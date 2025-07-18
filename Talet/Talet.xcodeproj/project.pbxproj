@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CCB6E0B32E2A3FCF00F7AD7F /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = CCB6E0B22E2A3FCF00F7AD7F /* Then */; };
 		EEC0DF832E15746B0046294D /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = EEC0DF822E15746B0046294D /* SnapKit */; };
 		EEC0DF862E1574990046294D /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = EEC0DF852E1574990046294D /* RxCocoa */; };
 		EEC0DF882E1574990046294D /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = EEC0DF872E1574990046294D /* RxSwift */; };
@@ -45,6 +46,7 @@
 				EEC0DF9F2E1576400046294D /* KakaoSDKCommon in Frameworks */,
 				EEC0DF932E1575340046294D /* RxMoya in Frameworks */,
 				EEC0DF882E1574990046294D /* RxSwift in Frameworks */,
+				CCB6E0B32E2A3FCF00F7AD7F /* Then in Frameworks */,
 				EEC0DF8E2E1574E00046294D /* Swinject in Frameworks */,
 				EEC0DF862E1574990046294D /* RxCocoa in Frameworks */,
 				EEC0DF912E1575340046294D /* Moya in Frameworks */,
@@ -107,6 +109,7 @@
 				EEC0DF9C2E1576400046294D /* KakaoSDKAuth */,
 				EEC0DF9E2E1576400046294D /* KakaoSDKCommon */,
 				EEC0DFA12E15765C0046294D /* Kingfisher */,
+				CCB6E0B22E2A3FCF00F7AD7F /* Then */,
 			);
 			productName = Talet;
 			productReference = CCA9B0BE2E156BED00198326 /* Talet.app */;
@@ -144,6 +147,7 @@
 				EEC0DF942E15757A0046294D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				EEC0DF992E1576400046294D /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
 				EEC0DFA02E15765C0046294D /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				CCB6E0B12E2A3FCF00F7AD7F /* XCRemoteSwiftPackageReference "Then" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CCA9B0BF2E156BED00198326 /* Products */;
@@ -388,6 +392,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		CCB6E0B12E2A3FCF00F7AD7F /* XCRemoteSwiftPackageReference "Then" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/devxoul/Then";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
 		EEC0DF812E15746B0046294D /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit";
@@ -447,6 +459,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CCB6E0B22E2A3FCF00F7AD7F /* Then */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CCB6E0B12E2A3FCF00F7AD7F /* XCRemoteSwiftPackageReference "Then" */;
+			productName = Then;
+		};
 		EEC0DF822E15746B0046294D /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = EEC0DF812E15746B0046294D /* XCRemoteSwiftPackageReference "SnapKit" */;
