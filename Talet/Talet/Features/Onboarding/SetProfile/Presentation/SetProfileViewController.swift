@@ -88,11 +88,6 @@ class SetProfileViewController: UIViewController {
 //        return pickerView
 //    }()
     
-    private let infoGenderBoy: UIView = {
-        let view = UIView()
-        return view
-    }()
-    
     
     //MARK: init
     private init() {
