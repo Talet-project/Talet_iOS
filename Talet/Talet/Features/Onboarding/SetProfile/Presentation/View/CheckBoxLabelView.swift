@@ -18,16 +18,16 @@ class CheckBoxLabelView: UIView {
     //MARK: UI Components
     let checkBoxButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.setImage(UIImage(systemName: "square"), for: .normal)
-        button.setImage(UIImage(systemName: "checkmark.square.fill"), for: .selected)
+        button.setImage(UIImage.setProfileNotCheckedBox, for: .normal)
+        button.setImage(UIImage.setProfileCheckedBox, for: .selected)
         button.tintColor = .systemBlue
         return button
     }()
     
     let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16)
-        label.textColor = .label
+        label.font = .systemFont(ofSize: 14)
+        label.textColor = .darkGray
         return label
     }()
     
@@ -35,6 +35,8 @@ class CheckBoxLabelView: UIView {
     let labelStyleButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("내용보기", for: .normal)
+        button.setTitleColor(.darkGray, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
         button.isHidden = true
         return button
     }()
@@ -42,12 +44,14 @@ class CheckBoxLabelView: UIView {
     //MARK: init
     init(text: String, linkURL: URL? = nil) {
         super.init(frame: .zero)
+        setLayout()
         titleLabel.text = text
         if let url = linkURL {
             labelStyleButton.isHidden = false
         } else {
             labelStyleButton.isHidden = true
         }
+        checkBoxButton.addTarget(self, action: #selector(checkBoxTapped), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
@@ -55,6 +59,9 @@ class CheckBoxLabelView: UIView {
     }
     
     //MARK: Methods
+    @objc private func checkBoxTapped() {
+        checkBoxButton.isSelected.toggle()
+    }
     
     //MARK: Bindings
     
