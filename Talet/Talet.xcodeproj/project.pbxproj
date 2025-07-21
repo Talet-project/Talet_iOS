@@ -28,9 +28,22 @@
 		EEC0DFB42E157A720046294D /* CommitConvention.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CommitConvention.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		CC72A37D2E2E5E5600DB463E /* Exceptions for "Talet" folder in "Talet" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				App/Info.plist,
+			);
+			target = CCA9B0BD2E156BED00198326 /* Talet */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		CCA9B0C02E156BED00198326 /* Talet */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				CC72A37D2E2E5E5600DB463E /* Exceptions for "Talet" folder in "Talet" target */,
+			);
 			path = Talet;
 			sourceTree = "<group>";
 		};
@@ -186,7 +199,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Talet/Talet.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Talet/App/Talet.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SS444RV4LU;
@@ -220,7 +233,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Talet/Talet.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Talet/App/Talet.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SS444RV4LU;
