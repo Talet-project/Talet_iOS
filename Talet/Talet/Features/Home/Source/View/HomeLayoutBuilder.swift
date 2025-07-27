@@ -9,10 +9,14 @@ import UIKit
 
 enum HomeLayoutBuilder {
     static func mainBannerSection() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(350),
+            heightDimension: .absolute(304))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.85), heightDimension: .absolute(200))
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(350),
+            heightDimension: .absolute(304))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 
         let section = NSCollectionLayoutSection(group: group)
@@ -23,15 +27,20 @@ enum HomeLayoutBuilder {
     }
 
     static func popularSection() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(80), heightDimension: .absolute(130))
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(128),
+            heightDimension: .absolute(194))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(140))
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(128),
+            heightDimension: .absolute(194)
+        )
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-        group.interItemSpacing = .fixed(12)
 
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
+        section.interGroupSpacing = 20
         section.contentInsets = .init(top: 8, leading: 16, bottom: 8, trailing: 16)
         return section
     }
@@ -47,24 +56,40 @@ enum HomeLayoutBuilder {
     }
 
     static func themedBooksSection() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(90), heightDimension: .absolute(130))
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(128),
+            heightDimension: .absolute(194))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(140))
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(128),
+            heightDimension: .absolute(194)
+        )
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-        group.interItemSpacing = .fixed(8)
 
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
-        section.contentInsets = .init(top: 12, leading: 16, bottom: 12, trailing: 16)
+        section.interGroupSpacing = 20
+        section.contentInsets = .init(top: 8, leading: 16, bottom: 8, trailing: 16)
         return section
     }
     
     static func defaultSection() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(44))
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(128),
+            heightDimension: .absolute(194))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        let group = NSCollectionLayoutGroup.vertical(layoutSize: itemSize, subitems: [item])
+
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(128),
+            heightDimension: .absolute(194)
+        )
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+
         let section = NSCollectionLayoutSection(group: group)
+        section.orthogonalScrollingBehavior = .continuous
+        section.interGroupSpacing = 20
+        section.contentInsets = .init(top: 8, leading: 16, bottom: 8, trailing: 16)
         return section
     }
 }
