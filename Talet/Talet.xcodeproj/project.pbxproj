@@ -29,7 +29,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		EEFAA4792E2DDA3000A5DEE4 /* Exceptions for "Talet" folder in "Talet" target */ = {
+		CC72A37D2E2E5E5600DB463E /* Exceptions for "Talet" folder in "Talet" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				App/Info.plist,
@@ -42,7 +42,7 @@
 		CCA9B0C02E156BED00198326 /* Talet */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				EEFAA4792E2DDA3000A5DEE4 /* Exceptions for "Talet" folder in "Talet" target */,
+				CC72A37D2E2E5E5600DB463E /* Exceptions for "Talet" folder in "Talet" target */,
 			);
 			path = Talet;
 			sourceTree = "<group>";
