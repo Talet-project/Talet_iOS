@@ -54,6 +54,7 @@ final class HomeViewController: UIViewController {
         lootCollectionView.register(RankingBookCell.self, forCellWithReuseIdentifier: "RankingBookCell")
         lootCollectionView.register(ReadingStatusCell.self, forCellWithReuseIdentifier: "ReadingStatusCell")
         lootCollectionView.register(BookPreviewCell.self, forCellWithReuseIdentifier: "BookPreviewCell")
+        lootCollectionView.register(HomeSectionHeaderView.self,forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,withReuseIdentifier: HomeSectionHeaderView.reuseIdentifier)
         
         view.addSubview(lootCollectionView)
         lootCollectionView.snp.makeConstraints {
@@ -134,6 +135,26 @@ final class HomeViewController: UIViewController {
                 cell.configure(with: itemIdentifier.color)
                 return cell
             }
+        }
+        
+        dataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
+            guard kind == UICollectionView.elementKindSectionHeader else { return nil }
+            let header = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: HomeSectionHeaderView.reuseIdentifier,
+                for: indexPath
+            ) as! HomeSectionHeaderView
+            
+            if let section = Section(rawValue: indexPath.section) {
+                switch section {
+                case .mainBanner: return nil
+                case .popularRanking: header.configure(title: "친구들이 좋아하는 인기 전래동화")
+                case .readingStatus: return nil
+                case .allBooksPreview: header.configure(title: "전체 책 보기")
+                case .randomViews: header.configure(title: "용기 → 용기있는 주인공 이야기")
+                }
+            }
+            return header
         }
     }
     

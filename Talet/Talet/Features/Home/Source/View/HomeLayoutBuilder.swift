@@ -42,6 +42,18 @@ enum HomeLayoutBuilder {
         section.orthogonalScrollingBehavior = .continuous
         section.interGroupSpacing = 20
         section.contentInsets = .init(top: 8, leading: 16, bottom: 8, trailing: 16)
+        
+        let headerSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(44)
+        )
+        let header = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: headerSize,
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top
+        )
+        section.boundarySupplementaryItems = [header]
+        
         return section
     }
 
@@ -71,6 +83,17 @@ enum HomeLayoutBuilder {
         section.orthogonalScrollingBehavior = .continuous
         section.interGroupSpacing = 20
         section.contentInsets = .init(top: 8, leading: 16, bottom: 8, trailing: 16)
+        
+        let headerSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(44)
+        )
+        let header = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: headerSize,
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top
+        )
+        section.boundarySupplementaryItems = [header]
         return section
     }
     
