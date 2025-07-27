@@ -8,9 +8,6 @@
 import UIKit
 
 enum HomeTabSection: Hashable {
-//    case story(ColorItem)
-//    case popular(ColorItem)
-//    case comingSoon(ColorItem)
     case mainBanner(ColorItem)
     case rankingBook(ColorItem)
     case readingStatus(ColorItem)

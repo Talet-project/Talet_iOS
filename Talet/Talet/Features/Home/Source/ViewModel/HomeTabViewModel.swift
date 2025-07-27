@@ -10,11 +10,11 @@ import UIKit
 import RxCocoa
 import RxSwift
 
-protocol HomeTabViewModel {
-    func transform(input: HomeTabViewModelImpl.Input) -> HomeTabViewModelImpl.Output
+protocol HomeViewModel {
+    func transform(input: HomeViewModelImpl.Input) -> HomeViewModelImpl.Output
 }
 
-final class HomeTabViewModelImpl: HomeTabViewModel {
+final class HomeViewModelImpl: HomeViewModel {
     private let disposeBag = DisposeBag()
     
     

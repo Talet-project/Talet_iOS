@@ -22,7 +22,7 @@ enum Section: Int, CaseIterable {
 final class HomeViewController: UIViewController {
     private let disposeBag = DisposeBag()
     private var dataSource: UICollectionViewDiffableDataSource<Section, HomeTabSection>!
-    private let viewModel: HomeTabViewModel
+    private let viewModel: HomeViewModel
     
     private let bannerBackgroundView: UIView = {
         let view = UIView()
@@ -30,7 +30,7 @@ final class HomeViewController: UIViewController {
         return view
     }()
     
-    init(viewModel: HomeTabViewModel) {
+    init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -75,7 +75,7 @@ final class HomeViewController: UIViewController {
     }
     
     private func bindViewModel() {
-        let input = HomeTabViewModelImpl.Input(loadHomeContent: Observable.just(()))
+        let input = HomeViewModelImpl.Input(loadHomeContent: Observable.just(()))
         let output = viewModel.transform(input: input)
         
         output.snapshot
