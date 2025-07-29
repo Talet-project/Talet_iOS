@@ -8,6 +8,7 @@
 import UIKit
 
 import SnapKit
+import Then
 
 
 class CheckBoxLabelView: UIView {
@@ -16,30 +17,24 @@ class CheckBoxLabelView: UIView {
     //MARK: Properties
     
     //MARK: UI Components
-    let checkBoxButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.setImage(UIImage.setProfileNotCheckedBox, for: .normal)
-        button.setImage(UIImage.setProfileCheckedBox, for: .selected)
-        button.tintColor = .systemBlue
-        return button
-    }()
+    let checkBoxButton = UIButton().then {
+        $0.setImage(UIImage.setProfileNotCheckedBox, for: .normal)
+        $0.setImage(UIImage.setProfileCheckedBox, for: .selected)
+        $0.tintColor = .systemBlue
+    }
     
-    let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 14)
-        label.textColor = .darkGray
-        return label
-    }()
+    let titleLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 14)
+        $0.textColor = .darkGray
+    }
     
     // 버튼 처리방법 확인후 추후연결
-    let labelStyleButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("내용보기", for: .normal)
-        button.setTitleColor(.darkGray, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
-        button.isHidden = true
-        return button
-    }()
+    let labelStyleButton = UIButton().then {
+        $0.setTitle("내용보기", for: .normal)
+        $0.setTitleColor(.darkGray, for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.isHidden = true
+    }
     
     //MARK: init
     init(text: String, linkURL: URL? = nil) {
