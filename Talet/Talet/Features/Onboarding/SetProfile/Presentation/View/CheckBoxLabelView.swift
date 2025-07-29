@@ -24,15 +24,15 @@ class CheckBoxLabelView: UIView {
     }
     
     let titleLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 14)
-        $0.textColor = .darkGray
+        $0.font = .pretendard(.body2)
+        $0.textColor = .gray600
     }
     
     // 버튼 처리방법 확인후 추후연결
     let labelStyleButton = UIButton().then {
         $0.setTitle("내용보기", for: .normal)
-        $0.setTitleColor(.darkGray, for: .normal)
-        $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.setTitleColor(.gray600, for: .normal)
+        $0.titleLabel?.font = .pretendard(.body2)
         $0.isHidden = true
     }
     
