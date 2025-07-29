@@ -8,6 +8,7 @@
 import UIKit
 
 import SnapKit
+import Then
 
 
 class SetProfileViewController: UIViewController {
@@ -17,104 +18,80 @@ class SetProfileViewController: UIViewController {
     
     //MARK: UI Components
     
-    private let topLabel: UILabel = {
-        let label = UILabel()
-        label.text = "거의 다 됐어요!"
-        label.font = .systemFont(ofSize: 20, weight: .bold)
-        label.textColor = .black
-        return label
-    }()
+    private let topLabel = UILabel().then {
+        $0.text = "거의 다 됐어요!"
+        $0.font = .systemFont(ofSize: 20, weight: .bold)
+        $0.textColor = .black
+    }
     
-    private let numberImage1: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage.setProfileNumberImage1
-        return imageView
-    }()
-    
-    private let numberImage2: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage.setProfileNumberImage2
-        return imageView
-    }()
-    
-    private let chooseLanguageLabel: UILabel = {
-        let label = UILabel()
-        label.text = "우리 가족이 사용하는 언어를 선택해주세요"
-        label.font = .systemFont(ofSize: 15, weight: .bold)
-        label.textColor = .black
-        return label
-    }()
-    
-    private let underLanguageLabel: UILabel = {
-        let label = UILabel()
-        label.text = "한국어는 선택하지 않아도 돼요"
-        label.font = .systemFont(ofSize: 13, weight: .regular)
-        label.textColor = .lightGray
-        return label
-    }()
-    
-    private let languageLabel1: UILabel = {
-        let label = UILabel()
-        label.text = "Language 1"
-        label.font = .systemFont(ofSize: 14, weight: .regular)
-        label.textColor = .darkGray
-        return label
-    }()
-    
-    private let languageLabel2: UILabel = {
-        let label = UILabel()
-        label.text = "Language 2"
-        label.font = .systemFont(ofSize: 14, weight: .regular)
-        label.textColor = .darkGray
-        return label
-    }()
-    
-    private let childInfoLabel: UILabel = {
-        let label = UILabel()
-        label.text = "아이의 정보를 입력해주세요"
-        label.font = .systemFont(ofSize: 15, weight: .bold)
-        label.textColor = .black
-        return label
-    }()
-    
-    private let infoName: UILabel = {
-        let label = UILabel()
-        label.text = "이름"
-        label.font = .systemFont(ofSize: 14, weight: .regular)
-        label.textColor = .darkGray
-        return label
-    }()
-    
-    private let infoBirth: UILabel = {
-        let label = UILabel()
-        label.text = "생년월일"
-        label.font = .systemFont(ofSize: 14, weight: .regular)
-        label.textColor = .darkGray
-        return label
-    }()
-    
-    private let infoGender: UILabel = {
-        let label = UILabel()
-        label.text = "성별"
-        label.font = .systemFont(ofSize: 14, weight: .regular)
-        label.textColor = .darkGray
-        return label
-    }()
-    
-    private let infoNameTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "이름을 입력하세요"
-        textField.borderStyle = .roundedRect
-        textField.backgroundColor = .lightGray
-        textField.font = .systemFont(ofSize: 15)
-        return textField
-    }()
-    
-    private let infoBirthPicker: UIDatePicker = {
-        let datePicker = UIDatePicker()
-        datePicker.datePickerMode = .date
-        return datePicker
-    }()
+    private let numberImage1 = UIImageView().then {
+        $0.image = UIImage.setProfileNumberImage1
+    }
+
+    private let numberImage2 = UIImageView().then {
+        $0.image = UIImage.setProfileNumberImage2
+    }
+
+    private let chooseLanguageLabel = UILabel().then {
+        $0.text = "우리 가족이 사용하는 언어를 선택해주세요."
+        $0.font = .systemFont(ofSize: 15, weight: .bold)
+        $0.textColor = .black
+    }
+
+    private let underLanguageLabel = UILabel().then {
+        $0.text = "한국어는 선택하지 않아도 돼요."
+        $0.font = .systemFont(ofSize: 13, weight: .regular)
+        $0.textColor = .lightGray
+    }
+
+    private let languageLabel1 = UILabel().then {
+        $0.text = "Language 1"
+        $0.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.textColor = .darkGray
+    }
+
+    private let languageLabel2 = UILabel().then {
+        $0.text = "Language 2"
+        $0.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.textColor = .darkGray
+    }
+
+    private let childInfoLabel = UILabel().then {
+        $0.text = "아이의 정보를 입력해주세요."
+        $0.font = .systemFont(ofSize: 15, weight: .bold)
+        $0.textColor = .black
+    }
+
+    private let infoName = UILabel().then {
+        $0.text = "이름"
+        $0.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.textColor = .darkGray
+    }
+
+    private let infoBirth = UILabel().then {
+        $0.text = "생년월일"
+        $0.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.textColor = .darkGray
+    }
+
+    private let infoGender = UILabel().then {
+        $0.text = "성별"
+        $0.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.textColor = .darkGray
+    }
+
+    private let infoNameTextField = UITextField().then {
+        $0.placeholder = "이름을 입력하세요."
+        $0.borderStyle = .roundedRect
+        $0.backgroundColor = .gray50
+        $0.font = .systemFont(ofSize: 15)
+        $0.textColor = .gray300
+    }
+
+    private let infoBirthPicker = UIDatePicker().then {
+        $0.datePickerMode = .date
+        // $0.preferredDatePickerStyle = .compact
+    }
     
     // 연 월 따로 구분하게 되면 사용
 //    private let infoBirthYear: UIPickerView = {
@@ -126,12 +103,10 @@ class SetProfileViewController: UIViewController {
 //        let pickerView = UIPickerView()
 //        return pickerView
 //    }()
-    private let checkBoxStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.distribution = .fillEqually
-        return stackView
-    }()
+    private let checkBoxStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.distribution = .fillEqually
+    }
     
     private let checkBoxLabel1 = CheckBoxLabelView(text: "전체 동의합니다")
     private let checkBoxLabel2 = CheckBoxLabelView(text: "[필수] 이용약관 동의", linkURL: URL(string: "https://github.com/Talet-project/Talet_iOS"))
@@ -198,8 +173,8 @@ class SetProfileViewController: UIViewController {
         }
         
         chooseLanguageLabel.snp.makeConstraints {
-            $0.leading.equalTo(numberImage1.snp.trailing).offset(20)
-            $0.centerY.equalTo(numberImage1)
+            $0.top.equalTo(numberImage1)
+            $0.leading.equalTo(numberImage1.snp.trailing).offset(10)
         }
         
         underLanguageLabel.snp.makeConstraints {
@@ -224,7 +199,7 @@ class SetProfileViewController: UIViewController {
         }
         
         childInfoLabel.snp.makeConstraints {
-            $0.leading.equalTo(numberImage2.snp.trailing).offset(20)
+            $0.leading.equalTo(numberImage2.snp.trailing).offset(10)
             $0.centerY.equalTo(numberImage2)
         }
         
@@ -234,7 +209,7 @@ class SetProfileViewController: UIViewController {
         }
 
         infoNameTextField.snp.makeConstraints {
-            $0.leading.equalTo(infoName.snp.trailing).offset(12)
+            $0.leading.equalTo(infoName.snp.trailing).offset(40)
             $0.centerY.equalTo(infoName)
             $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.height.equalTo(40)
@@ -246,8 +221,7 @@ class SetProfileViewController: UIViewController {
         }
 
         infoBirthPicker.snp.makeConstraints {
-            $0.leading.equalTo(infoBirth.snp.trailing).offset(12)
-            $0.centerY.equalTo(infoBirth)
+            $0.leading.equalTo(infoNameTextField)
             $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.height.equalTo(40)
         }

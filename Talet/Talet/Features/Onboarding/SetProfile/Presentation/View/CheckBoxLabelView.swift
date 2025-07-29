@@ -46,7 +46,7 @@ class CheckBoxLabelView: UIView {
         super.init(frame: .zero)
         setLayout()
         titleLabel.text = text
-        if let url = linkURL {
+        if linkURL != nil {
             labelStyleButton.isHidden = false
         } else {
             labelStyleButton.isHidden = true
