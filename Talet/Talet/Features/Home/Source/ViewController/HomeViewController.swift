@@ -79,7 +79,7 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
 // MARK: - Infinite scroll for mainBanner
     
     private func setLayout() {
-        view.backgroundColor = .systemBlue
+        
     }
     
     private func bindViewModel() {

@@ -26,8 +26,8 @@ class MypageViewController: UIViewController {
     private let profileIconView = UIView()
     
     private lazy var profileButton = UIButton().then {
-        let profileImage = isBoy ? UIImage.profileBoy : UIImage.profileGirl
-        $0.setImage(profileImage, for: .normal)
+//        let profileImage = isBoy ? UIImage.profileBoy : UIImage.profileGirl
+//        $0.setImage(profileImage, for: .normal)
         $0.clipsToBounds = true
         $0.layer.borderWidth = 2
         $0.layer.borderColor = UIColor.orange400.cgColor

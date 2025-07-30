@@ -31,3 +31,20 @@ final class AppDIContainer {
         return resolved
     }
 }
+
+extension AppDIContainer {
+    func makeMainTabBarController() -> MainTabBarController {
+        let homeVC = resolve(HomeViewController.self)
+        let myPageVC = MypageViewController()
+        
+//        let exploreVC = resolve(ExploreTabViewController.self)
+//        let myPageVC = resolve(MyPageViewController.self)
+
+        return MainTabBarController(
+            homeVC: homeVC,
+//            exploreVC: homeVC,
+//            exploreVC: exploreVC,
+            myPageVC: myPageVC
+        )
+    }
+}

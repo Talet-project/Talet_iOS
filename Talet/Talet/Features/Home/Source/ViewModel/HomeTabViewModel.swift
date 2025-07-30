@@ -63,22 +63,33 @@ final class HomeViewModelImpl: HomeViewModel {
         case .popularRanking:
             return [
                 .rankingBook(ColorItem(color: .orange)),
-                .rankingBook(ColorItem(color: .green))
+                .rankingBook(ColorItem(color: .green)),
+                .rankingBook(ColorItem(color: .orange)),
+                .rankingBook(ColorItem(color: .green)),
+                .rankingBook(ColorItem(color: .orange)),
+                .rankingBook(ColorItem(color: .green)),
             ]
         case .readingStatus:
             return [
                 .readingStatus(ColorItem(color: .cyan)),
-                .readingStatus(ColorItem(color: .magenta))
             ]
         case .allBooksPreview:
             return [
                 .allBooksPreview(ColorItem(color: .gray)),
-                .allBooksPreview(ColorItem(color: .lightGray))
+                .allBooksPreview(ColorItem(color: .lightGray)),
+                .allBooksPreview(ColorItem(color: .gray)),
+                .allBooksPreview(ColorItem(color: .lightGray)),
+                .allBooksPreview(ColorItem(color: .gray)),
+                .allBooksPreview(ColorItem(color: .lightGray)),
             ]
         case .randomViews:
             return [
                 .randomViews(ColorItem(color: .systemPink)),
-                .randomViews(ColorItem(color: .systemTeal))
+                .randomViews(ColorItem(color: .systemTeal)),
+                .randomViews(ColorItem(color: .systemPink)),
+                .randomViews(ColorItem(color: .systemTeal)),
+                .randomViews(ColorItem(color: .systemPink)),
+                .randomViews(ColorItem(color: .systemTeal)),
             ]
         }
     }
