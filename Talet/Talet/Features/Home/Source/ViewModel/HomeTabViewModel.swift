@@ -45,10 +45,21 @@ final class HomeViewModelImpl: HomeViewModel {
     private static func dummyItems(for section: Section) -> [HomeTabSection] {
         switch section {
         case .mainBanner:
-            return [
+            let banners: [HomeTabSection] = [
                 .mainBanner(ColorItem(color: .red)),
-                .mainBanner(ColorItem(color: .blue))
+                .mainBanner(ColorItem(color: .blue)),
+                .mainBanner(ColorItem(color: .green))
             ]
+            var infiniteBanners = banners
+            if let first = banners.first, let last = banners.last {
+                infiniteBanners.insert(.mainBanner(ColorItem(color: last.color)), at: 0)
+                infiniteBanners.append(.mainBanner(ColorItem(color: first.color)))
+            }
+            print("✅ mainBanner infiniteBanners count: \(infiniteBanners.count)")
+            infiniteBanners.enumerated().forEach { index, item in
+                print("mainBanner[\(index)] → \(item)")
+            }
+            return infiniteBanners
         case .popularRanking:
             return [
                 .rankingBook(ColorItem(color: .orange)),

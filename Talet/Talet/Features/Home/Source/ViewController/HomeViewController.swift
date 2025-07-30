@@ -19,7 +19,7 @@ enum Section: Int, CaseIterable {
     case randomViews
 }
 
-final class HomeViewController: UIViewController {
+final class HomeViewController: UIViewController, UICollectionViewDelegate {
     private let disposeBag = DisposeBag()
     private var dataSource: UICollectionViewDiffableDataSource<Section, HomeTabSection>!
     private let viewModel: HomeViewModel
@@ -47,8 +47,6 @@ final class HomeViewController: UIViewController {
     }()
     
     private func configureCollectionView() {
-        let layout = createLayout()
-        lootCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         lootCollectionView.backgroundColor = .clear
         lootCollectionView.register(MainBannerCell.self, forCellWithReuseIdentifier: "MainBannerCell")
         lootCollectionView.register(RankingBookCell.self, forCellWithReuseIdentifier: "RankingBookCell")
@@ -68,8 +66,17 @@ final class HomeViewController: UIViewController {
         setLayout()
         configureCollectionView()
         configureDataSource()
-        applyInitialSnapshot()
+        bindViewModel()
+        lootCollectionView.delegate = self
     }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        let indexPath = IndexPath(item: 1, section: Section.mainBanner.rawValue)
+        print("✅ Initial scroll to index 1")
+        lootCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+    }
+// MARK: - Infinite scroll for mainBanner
     
     private func setLayout() {
         view.backgroundColor = .systemBlue
@@ -81,6 +88,12 @@ final class HomeViewController: UIViewController {
         
         output.snapshot
             .drive(onNext: { [weak self] snapshot in
+                print("✅ Snapshot applied, sections: \(snapshot.sectionIdentifiers)")
+                let mainBannerItems = snapshot.itemIdentifiers(inSection: .mainBanner)
+                print("mainBanner items count: \(mainBannerItems.count)")
+                mainBannerItems.enumerated().forEach { idx, item in
+                    print("snapshot mainBanner[\(idx)] → \(item)")
+                }
                 self?.dataSource.apply(snapshot, animatingDifferences: true)
             })
             .disposed(by: disposeBag)
@@ -158,57 +171,77 @@ final class HomeViewController: UIViewController {
         }
     }
     
-    private func applyInitialSnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, HomeTabSection>()
-        Section.allCases.forEach { section in
-            snapshot.appendSections([section])
-            let dummyItems: [HomeTabSection]
-            switch section {
-            case .mainBanner:
-                dummyItems = [
-                    HomeTabSection.mainBanner(ColorItem(color: .red)),
-                    HomeTabSection.mainBanner(ColorItem(color: .blue)),
-                    HomeTabSection.mainBanner(ColorItem(color: .green))
-                ]
-            case .popularRanking:
-                dummyItems = [
-                    HomeTabSection.rankingBook(ColorItem(color: .orange)),
-                    HomeTabSection.rankingBook(ColorItem(color: .purple)),
-                    HomeTabSection.rankingBook(ColorItem(color: .brown)),
-                    HomeTabSection.rankingBook(ColorItem(color: .orange)),
-                    HomeTabSection.rankingBook(ColorItem(color: .purple)),
-                    HomeTabSection.rankingBook(ColorItem(color: .orange)),
-                    HomeTabSection.rankingBook(ColorItem(color: .purple)),
-                    HomeTabSection.rankingBook(ColorItem(color: .brown)),
-                    HomeTabSection.rankingBook(ColorItem(color: .orange)),
-                    HomeTabSection.rankingBook(ColorItem(color: .purple)),
-                ]
-            case .readingStatus:
-                dummyItems = [
-                    HomeTabSection.readingStatus(ColorItem(color: .red)),
-                ]
-            case .allBooksPreview:
-                dummyItems = [
-                    HomeTabSection.allBooksPreview(ColorItem(color: .gray)),
-                    HomeTabSection.allBooksPreview(ColorItem(color: .darkGray)),
-                    HomeTabSection.allBooksPreview(ColorItem(color: .lightGray)),
-                    HomeTabSection.allBooksPreview(ColorItem(color: .gray)),
-                    HomeTabSection.allBooksPreview(ColorItem(color: .darkGray)),
-                    HomeTabSection.allBooksPreview(ColorItem(color: .lightGray))
-                    
-                ]
-            case .randomViews:
-                dummyItems = [
-                    HomeTabSection.randomViews(ColorItem(color: .black)),
-                    HomeTabSection.randomViews(ColorItem(color: .white)),
-                    HomeTabSection.randomViews(ColorItem(color: .systemPink)),
-                    HomeTabSection.randomViews(ColorItem(color: .black)),
-                    HomeTabSection.randomViews(ColorItem(color: .white)),
-                    HomeTabSection.randomViews(ColorItem(color: .systemPink))
-                ]
-            }
-            snapshot.appendItems(dummyItems, toSection: section)
+//    private func applyInitialSnapshot() {
+//        var snapshot = NSDiffableDataSourceSnapshot<Section, HomeTabSection>()
+//        Section.allCases.forEach { section in
+//            snapshot.appendSections([section])
+//            let dummyItems: [HomeTabSection]
+//            switch section {
+//            case .mainBanner:
+//                dummyItems = [
+//                    HomeTabSection.mainBanner(ColorItem(color: .red)),
+//                    HomeTabSection.mainBanner(ColorItem(color: .blue)),
+//                    HomeTabSection.mainBanner(ColorItem(color: .green))
+//                ]
+//            case .popularRanking:
+//                dummyItems = [
+//                    HomeTabSection.rankingBook(ColorItem(color: .orange)),
+//                    HomeTabSection.rankingBook(ColorItem(color: .purple)),
+//                    HomeTabSection.rankingBook(ColorItem(color: .brown)),
+//                    HomeTabSection.rankingBook(ColorItem(color: .orange)),
+//                    HomeTabSection.rankingBook(ColorItem(color: .purple)),
+//                    HomeTabSection.rankingBook(ColorItem(color: .orange)),
+//                    HomeTabSection.rankingBook(ColorItem(color: .purple)),
+//                    HomeTabSection.rankingBook(ColorItem(color: .brown)),
+//                    HomeTabSection.rankingBook(ColorItem(color: .orange)),
+//                    HomeTabSection.rankingBook(ColorItem(color: .purple)),
+//                ]
+//            case .readingStatus:
+//                dummyItems = [
+//                    HomeTabSection.readingStatus(ColorItem(color: .red)),
+//                ]
+//            case .allBooksPreview:
+//                dummyItems = [
+//                    HomeTabSection.allBooksPreview(ColorItem(color: .gray)),
+//                    HomeTabSection.allBooksPreview(ColorItem(color: .darkGray)),
+//                    HomeTabSection.allBooksPreview(ColorItem(color: .lightGray)),
+//                    HomeTabSection.allBooksPreview(ColorItem(color: .gray)),
+//                    HomeTabSection.allBooksPreview(ColorItem(color: .darkGray)),
+//                    HomeTabSection.allBooksPreview(ColorItem(color: .lightGray))
+//                    
+//                ]
+//            case .randomViews:
+//                dummyItems = [
+//                    HomeTabSection.randomViews(ColorItem(color: .black)),
+//                    HomeTabSection.randomViews(ColorItem(color: .white)),
+//                    HomeTabSection.randomViews(ColorItem(color: .systemPink)),
+//                    HomeTabSection.randomViews(ColorItem(color: .black)),
+//                    HomeTabSection.randomViews(ColorItem(color: .white)),
+//                    HomeTabSection.randomViews(ColorItem(color: .systemPink))
+//                ]
+//            }
+//            snapshot.appendItems(dummyItems, toSection: section)
+//        }
+//        dataSource.apply(snapshot, animatingDifferences: false)
+//    }
+}
+
+extension HomeViewController: UIScrollViewDelegate {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        let visibleItems = lootCollectionView.indexPathsForVisibleItems.sorted()
+        guard let currentIndexPath = visibleItems.first,
+              currentIndexPath.section == Section.mainBanner.rawValue else { return }
+        
+        let totalCount = dataSource.snapshot().itemIdentifiers(inSection: .mainBanner).count
+        print("✅ Scrolled to index: \(currentIndexPath.item), totalCount: \(totalCount)")
+        if currentIndexPath.item == 0 {
+            print("⬅️ Left edge reached → jump to \(totalCount - 2)")
+            let target = IndexPath(item: totalCount - 2, section: Section.mainBanner.rawValue)
+            lootCollectionView.scrollToItem(at: target, at: .centeredHorizontally, animated: false)
+        } else if currentIndexPath.item == totalCount - 1 {
+            print("➡️ Right edge reached → jump to 1")
+            let target = IndexPath(item: 1, section: Section.mainBanner.rawValue)
+            lootCollectionView.scrollToItem(at: target, at: .centeredHorizontally, animated: false)
         }
-        dataSource.apply(snapshot, animatingDifferences: false)
     }
 }
