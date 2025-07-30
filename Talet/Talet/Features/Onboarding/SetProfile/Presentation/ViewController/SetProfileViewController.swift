@@ -179,7 +179,6 @@ class SetProfileViewController: UIViewController {
     //MARK: View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         infoNameTextField.delegate = self
         bind()
         setLayout()
@@ -194,6 +193,7 @@ class SetProfileViewController: UIViewController {
     
     //MARK: Layout
     private func setLayout() {
+        view.backgroundColor = .white
         //뷰 등록
         [topLabel,
          scrollView,
