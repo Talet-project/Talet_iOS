@@ -202,7 +202,7 @@
 				CODE_SIGN_ENTITLEMENTS = Talet/App/Talet.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = SS444RV4LU;
+				DEVELOPMENT_TEAM = DPB3NG2Q2T;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Talet/App/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "테일릿";
@@ -236,7 +236,7 @@
 				CODE_SIGN_ENTITLEMENTS = Talet/App/Talet.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = SS444RV4LU;
+				DEVELOPMENT_TEAM = DPB3NG2Q2T;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Talet/App/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "테일릿";
