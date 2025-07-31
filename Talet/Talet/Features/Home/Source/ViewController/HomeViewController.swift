@@ -39,7 +39,7 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private lazy var lootCollectionView: UICollectionView = {
+    private lazy var rootCollectionView: UICollectionView = {
         let layout = createLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
@@ -47,15 +47,15 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
     }()
     
     private func configureCollectionView() {
-        lootCollectionView.backgroundColor = .clear
-        lootCollectionView.register(MainBannerCell.self, forCellWithReuseIdentifier: "MainBannerCell")
-        lootCollectionView.register(RankingBookCell.self, forCellWithReuseIdentifier: "RankingBookCell")
-        lootCollectionView.register(ReadingStatusCell.self, forCellWithReuseIdentifier: "ReadingStatusCell")
-        lootCollectionView.register(BookPreviewCell.self, forCellWithReuseIdentifier: "BookPreviewCell")
-        lootCollectionView.register(HomeSectionHeaderView.self,forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,withReuseIdentifier: HomeSectionHeaderView.reuseIdentifier)
+        rootCollectionView.backgroundColor = .clear
+        rootCollectionView.register(MainBannerCell.self, forCellWithReuseIdentifier: "MainBannerCell")
+        rootCollectionView.register(RankingBookCell.self, forCellWithReuseIdentifier: "RankingBookCell")
+        rootCollectionView.register(ReadingStatusCell.self, forCellWithReuseIdentifier: "ReadingStatusCell")
+        rootCollectionView.register(BookPreviewCell.self, forCellWithReuseIdentifier: "BookPreviewCell")
+        rootCollectionView.register(HomeSectionHeaderView.self,forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,withReuseIdentifier: HomeSectionHeaderView.reuseIdentifier)
         
-        view.addSubview(lootCollectionView)
-        lootCollectionView.snp.makeConstraints {
+        view.addSubview(rootCollectionView)
+        rootCollectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
     }
@@ -67,14 +67,14 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
         configureCollectionView()
         configureDataSource()
         bindViewModel()
-        lootCollectionView.delegate = self
+        rootCollectionView.delegate = self
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         let indexPath = IndexPath(item: 1, section: Section.mainBanner.rawValue)
         print("✅ Initial scroll to index 1")
-        lootCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+        rootCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
     }
 // MARK: - Infinite scroll for mainBanner
     
@@ -120,7 +120,7 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
     }
     
     private func configureDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, HomeTabSection>(collectionView: lootCollectionView) {
+        dataSource = UICollectionViewDiffableDataSource<Section, HomeTabSection>(collectionView: rootCollectionView) {
             collectionView, indexPath, itemIdentifier in
             
             guard let section = Section(rawValue: indexPath.section) else {
@@ -170,65 +170,11 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
             return header
         }
     }
-    
-//    private func applyInitialSnapshot() {
-//        var snapshot = NSDiffableDataSourceSnapshot<Section, HomeTabSection>()
-//        Section.allCases.forEach { section in
-//            snapshot.appendSections([section])
-//            let dummyItems: [HomeTabSection]
-//            switch section {
-//            case .mainBanner:
-//                dummyItems = [
-//                    HomeTabSection.mainBanner(ColorItem(color: .red)),
-//                    HomeTabSection.mainBanner(ColorItem(color: .blue)),
-//                    HomeTabSection.mainBanner(ColorItem(color: .green))
-//                ]
-//            case .popularRanking:
-//                dummyItems = [
-//                    HomeTabSection.rankingBook(ColorItem(color: .orange)),
-//                    HomeTabSection.rankingBook(ColorItem(color: .purple)),
-//                    HomeTabSection.rankingBook(ColorItem(color: .brown)),
-//                    HomeTabSection.rankingBook(ColorItem(color: .orange)),
-//                    HomeTabSection.rankingBook(ColorItem(color: .purple)),
-//                    HomeTabSection.rankingBook(ColorItem(color: .orange)),
-//                    HomeTabSection.rankingBook(ColorItem(color: .purple)),
-//                    HomeTabSection.rankingBook(ColorItem(color: .brown)),
-//                    HomeTabSection.rankingBook(ColorItem(color: .orange)),
-//                    HomeTabSection.rankingBook(ColorItem(color: .purple)),
-//                ]
-//            case .readingStatus:
-//                dummyItems = [
-//                    HomeTabSection.readingStatus(ColorItem(color: .red)),
-//                ]
-//            case .allBooksPreview:
-//                dummyItems = [
-//                    HomeTabSection.allBooksPreview(ColorItem(color: .gray)),
-//                    HomeTabSection.allBooksPreview(ColorItem(color: .darkGray)),
-//                    HomeTabSection.allBooksPreview(ColorItem(color: .lightGray)),
-//                    HomeTabSection.allBooksPreview(ColorItem(color: .gray)),
-//                    HomeTabSection.allBooksPreview(ColorItem(color: .darkGray)),
-//                    HomeTabSection.allBooksPreview(ColorItem(color: .lightGray))
-//                    
-//                ]
-//            case .randomViews:
-//                dummyItems = [
-//                    HomeTabSection.randomViews(ColorItem(color: .black)),
-//                    HomeTabSection.randomViews(ColorItem(color: .white)),
-//                    HomeTabSection.randomViews(ColorItem(color: .systemPink)),
-//                    HomeTabSection.randomViews(ColorItem(color: .black)),
-//                    HomeTabSection.randomViews(ColorItem(color: .white)),
-//                    HomeTabSection.randomViews(ColorItem(color: .systemPink))
-//                ]
-//            }
-//            snapshot.appendItems(dummyItems, toSection: section)
-//        }
-//        dataSource.apply(snapshot, animatingDifferences: false)
-//    }
 }
 
 extension HomeViewController: UIScrollViewDelegate {
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let visibleItems = lootCollectionView.indexPathsForVisibleItems.sorted()
+        let visibleItems = rootCollectionView.indexPathsForVisibleItems.sorted()
         guard let currentIndexPath = visibleItems.first,
               currentIndexPath.section == Section.mainBanner.rawValue else { return }
         
@@ -237,11 +183,11 @@ extension HomeViewController: UIScrollViewDelegate {
         if currentIndexPath.item == 0 {
             print("⬅️ Left edge reached → jump to \(totalCount - 2)")
             let target = IndexPath(item: totalCount - 2, section: Section.mainBanner.rawValue)
-            lootCollectionView.scrollToItem(at: target, at: .centeredHorizontally, animated: false)
+            rootCollectionView.scrollToItem(at: target, at: .centeredHorizontally, animated: false)
         } else if currentIndexPath.item == totalCount - 1 {
             print("➡️ Right edge reached → jump to 1")
             let target = IndexPath(item: 1, section: Section.mainBanner.rawValue)
-            lootCollectionView.scrollToItem(at: target, at: .centeredHorizontally, animated: false)
+            rootCollectionView.scrollToItem(at: target, at: .centeredHorizontally, animated: false)
         }
     }
 }
