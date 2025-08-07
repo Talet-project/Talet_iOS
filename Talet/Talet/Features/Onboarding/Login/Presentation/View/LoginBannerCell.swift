@@ -49,8 +49,6 @@ class LoginBannerCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setLayout()
-        print("imageView size: \(imageView.bounds)")
-        print("image size: \(imageView.image?.size ?? .zero)")
     }
     
     required init?(coder: NSCoder) {

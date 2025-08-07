@@ -13,6 +13,13 @@ import Then
 
 class MypageViewController: UIViewController {
     //MARK: Constants
+    let dummyVoices: [VoiceModel] = [
+        VoiceModel(image: .voiceProfile1, title: "엄마 목소리", isPlaying: false, voiceURL: URL(string: "https://dummy1")!),
+        VoiceModel(image: .voiceProfile2, title: "아빠 목소리", isPlaying: true, voiceURL: URL(string: "https://dummy2")!),
+        VoiceModel(image: .voiceProfile3, title: "수아 목소리", isPlaying: false, voiceURL: URL(string: "https://dummy3")!),
+        VoiceModel(image: .voiceProfile4, title: "할머니 목소리", isPlaying: false, voiceURL: URL(string: "https://dummy4")!),
+        VoiceModel(image: .voiceProfile5, title: "AI 목소리", isPlaying: false, voiceURL: URL(string: "https://dummy5")!)
+    ]
     
     //MARK: Properties
     var isBoy = true
@@ -54,6 +61,10 @@ class MypageViewController: UIViewController {
         $0.axis = .vertical
         $0.distribution = .equalSpacing
         $0.alignment = .center
+    }
+    
+    private lazy var voiceSelectView = VoiceSelectView().then {
+        $0.configure(with: self.dummyVoices)
     }
     
     //MARK: init
@@ -109,7 +120,8 @@ class MypageViewController: UIViewController {
         view.backgroundColor = .gray50
         
         [headerImage,
-         profileStackView
+         profileStackView,
+         voiceSelectView
         ].forEach { view.addSubview($0) }
         
         [profileIconView,
@@ -148,6 +160,12 @@ class MypageViewController: UIViewController {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(10)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(headerImage).multipliedBy(0.58)
+        }
+        
+        voiceSelectView.snp.makeConstraints {
+            $0.top.equalTo(headerImage.snp.bottom).offset(30)
+            $0.width.equalToSuperview()
+            $0.height.equalTo(240)
         }
     }
     
