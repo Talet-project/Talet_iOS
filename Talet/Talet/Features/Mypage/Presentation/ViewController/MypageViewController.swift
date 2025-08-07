@@ -147,10 +147,8 @@ class MypageViewController: UIViewController {
         profileStackView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(10)
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(headerImage).offset(-10)
+            $0.height.equalTo(headerImage).multipliedBy(0.58)
         }
-        
-        
     }
     
     //MARK: Extensions

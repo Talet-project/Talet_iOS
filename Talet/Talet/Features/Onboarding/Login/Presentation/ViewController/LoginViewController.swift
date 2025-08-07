@@ -56,8 +56,12 @@ class LoginViewController: UIViewController {
         $0.distribution = .equalSpacing
     }
     
-    private let previewButton = UIButton().then {
+    private lazy var previewButton = UIButton().then {
         $0.setImage(.loginPreviewButton, for: .normal)
+        // 임시 뷰넘김 처리
+        $0.addAction(UIAction(handler: { [weak self] _ in
+            self?.navigationController?.pushViewController(SetProfileViewController(), animated: true)
+        }), for: .touchUpInside)
     }
     
     private let appleLoginButton = UIButton().then {
@@ -86,6 +90,8 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         bind()
         setLayout()
+        
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
     override func viewDidLayoutSubviews() {
@@ -156,6 +162,8 @@ extension LoginViewController: UICollectionViewDataSource {
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard scrollView.frame.width > 0 else { return } 
+        
         let page = Int(round(scrollView.contentOffset.x / scrollView.frame.width))
         pageControl.currentPage = page
     }
