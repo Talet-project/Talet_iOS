@@ -13,19 +13,35 @@ import Then
 
 class MypageViewController: UIViewController {
     //MARK: Constants
-    let dummyVoices: [VoiceModel] = [
-        VoiceModel(image: .voiceProfile1, title: "엄마 목소리", isPlaying: false, voiceURL: URL(string: "https://dummy1")!),
-        VoiceModel(image: .voiceProfile2, title: "아빠 목소리", isPlaying: true, voiceURL: URL(string: "https://dummy2")!),
-        VoiceModel(image: .voiceProfile3, title: "수아 목소리", isPlaying: false, voiceURL: URL(string: "https://dummy3")!),
-        VoiceModel(image: .voiceProfile4, title: "할머니 목소리", isPlaying: false, voiceURL: URL(string: "https://dummy4")!),
-        VoiceModel(image: .voiceProfile5, title: "AI 목소리", isPlaying: false, voiceURL: URL(string: "https://dummy5")!)
+    let dummyVoices: [VoiceEntity] = [
+        VoiceEntity(image: .voiceProfile1, title: "엄마 목소리", isPlaying: false, voiceURL: URL(string: "https://dummy1")!),
+        VoiceEntity(image: .voiceProfile2, title: "아빠 목소리", isPlaying: true, voiceURL: URL(string: "https://dummy2")!),
+        VoiceEntity(image: .voiceProfile3, title: "수아 목소리", isPlaying: false, voiceURL: URL(string: "https://dummy3")!),
+        VoiceEntity(image: .voiceProfile4, title: "할머니 목소리", isPlaying: false, voiceURL: URL(string: "https://dummy4")!),
+        VoiceEntity(image: .voiceProfile5, title: "AI 목소리", isPlaying: false, voiceURL: URL(string: "https://dummy5")!)
     ]
+    
+    let dummyBooks: [MyBookEntity] = [
+        MyBookEntity(id: UUID().uuidString, title: "선녀와 나무꾼", image: URL(string: "https://dummy1")!, readPercentage: 0.32, isBookmarked: true),
+        MyBookEntity(id: UUID().uuidString, title: "흥부와 놀부", image: URL(string: "https://dummy2")!, readPercentage: 0.74, isBookmarked: false),
+        MyBookEntity(id: UUID().uuidString, title: "콩쥐팥쥐", image: URL(string: "https://dummy3")!, readPercentage: 0,  isBookmarked: true),
+        MyBookEntity(id: UUID().uuidString, title: "금도끼 은도끼", image: URL(string: "https://dummy4")!, readPercentage: 1, isBookmarked: false),
+        MyBookEntity(id: UUID().uuidString, title: "토끼와 거북", image: URL(string: "https://dummy5")!, readPercentage: 0.18, isBookmarked: false),
+        MyBookEntity(id: UUID().uuidString, title: "혹부리 영감", image: URL(string: "https://dummy6")!, readPercentage: 0,  isBookmarked: false),
+        MyBookEntity(id: UUID().uuidString, title: "별주부전", image: URL(string: "https://dummy7")!, readPercentage: 0.55, isBookmarked: true),
+        MyBookEntity(id: UUID().uuidString, title: "방귀쟁이 며느리", image: URL(string: "https://dummy8")!, readPercentage: 1, isBookmarked: false)
+    ]
+
     
     //MARK: Properties
     var isBoy = true
     var temporaryName = "이수아"
     
     //MARK: UI Components
+    private let scrollView = UIScrollView()
+    
+    private let contentView = UIView()
+    
     private let headerImage = UIImageView().then {
         $0.image = .profileHeaderBG
     }
@@ -64,7 +80,11 @@ class MypageViewController: UIViewController {
     }
     
     private lazy var voiceSelectView = VoiceSelectView().then {
-        $0.configure(with: self.dummyVoices)
+        $0.setEntity(with: self.dummyVoices)
+    }
+    
+    private lazy var myBookView = MyBookView().then {
+        $0.setEntity(with: self.dummyBooks)
     }
     
     //MARK: init
@@ -87,6 +107,8 @@ class MypageViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         profileButton.layer.cornerRadius = profileButton.frame.width * 0.5
+        let inset = view.safeAreaInsets.bottom
+        scrollView.contentInset.bottom = inset
     }
     
     //MARK: Methods
@@ -120,8 +142,7 @@ class MypageViewController: UIViewController {
         view.backgroundColor = .gray50
         
         [headerImage,
-         profileStackView,
-         voiceSelectView
+         profileStackView
         ].forEach { view.addSubview($0) }
         
         [profileIconView,
@@ -162,10 +183,38 @@ class MypageViewController: UIViewController {
             $0.height.equalTo(headerImage).multipliedBy(0.58)
         }
         
-        voiceSelectView.snp.makeConstraints {
+        //스크롤뷰 영역
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        
+        [voiceSelectView,
+         myBookView
+        ].forEach { contentView.addSubview($0) }
+        
+        scrollView.snp.makeConstraints {
             $0.top.equalTo(headerImage.snp.bottom).offset(30)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        contentView.snp.makeConstraints {
+            $0.edges.equalTo(scrollView.contentLayoutGuide)
+            $0.width.equalTo(scrollView.frameLayoutGuide)
+        }
+        
+        voiceSelectView.snp.makeConstraints {
+            $0.top.equalToSuperview()
             $0.width.equalToSuperview()
             $0.height.equalTo(240)
+            $0.centerX.equalToSuperview()
+        }
+        
+        myBookView.snp.makeConstraints {
+            $0.top.equalTo(voiceSelectView.snp.bottom).offset(30)
+            $0.width.equalToSuperview()
+            $0.centerX.equalToSuperview()
+            $0.height.equalTo(300)
+            $0.bottom.equalToSuperview()
         }
     }
     

@@ -60,7 +60,7 @@ class VoiceSelectCell: UICollectionViewCell {
     }
     
     //MARK: Configure
-    func configure(cellModel: VoiceModel) {
+    func configure(cellModel: VoiceEntity) {
         imageView.image = cellModel.image.image
         voiceLabel.text = cellModel.title
         
@@ -96,13 +96,13 @@ class VoiceSelectCell: UICollectionViewCell {
         
         playButton.snp.makeConstraints {
             $0.top.equalTo(imageView.snp.bottom).offset(5)
-            $0.trailing.equalToSuperview().offset(-5)
+            $0.trailing.equalToSuperview().offset(-10)
             $0.height.width.equalToSuperview().multipliedBy(0.24)
         }
         
         voiceLabel.snp.makeConstraints {
             $0.top.equalTo(imageView.snp.bottom).offset(10)
-            $0.leading.equalToSuperview().offset(5)
+            $0.leading.equalToSuperview()
             $0.trailing.equalTo(playButton.snp.leading).offset(-5)
         }
     }

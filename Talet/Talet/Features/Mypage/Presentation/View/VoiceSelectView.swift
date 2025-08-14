@@ -15,11 +15,11 @@ import Then
 
 class VoiceSelectView: UIView {
     //MARK: Properties
-    private var voices: [VoiceModel] = []
+    private var voices: [VoiceEntity] = []
     
     //MARK: UI Components
     private let titleLabel = UILabel().then {
-        $0.text = "My Voice"
+        $0.text = "나의 목소리"
         $0.textColor = .black
         $0.font = .nanum(.headline1)
     }
@@ -64,7 +64,7 @@ class VoiceSelectView: UIView {
     }
     
     //MARK: Methods
-    func configure(with voices: [VoiceModel]) {
+    func setEntity(with voices: [VoiceEntity]) {
         self.voices = voices
         voiceSelectCollectionView.reloadData()
     }

@@ -1,5 +1,5 @@
 //
-//  VoiceModel.swift
+//  VoiceEntity.swift
 //  Talet
 //
 //  Created by 김승희 on 7/31/25.
@@ -19,7 +19,7 @@ enum VoiceDefaultImage: String, CaseIterable {
     }
 }
 
-struct VoiceModel {
+struct VoiceEntity {
     let image: VoiceDefaultImage
     let title: String
     let isPlaying: Bool
