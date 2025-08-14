@@ -43,3 +43,15 @@ struct MyBookEntity {
 //        }
 //    }
 //}
+
+// dummyData
+let dummyBooks: [MyBookEntity] = [
+    MyBookEntity(id: UUID().uuidString, title: "선녀와 나무꾼", image: URL(string: "https://dummy1")!, readPercentage: 0.32, isBookmarked: true),
+    MyBookEntity(id: UUID().uuidString, title: "흥부와 놀부", image: URL(string: "https://dummy2")!, readPercentage: 0.74, isBookmarked: false),
+    MyBookEntity(id: UUID().uuidString, title: "콩쥐팥쥐", image: URL(string: "https://dummy3")!, readPercentage: 0,  isBookmarked: true),
+    MyBookEntity(id: UUID().uuidString, title: "금도끼 은도끼", image: URL(string: "https://dummy4")!, readPercentage: 1, isBookmarked: false),
+    MyBookEntity(id: UUID().uuidString, title: "토끼와 거북", image: URL(string: "https://dummy5")!, readPercentage: 0.18, isBookmarked: false),
+    MyBookEntity(id: UUID().uuidString, title: "혹부리 영감", image: URL(string: "https://dummy6")!, readPercentage: 0,  isBookmarked: false),
+    MyBookEntity(id: UUID().uuidString, title: "별주부전", image: URL(string: "https://dummy7")!, readPercentage: 0.55, isBookmarked: true),
+    MyBookEntity(id: UUID().uuidString, title: "방귀쟁이 며느리", image: URL(string: "https://dummy8")!, readPercentage: 1, isBookmarked: false)
+]

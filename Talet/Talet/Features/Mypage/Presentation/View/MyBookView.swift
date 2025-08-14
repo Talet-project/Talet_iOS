@@ -20,6 +20,11 @@ class MyBookView: UIView {
     private var books: [MyBookEntity] = []
     private let tabButtons: [UIButton] = []
     
+    //임시 콜백
+    var seeAllTap: ControlEvent<Void> {
+        seeAllButton.rx.tap
+    }
+    
     //MARK: UI Components
     private let titleLabel = UILabel().then {
         $0.text = "나의 책장"
