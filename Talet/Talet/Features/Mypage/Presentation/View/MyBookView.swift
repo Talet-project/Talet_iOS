@@ -16,6 +16,7 @@ class MyBookView: UIView {
     //MARK: Constants
     
     //MARK: Properties
+    private let disposeBag = DisposeBag()
     private var selectedIdx = 0
     private var books: [MyBookEntity] = []
     private let tabButtons: [UIButton] = []
@@ -23,6 +24,18 @@ class MyBookView: UIView {
     //임시 콜백
     var seeAllTap: ControlEvent<Void> {
         seeAllButton.rx.tap
+    }
+    
+    var readingTap: ControlEvent<Void> {
+        readingButton.rx.tap
+    }
+    
+    var bookmarkTap: ControlEvent<Void> {
+        bookmarkButton.rx.tap
+    }
+    
+    var allReadTap: ControlEvent<Void> {
+        allReadButton.rx.tap
     }
     
     //MARK: UI Components
@@ -103,6 +116,7 @@ class MyBookView: UIView {
         $0.dataSource = self
         $0.isPagingEnabled = true
         $0.showsHorizontalScrollIndicator = false
+        $0.isScrollEnabled = false
         $0.clipsToBounds = false
         $0.register(MyBookCell.self, forCellWithReuseIdentifier: MyBookCell.id)
     }
@@ -116,6 +130,7 @@ class MyBookView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setLayout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -128,9 +143,31 @@ class MyBookView: UIView {
         myBookCollectionView.reloadData()
     }
     
+    //버튼 클릭 UI 변경 메서드, 데이터 처리는 VM-VC에서 해야함 (MypageVM, VC참고)
+    private func selectButton(_ button: UIButton) {
+        [readingButton, bookmarkButton, allReadButton].forEach {
+            var config = $0.configuration
+            if $0 == button {
+                config?.baseBackgroundColor = .orange500
+                config?.baseForegroundColor = .white
+            } else {
+                config?.baseBackgroundColor = .gray200
+                config?.baseForegroundColor = .gray400
+            }
+            $0.configuration = config
+        }
+    }
+    
     //MARK: Bindings
     private func bind() {
-        
+        [readingButton, bookmarkButton, allReadButton]
+            .forEach { button in
+                button.rx.tap
+                    .bind(onNext: { [weak self] in
+                        self?.selectButton(button)
+                    })
+                    .disposed(by: disposeBag)
+            }
     }
     
     //MARK: Layout

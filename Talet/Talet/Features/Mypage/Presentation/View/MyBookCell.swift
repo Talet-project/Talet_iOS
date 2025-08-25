@@ -55,7 +55,7 @@ class MyBookCell: UICollectionViewCell {
     
     //MARK: Layout
     private func setLayout() {
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .clear
         
         [mainImage,
          readPercentView,

@@ -15,16 +15,10 @@ import Then
 
 class MypageViewController: UIViewController {
     //MARK: Constants
-    let dummyVoices: [VoiceEntity] = [
-        VoiceEntity(image: .voiceProfile1, title: "엄마 목소리", isPlaying: false, voiceURL: URL(string: "https://dummy1")!),
-        VoiceEntity(image: .voiceProfile2, title: "아빠 목소리", isPlaying: true, voiceURL: URL(string: "https://dummy2")!),
-        VoiceEntity(image: .voiceProfile3, title: "수아 목소리", isPlaying: false, voiceURL: URL(string: "https://dummy3")!),
-        VoiceEntity(image: .voiceProfile4, title: "할머니 목소리", isPlaying: false, voiceURL: URL(string: "https://dummy4")!),
-        VoiceEntity(image: .voiceProfile5, title: "AI 목소리", isPlaying: false, voiceURL: URL(string: "https://dummy5")!)
-    ]
     
     //MARK: Properties
     private let disposeBag = DisposeBag()
+    private let viewModel = MypageViewModel()
     var isBoy = true
     var temporaryName = "이수아"
     
@@ -71,7 +65,7 @@ class MypageViewController: UIViewController {
     }
     
     private lazy var voiceSelectView = VoiceSelectView().then {
-        $0.setEntity(with: self.dummyVoices)
+        $0.setEntity(with: dummyVoices)
     }
     
     private lazy var myBookView = MyBookView().then {
@@ -125,11 +119,39 @@ class MypageViewController: UIViewController {
     
     //MARK: Bindings
     private func bind() {
+        let input = MypageViewModel.Input(
+            readingTap: myBookView.readingTap.asSignal(),
+            bookmarkTap: myBookView.bookmarkTap.asSignal(),
+            allReadTap: myBookView.allReadTap.asSignal()
+        )
+        
+        let output = viewModel.transform(input: input)
+        
+        output.profileName
+            .drive(profileName.rx.text)
+            .disposed(by: disposeBag)
+        
+        output.profileGender
+            .drive(profileGender.rx.text)
+            .disposed(by: disposeBag)
+        
+        output.voices
+            .drive(onNext: { [weak self] voices in
+                self?.voiceSelectView.setEntity(with: voices)
+            })
+            .disposed(by: disposeBag)
+        
+        output.books
+            .drive(onNext: { [weak self] books in
+                self?.myBookView.setEntity(with: books)
+            })
+            .disposed(by: disposeBag)
+        
         myBookView.seeAllTap
             .bind(with: self) { owner, _ in
-                let vc = MyBookDetailViewController()
-                owner.navigationController?.pushViewController(vc, animated: true)
-            }.disposed(by: disposeBag)
+                owner.navigationController?.pushViewController(MyBookDetailViewController(), animated: true)
+            }
+            .disposed(by: disposeBag)
     }
     
     //MARK: Layout
