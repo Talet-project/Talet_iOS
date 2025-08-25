@@ -11,17 +11,6 @@ import SnapKit
 import Then
 
 
-// 임시 enum - 다른폴더로 이전예정
-enum AppLanguage: String, CaseIterable {
-    case korean = "한국어"
-    case english = "영어"
-    case chinese = "중국어"
-    case japanese = "일본어"
-    case vietnamese = "베트남어"
-    case thai = "태국어"
-}
-
-
 class SetProfileViewController: UIViewController {
     //MARK: Constants
     private let languageOptions = AppLanguage.allCases
@@ -182,6 +171,8 @@ class SetProfileViewController: UIViewController {
         infoNameTextField.delegate = self
         bind()
         setLayout()
+        
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
     //MARK: Methods

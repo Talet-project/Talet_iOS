@@ -7,6 +7,8 @@
 
 import UIKit
 
+import RxCocoa
+import RxSwift
 import SnapKit
 import Then
 
@@ -15,10 +17,16 @@ class MypageViewController: UIViewController {
     //MARK: Constants
     
     //MARK: Properties
+    private let disposeBag = DisposeBag()
+    private let viewModel = MypageViewModel()
     var isBoy = true
     var temporaryName = "이수아"
     
     //MARK: UI Components
+    private let scrollView = UIScrollView()
+    
+    private let contentView = UIView()
+    
     private let headerImage = UIImageView().then {
         $0.image = .profileHeaderBG
     }
@@ -26,8 +34,8 @@ class MypageViewController: UIViewController {
     private let profileIconView = UIView()
     
     private lazy var profileButton = UIButton().then {
-//        let profileImage = isBoy ? UIImage.profileBoy : UIImage.profileGirl
-//        $0.setImage(profileImage, for: .normal)
+        let profileImage = isBoy ? UIImage.profileBoy : UIImage.profileGirl
+        $0.setImage(profileImage, for: .normal)
         $0.clipsToBounds = true
         $0.layer.borderWidth = 2
         $0.layer.borderColor = UIColor.orange400.cgColor
@@ -56,6 +64,14 @@ class MypageViewController: UIViewController {
         $0.alignment = .center
     }
     
+    private lazy var voiceSelectView = VoiceSelectView().then {
+        $0.setEntity(with: dummyVoices)
+    }
+    
+    private lazy var myBookView = MyBookView().then {
+        $0.setEntity(with: dummyBooks)
+    }
+    
     //MARK: init
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -76,6 +92,8 @@ class MypageViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         profileButton.layer.cornerRadius = profileButton.frame.width * 0.5
+        let inset = view.safeAreaInsets.bottom
+        scrollView.contentInset.bottom = inset
     }
     
     //MARK: Methods
@@ -101,7 +119,39 @@ class MypageViewController: UIViewController {
     
     //MARK: Bindings
     private func bind() {
+        let input = MypageViewModel.Input(
+            readingTap: myBookView.readingTap.asSignal(),
+            bookmarkTap: myBookView.bookmarkTap.asSignal(),
+            allReadTap: myBookView.allReadTap.asSignal()
+        )
         
+        let output = viewModel.transform(input: input)
+        
+        output.profileName
+            .drive(profileName.rx.text)
+            .disposed(by: disposeBag)
+        
+        output.profileGender
+            .drive(profileGender.rx.text)
+            .disposed(by: disposeBag)
+        
+        output.voices
+            .drive(onNext: { [weak self] voices in
+                self?.voiceSelectView.setEntity(with: voices)
+            })
+            .disposed(by: disposeBag)
+        
+        output.books
+            .drive(onNext: { [weak self] books in
+                self?.myBookView.setEntity(with: books)
+            })
+            .disposed(by: disposeBag)
+        
+        myBookView.seeAllTap
+            .bind(with: self) { owner, _ in
+                owner.navigationController?.pushViewController(MyBookDetailViewController(), animated: true)
+            }
+            .disposed(by: disposeBag)
     }
     
     //MARK: Layout
@@ -147,10 +197,42 @@ class MypageViewController: UIViewController {
         profileStackView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(10)
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(headerImage).offset(-10)
+            $0.height.equalTo(headerImage).multipliedBy(0.58)
         }
         
+        //스크롤뷰 영역
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
         
+        [voiceSelectView,
+         myBookView
+        ].forEach { contentView.addSubview($0) }
+        
+        scrollView.snp.makeConstraints {
+            $0.top.equalTo(headerImage.snp.bottom).offset(30)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        contentView.snp.makeConstraints {
+            $0.edges.equalTo(scrollView.contentLayoutGuide)
+            $0.width.equalTo(scrollView.frameLayoutGuide)
+        }
+        
+        voiceSelectView.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.width.equalToSuperview()
+            $0.height.equalTo(240)
+            $0.centerX.equalToSuperview()
+        }
+        
+        myBookView.snp.makeConstraints {
+            $0.top.equalTo(voiceSelectView.snp.bottom).offset(30)
+            $0.width.equalToSuperview()
+            $0.centerX.equalToSuperview()
+            $0.height.equalTo(300)
+            $0.bottom.equalToSuperview()
+        }
     }
     
     //MARK: Extensions

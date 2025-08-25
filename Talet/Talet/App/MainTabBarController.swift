@@ -31,8 +31,8 @@ final class MainTabBarController: UITabBarController {
     private func setupTabs() {
         homeVC.tabBarItem = UITabBarItem(
             title: "홈",
-            image: UIImage(named: "homeNotClick")?.withRenderingMode(.alwaysOriginal),
-            selectedImage: UIImage(named: "homeClick")?.withRenderingMode(.alwaysOriginal)
+            image: UIImage.homeNotClick,
+            selectedImage: UIImage.homeClick
         )
 
 //        exploreVC.tabBarItem = UITabBarItem(
@@ -40,14 +40,16 @@ final class MainTabBarController: UITabBarController {
 //            image: UIImage(named: "exploreNotClick"),
 //            selectedImage: UIImage(named: "exploreClick")
 //        )
-
-        myPageVC.tabBarItem = UITabBarItem(
+        
+        // 네비게이션컨트롤러로 설정
+        let mypageNavi = UINavigationController(rootViewController: myPageVC)
+        mypageNavi.tabBarItem = UITabBarItem(
             title: "마이",
-            image: UIImage(named: "profileNotClick")?.withRenderingMode(.alwaysOriginal),
-            selectedImage: UIImage(named: "profileClick")?.withRenderingMode(.alwaysOriginal)
+            image: UIImage.profileNotClick,
+            selectedImage: UIImage.profileClick
         )
 
-        self.viewControllers = [homeVC, /*exploreVC,*/ myPageVC]
+        self.viewControllers = [homeVC, /*exploreVC,*/ mypageNavi]
     }
     
     private func setupTabBarAppearance() {
