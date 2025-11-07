@@ -9,13 +9,24 @@ import UIKit
 
 import SnapKit
 
+// 백그라운드 이미지
+enum TaleCardBackground: String, CaseIterable {
+    case green = "cardBackgroundGreen"
+    case purple = "cardBackgroundPurple"
+    case skyBlue = "cardBackgroundSkyBlue"
+    
+    var image: UIImage? {
+        return UIImage(named: self.rawValue)
+    }
+}
+
 final class TaleCollectionViewCell: UICollectionViewCell {
     
     private let backgroundImage: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-//        imageView.image = UIImage.
+        imageView.layer.cornerRadius = 12
         return imageView
     }()
     
@@ -90,8 +101,8 @@ final class TaleCollectionViewCell: UICollectionViewCell {
         self.layer.cornerRadius = 12
         
         [
-            fairyTaleImage,
             backgroundImage,
+            fairyTaleImage,
             fairyTaleTitle,
             fairyTaleDescription,
             favoriteButton,
@@ -105,9 +116,7 @@ final class TaleCollectionViewCell: UICollectionViewCell {
         }
         
         backgroundImage.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(favoriteButton.snp.top)
+            $0.edges.equalToSuperview()
         }
         
         fairyTaleTitle.snp.makeConstraints {
@@ -134,5 +143,11 @@ final class TaleCollectionViewCell: UICollectionViewCell {
             $0.trailing.equalToSuperview().offset(-18)
             $0.height.equalTo(42)
         }
+    }
+    
+    func configure(index: Int) {
+        let backgrounds = TaleCardBackground.allCases
+        let background = backgrounds[index % backgrounds.count]
+        backgroundImage.image = background.image
     }
 }

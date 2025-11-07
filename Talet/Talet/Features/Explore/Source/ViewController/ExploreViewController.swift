@@ -13,7 +13,16 @@ import RxSwift
 
 class ExploreViewController: UIViewController {
     private let disposeBag = DisposeBag()
-    private let itemsRelay = BehaviorRelay<[Int]>(value: Array(0..<10)) //더미
+    private let viewModel: ExploreViewModel
+    
+    init(viewModel: ExploreViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // 뷰 상태 관리
     private var didAdjustInitialOffset = false
@@ -29,8 +38,8 @@ class ExploreViewController: UIViewController {
     private let taleCollectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .horizontal
-        flowLayout.minimumLineSpacing = 8
-        flowLayout.sectionInset = .init(top: 0, left: 0, bottom: 0, right: 0)
+        flowLayout.minimumLineSpacing = -16
+//        flowLayout.sectionInset = .init(top: 0, left: 12, bottom: 0, right: 12)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         collectionView.backgroundColor = .clear
@@ -39,12 +48,14 @@ class ExploreViewController: UIViewController {
         collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.register(TaleCollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
+//        collectionView.contentInset = .zero
         return collectionView
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setLayout()
+        setupCollectionView()
         bind()
     }
     
@@ -62,14 +73,8 @@ class ExploreViewController: UIViewController {
         }
     }
     
-    private func bind() {
+    private func setupCollectionView() {
         taleCollectionView.rx.setDelegate(self)
-            .disposed(by: disposeBag)
-        
-        itemsRelay
-            .bind(to: taleCollectionView.rx.items(cellIdentifier: "Cell", cellType: TaleCollectionViewCell.self)) { row, item, cell in
-                // TODO: Configure cell with your model
-            }
             .disposed(by: disposeBag)
         
         taleCollectionView.rx.contentOffset
@@ -82,12 +87,28 @@ class ExploreViewController: UIViewController {
         taleCollectionView.rx.didEndDecelerating
             .subscribe(onNext: { [weak self] in
                 guard let self = self else { return }
-                let center = CGPoint(x: self.taleCollectionView.bounds.midX + self.taleCollectionView.contentOffset.x,
-                                     y: self.taleCollectionView.bounds.midY + self.taleCollectionView.contentOffset.y)
+                let center = CGPoint(
+                    x: self.taleCollectionView.bounds.midX + self.taleCollectionView.contentOffset.x,
+                    y: self.taleCollectionView.bounds.midY + self.taleCollectionView.contentOffset.y
+                )
                 if let indexPath = self.taleCollectionView.indexPathForItem(at: center) {
                     print("현재 노출된 index:", indexPath.item)
                 }
             })
+            .disposed(by: disposeBag)
+    }
+    
+    private func bind() {
+        let input = ExploreViewModelImpl.Input()
+        let output = viewModel.transform(input: input)
+        
+        output.items
+            .drive(taleCollectionView.rx.items(
+                cellIdentifier: "Cell",
+                cellType: TaleCollectionViewCell.self
+            )) { index, item, cell in
+                cell.configure(index: index)
+            }
             .disposed(by: disposeBag)
     }
     
@@ -113,7 +134,7 @@ class ExploreViewController: UIViewController {
 //        }
         
         taleCollectionView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(29)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-28)
         }
@@ -138,8 +159,8 @@ class ExploreViewController: UIViewController {
 
 extension ExploreViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = collectionView.bounds.width * 0.8
-        let height = collectionView.bounds.height * 0.9
+        let width = collectionView.bounds.width * 0.9
+        let height = collectionView.bounds.height * 1
         return CGSize(width: width, height: height)
     }
 }
