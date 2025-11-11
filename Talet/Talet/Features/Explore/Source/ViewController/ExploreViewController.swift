@@ -11,6 +11,16 @@ import SnapKit
 import RxCocoa
 import RxSwift
 
+struct ExploreModel {
+    let id: String
+    let name: String
+    let description: String
+    let thumbnail: String
+    let tags: [String]
+//    let shorts: object
+//    let bookmark: Bool
+}
+
 class ExploreViewController: UIViewController {
     private let disposeBag = DisposeBag()
     private let viewModel: ExploreViewModel
@@ -39,7 +49,6 @@ class ExploreViewController: UIViewController {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .horizontal
         flowLayout.minimumLineSpacing = -16
-//        flowLayout.sectionInset = .init(top: 0, left: 12, bottom: 0, right: 12)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         collectionView.backgroundColor = .clear
@@ -48,7 +57,6 @@ class ExploreViewController: UIViewController {
         collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.register(TaleCollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
-//        collectionView.contentInset = .zero
         return collectionView
     }()
     
@@ -74,6 +82,11 @@ class ExploreViewController: UIViewController {
     }
     
     private func setupCollectionView() {
+        taleCollectionView.register(
+            TaleCollectionViewCell.self,
+            forCellWithReuseIdentifier: TaleCollectionViewCell.reuseIdentifier
+        )
+        
         taleCollectionView.rx.setDelegate(self)
             .disposed(by: disposeBag)
         
@@ -104,10 +117,10 @@ class ExploreViewController: UIViewController {
         
         output.items
             .drive(taleCollectionView.rx.items(
-                cellIdentifier: "Cell",
+                cellIdentifier: TaleCollectionViewCell.reuseIdentifier,
                 cellType: TaleCollectionViewCell.self
             )) { index, item, cell in
-                cell.configure(index: index)
+                cell.configure(with: item, index: index)
             }
             .disposed(by: disposeBag)
     }
@@ -117,7 +130,7 @@ class ExploreViewController: UIViewController {
         
         [
             titleLabel,
-            taleCollectionView
+            taleCollectionView,
         ].forEach { view.addSubview($0) }
         
         titleLabel.snp.makeConstraints {
@@ -125,19 +138,18 @@ class ExploreViewController: UIViewController {
             $0.leading.equalToSuperview().offset(20)
             $0.trailing.equalToSuperview().offset(-20)
         }
-        
-//        taleCollectionView.snp.makeConstraints {
-//            $0.top.equalTo(titleLabel.snp.bottom).offset(28)
-//            $0.leading.equalToSuperview().offset(20)
-//            $0.trailing.equalToSuperview().offset(-20)
-//            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-28)
-//        }
-        
+           
         taleCollectionView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(29)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-28)
         }
+        
+//        tagStackView.snp.makeConstraints {
+//            $0.leading.trailing.equalToSuperview()
+//            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-23)
+//            $0.height.equalTo(50)
+//        }
     }
     
     private func applyCenterScaling() {
@@ -155,6 +167,35 @@ class ExploreViewController: UIViewController {
         }
     }
     
+    // ① 기존 태그 제거
+//    tagStackView.arrangedSubviews.forEach {
+//        tagStackView.removeArrangedSubview($0)
+//        $0.removeFromSuperview()
+//    }
+    
+    
+//    func configure(with model: ExploreModel) {
+//        // ① 기존 태그 제거
+//        tagStackView.arrangedSubviews.forEach {
+//            tagStackView.removeArrangedSubview($0)
+//            $0.removeFromSuperview()
+//        }
+//
+//        // ② 새 태그 버튼 추가
+//        model.tags.forEach { tagText in
+//            guard let tagType = TagType(rawValue: tagText) else { return }
+//            let button = TagButton(frame: .zero)
+//            button.configure(type: tagType)
+//            button.isUserInteractionEnabled = false
+//            tagStackView.addArrangedSubview(button)
+//        }
+//
+//        // 제목, 기타 정보 세팅
+//        titleLabel.text = model.name
+//        // 썸네일, 북마크 등도 여기서:
+//        // thumbnailImageView.setImage(...)
+//        // bookmarkButton.isSelected = model.bookmark
+//    }
 }
 
 extension ExploreViewController: UICollectionViewDelegateFlowLayout {
@@ -242,47 +283,3 @@ extension ExploreViewController {
         targetContentOffset.pointee.x = finalOffsetX
     }
 }
-
-//extension ExploreViewController {
-//    func scrollViewWillEndDragging(
-//        _ scrollView: UIScrollView,
-//        withVelocity velocity: CGPoint,
-//        targetContentOffset: UnsafeMutablePointer<CGPoint>
-//    ) {
-//        guard let layout = taleCollectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
-//
-//        // Proposed offset from the system
-//        let proposedOffsetX = targetContentOffset.pointee.x
-//        let proposedRect = CGRect(x: proposedOffsetX,
-//                                  y: 0,
-//                                  width: taleCollectionView.bounds.width,
-//                                  height: taleCollectionView.bounds.height)
-//
-//        // Find the attributes nearest to the horizontal center of the collection view
-//        guard let attributes = layout.layoutAttributesForElements(in: proposedRect), !attributes.isEmpty else { return }
-//
-//        let collectionCenterX = proposedOffsetX + taleCollectionView.bounds.width / 2
-//
-//        var closest: UICollectionViewLayoutAttributes?
-//        var minDistance = CGFloat.greatestFiniteMagnitude
-//
-//        for attr in attributes {
-//            let distance = abs(attr.center.x - collectionCenterX)
-//            if distance < minDistance {
-//                minDistance = distance
-//                closest = attr
-//            }
-//        }
-//
-//        guard let targetAttr = closest else { return }
-//
-//        // Adjust the target offset so that the selected cell centers in the view
-//        let newOffsetX = targetAttr.center.x - taleCollectionView.bounds.width / 2
-//        let leftInset = taleCollectionView.contentInset.left
-//        let rightInset = taleCollectionView.contentInset.right
-//        let maxOffsetX = taleCollectionView.contentSize.width - taleCollectionView.bounds.width + rightInset
-//        let minOffsetX = -leftInset
-//
-//        targetContentOffset.pointee.x = max(min(newOffsetX, maxOffsetX), minOffsetX)
-//    }
-//}

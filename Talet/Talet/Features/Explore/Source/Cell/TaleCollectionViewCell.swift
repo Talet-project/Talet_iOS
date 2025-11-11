@@ -21,6 +21,7 @@ enum TaleCardBackground: String, CaseIterable {
 }
 
 final class TaleCollectionViewCell: UICollectionViewCell {
+    static let reuseIdentifier = "TaleCollectionViewCell"
     
     private let backgroundImage: UIImageView = {
         let imageView = UIImageView()
@@ -49,7 +50,6 @@ final class TaleCollectionViewCell: UICollectionViewCell {
         label.font = .nanum(.headline2)
         label.textColor = .black
         label.textAlignment = .center
-        label.text = "요술 항아리"
         return label
     }()
     
@@ -59,7 +59,6 @@ final class TaleCollectionViewCell: UICollectionViewCell {
         label.textColor = .gray500
         label.textAlignment = .left
         label.numberOfLines = 0
-        label.text = "착하고 부지런한 가난한 농부가 마법처럼 물건을 불려내는 요술 항아리를 우연히 얻게되며 펼쳐지는 이야기"
         return label
     }()
     
@@ -87,6 +86,26 @@ final class TaleCollectionViewCell: UICollectionViewCell {
         return button
     }()
     
+    private lazy var tagCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumInteritemSpacing = 8
+        layout.minimumLineSpacing = 8
+        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .clear
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 18)
+        collectionView.register(TagCollectionViewCell.self,
+                                forCellWithReuseIdentifier: TagCollectionViewCell.reuseIdentifier)
+        return collectionView
+    }()
+    
+    private var tags: [TagType] = []
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setLayout()
@@ -94,6 +113,12 @@ final class TaleCollectionViewCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        print("📐 [TagCV] frame:", tagCollectionView.frame)
+        tagCollectionView.collectionViewLayout.invalidateLayout()
     }
     
     private func setLayout() {
@@ -107,7 +132,8 @@ final class TaleCollectionViewCell: UICollectionViewCell {
             fairyTaleDescription,
             favoriteButton,
             readButton,
-        ].forEach { addSubview($0) }
+            tagCollectionView
+        ].forEach { contentView.addSubview($0) }
         
         fairyTaleImage.snp.makeConstraints {
             $0.top.equalTo(self.safeAreaLayoutGuide).offset(62)
@@ -143,11 +169,49 @@ final class TaleCollectionViewCell: UICollectionViewCell {
             $0.trailing.equalToSuperview().offset(-18)
             $0.height.equalTo(42)
         }
+        
+        tagCollectionView.snp.makeConstraints {
+//            $0.leading.trailing.equalToSuperview()
+//            $0.bottom.equalToSuperview().offset(-83)
+//            $0.height.equalTo(30)
+            $0.top.equalTo(fairyTaleDescription.snp.bottom).offset(12)
+                $0.leading.equalToSuperview()
+                $0.trailing.equalToSuperview()
+                $0.height.equalTo(30)
+        }
     }
     
-    func configure(index: Int) {
+    func configure(with model: ExploreModel, index: Int) {
+        fairyTaleTitle.text = model.name
+        fairyTaleDescription.text = model.description
+        
+        tags = model.tags.compactMap { TagType(rawValue: $0) }
+//        print("🎯 tags:", model.tags, "→ 필터 후:", tags)
+        DispatchQueue.main.async { [weak self] in
+                self?.tagCollectionView.reloadData()
+            }
+        
         let backgrounds = TaleCardBackground.allCases
         let background = backgrounds[index % backgrounds.count]
         backgroundImage.image = background.image
+    }
+}
+
+extension TaleCollectionViewCell: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView,
+                        numberOfItemsInSection section: Int) -> Int {
+        return tags.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: TagCollectionViewCell.reuseIdentifier,
+            for: indexPath
+        ) as? TagCollectionViewCell else {
+            return UICollectionViewCell()
+        }
+        cell.configure(type: tags[indexPath.item])
+        return cell
     }
 }
