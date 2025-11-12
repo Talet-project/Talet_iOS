@@ -11,6 +11,16 @@ import RxCocoa
 import RxSwift
 import SnapKit
 
+enum mainBannerImageData: String, CaseIterable {
+    case first = "bannerPurple"
+    case second = "bannerGreen"
+    case third = "bannerBlue"
+    
+    var image: UIImage? {
+        return UIImage(named: self.rawValue)
+    }
+}
+
 enum Section: Int, CaseIterable {
     case mainBanner
     case popularRanking
@@ -28,6 +38,14 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
         let view = UIView()
         view.backgroundColor = .systemYellow
         return view
+    }()
+    
+    private let backgroundImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.image = UIImage.homeBackground
+        return imageView
     }()
     
     init(viewModel: HomeViewModel) {
@@ -79,7 +97,13 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
 // MARK: - Infinite scroll for mainBanner
     
     private func setLayout() {
+        [
+            backgroundImageView,
+        ].forEach { view.addSubview($0) }
         
+        backgroundImageView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
     }
     
     private func bindViewModel() {
@@ -130,7 +154,16 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
             switch section {
             case .mainBanner:
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MainBannerCell", for: indexPath) as! MainBannerCell
-                cell.configure(with: itemIdentifier.color)
+                let count = mainBannerImageData.allCases.count
+                let logicalIndex = (indexPath.item - 1 + count) % count
+                let image = mainBannerImageData.allCases[logicalIndex].image
+                if let image {
+                    print("이미지 받아옴")
+                    cell.configure(image: image)
+                } else {
+                    print("⚠️ Missing banner image for \(mainBannerImageData.allCases[logicalIndex].rawValue)")
+                    cell.configure(image: nil)
+                }
                 return cell
             case .popularRanking:
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RankingBookCell", for: indexPath) as! RankingBookCell

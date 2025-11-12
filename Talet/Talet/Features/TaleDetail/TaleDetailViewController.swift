@@ -29,6 +29,8 @@ final class TaleDetailViewController: UIViewController {
         let view = UIImageView()
         view.contentMode = .scaleAspectFit
         view.image = UIImage.bookTest
+        view.layer.cornerRadius = 4
+        view.clipsToBounds = true
         return view
     }()
     
@@ -87,7 +89,7 @@ final class TaleDetailViewController: UIViewController {
     private let bookDescriptionBodyLabel: UILabel = {
         let label = UILabel()
         label.font = .pretendard(.bodyLong1)
-        label.textColor = .gray
+        label.textColor = .gray600
         label.numberOfLines = 0
         label.textAlignment = .left
         label.text = """
@@ -188,7 +190,7 @@ final class TaleDetailViewController: UIViewController {
         
         testBookImageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.height.width.equalTo(190)
+            $0.size.equalTo(CGSize(width: 140, height: 190))
             $0.top.equalTo(navitestView.snp.bottom).offset(16)
             
 //            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)

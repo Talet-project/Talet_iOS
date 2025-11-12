@@ -67,7 +67,7 @@ final class TagView: UIView {
     private let contentInset = UIEdgeInsets(top: 4, left: 10, bottom: 4, right: 10)
     
     private func setupUI() {
-        self.layer.cornerRadius = 999
+        self.layer.cornerRadius = 10
         self.clipsToBounds = true
         
         [

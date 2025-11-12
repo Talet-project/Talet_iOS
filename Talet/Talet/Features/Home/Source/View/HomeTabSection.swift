@@ -8,7 +8,7 @@
 import UIKit
 
 enum HomeTabSection: Hashable {
-    case mainBanner(ColorItem)
+    case mainBanner(BannerToken)
     case rankingBook(ColorItem)
     case readingStatus(ColorItem)
     case allBooksPreview(ColorItem)
@@ -17,7 +17,7 @@ enum HomeTabSection: Hashable {
     
     var id: UUID {
         switch self {
-        case .mainBanner(let item): return item.id
+        case .mainBanner(let token): return token.id
         case .rankingBook(let item): return item.id
         case .readingStatus(let item): return item.id
         case .allBooksPreview(let item): return item.id
@@ -27,7 +27,7 @@ enum HomeTabSection: Hashable {
 
     var color: UIColor {
         switch self {
-        case .mainBanner(let item): return item.color
+        case .mainBanner(let item): return .clear
         case .rankingBook(let item): return item.color
         case .readingStatus(let item): return item.color
         case .allBooksPreview(let item): return item.color
@@ -39,4 +39,8 @@ enum HomeTabSection: Hashable {
 struct ColorItem: Hashable {
     let id = UUID()
     let color: UIColor
+}
+
+struct BannerToken: Hashable {
+    let id = UUID()
 }

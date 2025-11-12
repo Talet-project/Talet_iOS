@@ -17,7 +17,6 @@ protocol HomeViewModel {
 final class HomeViewModelImpl: HomeViewModel {
     private let disposeBag = DisposeBag()
     
-    
     struct Input {
         let loadHomeContent: Observable<Void>
     }
@@ -45,21 +44,11 @@ final class HomeViewModelImpl: HomeViewModel {
     private static func dummyItems(for section: Section) -> [HomeTabSection] {
         switch section {
         case .mainBanner:
-            let banners: [HomeTabSection] = [
-                .mainBanner(ColorItem(color: .red)),
-                .mainBanner(ColorItem(color: .blue)),
-                .mainBanner(ColorItem(color: .green))
-            ]
-            var infiniteBanners = banners
-            if let first = banners.first, let last = banners.last {
-                infiniteBanners.insert(.mainBanner(ColorItem(color: last.color)), at: 0)
-                infiniteBanners.append(.mainBanner(ColorItem(color: first.color)))
-            }
-            print("✅ mainBanner infiniteBanners count: \(infiniteBanners.count)")
-            infiniteBanners.enumerated().forEach { index, item in
-                print("mainBanner[\(index)] → \(item)")
-            }
-            return infiniteBanners
+            let imageCount = 3
+            let total = imageCount + 2
+            let placeholders = (0..<total).map { _ in HomeTabSection.mainBanner(BannerToken()) }
+            print("✅ mainBanner placeholders count: \(placeholders.count)")
+            return placeholders
         case .popularRanking:
             return [
                 .rankingBook(ColorItem(color: .orange)),
