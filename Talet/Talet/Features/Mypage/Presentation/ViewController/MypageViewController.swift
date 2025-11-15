@@ -117,6 +117,12 @@ class MypageViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = rightItem
     }
     
+    //TODO: 추후 Coordinator 연결로 화면이동 로직 분리    
+    private func moveToVoiceCloning() {
+        let voiceCloningVC = VoiceCloningViewController()
+        navigationController?.pushViewController(voiceCloningVC, animated: true)
+    }
+    
     //MARK: Bindings
     private func bind() {
         let input = MypageViewModel.Input(
@@ -152,6 +158,11 @@ class MypageViewController: UIViewController {
                 owner.navigationController?.pushViewController(MyBookDetailViewController(), animated: true)
             }
             .disposed(by: disposeBag)
+        
+        voiceSelectView.tapSetting
+            .emit(onNext: { [weak self] _ in
+                self?.moveToVoiceCloning()
+            }).disposed(by: disposeBag)
     }
     
     //MARK: Layout

@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Property 1=stop.png",
+      "filename" : "recordingIcon.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "recordingIcon@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "recordingIcon@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -33,7 +33,7 @@ class VoiceSelectCell: UICollectionViewCell {
     
     private lazy var imageView = UIImageView().then {
         $0.image = .voiceProfile1
-        $0.contentMode = .scaleAspectFill
+        $0.contentMode = .scaleAspectFit
         $0.clipsToBounds = true
     }
     
@@ -46,7 +46,7 @@ class VoiceSelectCell: UICollectionViewCell {
     }
     
     private lazy var playButton = UIButton().then {
-        $0.setImage(.playButton, for: .normal)
+        $0.setImage(.circlePlayButton, for: .normal)
     }
     
     //MARK: init
@@ -64,7 +64,7 @@ class VoiceSelectCell: UICollectionViewCell {
         imageView.image = cellModel.image.image
         voiceLabel.text = cellModel.title
         
-        let playButtonImage = cellModel.isPlaying ? UIImage.playButton : UIImage.stopButton
+        let playButtonImage = cellModel.isPlaying ? UIImage.circlePlayButton : UIImage.circlePauseButton
         playButton.setImage(playButtonImage, for: .normal)
     }
     
@@ -97,7 +97,8 @@ class VoiceSelectCell: UICollectionViewCell {
         playButton.snp.makeConstraints {
             $0.top.equalTo(imageView.snp.bottom).offset(5)
             $0.trailing.equalToSuperview().offset(-10)
-            $0.height.width.equalToSuperview().multipliedBy(0.24)
+            $0.width.equalToSuperview().multipliedBy(0.20)
+            $0.height.equalTo(playButton.snp.width)
         }
         
         voiceLabel.snp.makeConstraints {
