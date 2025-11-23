@@ -6,8 +6,8 @@
 //
 
 struct ErrorResponse: Decodable {
-    let code: String
-    let status: Int
-    let message: String
-    let details: [String]
+    let code: String?
+    let status: Int?
+    let message: String?
+    let details: [String]?
 }
