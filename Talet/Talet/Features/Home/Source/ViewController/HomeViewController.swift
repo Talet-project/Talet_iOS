@@ -86,6 +86,7 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
         configureDataSource()
         bindViewModel()
         rootCollectionView.delegate = self
+        setupNavigation()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -104,6 +105,40 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
         backgroundImageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+    }
+    
+    private func setupNavigation() {
+        navigationItem.title = nil
+        navigationController?.navigationBar.prefersLargeTitles = false
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.shadowColor = .clear
+        
+        let logoImageView = UIImageView(image: .taletTitle)
+        logoImageView.contentMode = .scaleAspectFit
+        
+        view.addSubview(logoImageView)
+        
+        logoImageView.snp.makeConstraints {
+            $0.size.equalTo(CGSize(width: 64, height: 35))
+            $0.leading.equalToSuperview().offset(50)
+        }
+        
+        let logoItem = UIBarButtonItem(customView: logoImageView)
+        navigationItem.leftBarButtonItem = logoItem
+        
+        let searchItem = UIBarButtonItem(
+            image: UIImage.searchIcon,
+            style: .plain,
+            target: self,
+            action: #selector(didTapSearch)
+        )
+        navigationItem.rightBarButtonItem = searchItem
+    }
+    
+    @objc private func didTapSearch() {
+        // 예: 둘러보기 탭(검색 탭)으로 전환한다고 가정 (인덱스는 상황에 맞게)
+        tabBarController?.selectedIndex = 1
     }
     
     private func bindViewModel() {
