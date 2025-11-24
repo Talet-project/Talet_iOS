@@ -9,11 +9,12 @@ import UIKit
 
 final class MainTabBarController: UITabBarController {
     private let homeVC: HomeViewController
-//    private let exploreVC: exploreViewController
+    private let exploreVC: ExploreViewController
     private let myPageVC: MypageViewController
     
-    init(homeVC: HomeViewController, myPageVC: MypageViewController) {
+    init(homeVC: HomeViewController, exploreVC: ExploreViewController, myPageVC: MypageViewController) {
         self.homeVC = homeVC
+        self.exploreVC = exploreVC
         self.myPageVC = myPageVC
         super.init(nibName: nil, bundle: nil)
     }
@@ -35,13 +36,12 @@ final class MainTabBarController: UITabBarController {
             selectedImage: UIImage.homeClick
         )
 
-//        exploreVC.tabBarItem = UITabBarItem(
-//            title: "둘러보기",
-//            image: UIImage(named: "exploreNotClick"),
-//            selectedImage: UIImage(named: "exploreClick")
-//        )
+        exploreVC.tabBarItem = UITabBarItem(
+            title: "둘러보기",
+            image: UIImage.exploreNotClick,
+            selectedImage: UIImage.exploreClick
+        )
         
-        // 네비게이션컨트롤러로 설정
         let mypageNavi = UINavigationController(rootViewController: myPageVC)
         mypageNavi.tabBarItem = UITabBarItem(
             title: "마이",
@@ -49,7 +49,7 @@ final class MainTabBarController: UITabBarController {
             selectedImage: UIImage.profileClick
         )
 
-        self.viewControllers = [homeVC, /*exploreVC,*/ mypageNavi]
+        self.viewControllers = [homeVC, exploreVC, mypageNavi]
     }
     
     private func setupTabBarAppearance() {

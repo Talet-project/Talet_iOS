@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Property 1=stop.png",
+      "filename" : "image 34.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "image 34@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "image 34@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
