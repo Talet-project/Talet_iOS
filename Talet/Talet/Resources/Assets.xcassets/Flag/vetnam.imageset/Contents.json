@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "제공언어.png",
+      "filename" : "vetnam.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "제공언어@2x.png",
+      "filename" : "vetnam@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "제공언어@3x.png",
+      "filename" : "vetnam@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
