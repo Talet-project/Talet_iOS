@@ -37,14 +37,6 @@ class ExploreViewController: UIViewController {
     // 뷰 상태 관리
     private var didAdjustInitialOffset = false
     
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "둘러보기"
-        label.font = .nanum(.headline1)
-        label.textColor = .white
-        return label
-    }()
-    
     private let taleCollectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .horizontal
@@ -65,6 +57,7 @@ class ExploreViewController: UIViewController {
         setLayout()
         setupCollectionView()
         bind()
+        setNavigationBar()
     }
     
     override func viewDidLayoutSubviews() {
@@ -111,6 +104,19 @@ class ExploreViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
+    private func setNavigationBar() {
+        let leftLabel: UILabel = {
+            let label = UILabel()
+            label.text = "둘러보기"
+            label.font = .nanum(.headline1)
+            label.textColor = .white
+            return label
+        }()
+        
+        let leftItem = UIBarButtonItem(customView: leftLabel)
+        self.navigationItem.leftBarButtonItem = leftItem
+    }
+    
     private func bind() {
         let input = ExploreViewModelImpl.Input()
         let output = viewModel.transform(input: input)
@@ -129,27 +135,14 @@ class ExploreViewController: UIViewController {
         view.backgroundColor = .orange300
         
         [
-            titleLabel,
             taleCollectionView,
         ].forEach { view.addSubview($0) }
-        
-        titleLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(28)
-            $0.leading.equalToSuperview().offset(20)
-            $0.trailing.equalToSuperview().offset(-20)
-        }
            
         taleCollectionView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(29)
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(29)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-28)
         }
-        
-//        tagStackView.snp.makeConstraints {
-//            $0.leading.trailing.equalToSuperview()
-//            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-23)
-//            $0.height.equalTo(50)
-//        }
     }
     
     private func applyCenterScaling() {
@@ -166,36 +159,6 @@ class ExploreViewController: UIViewController {
             cell.layer.zPosition = CGFloat(Float(scale))
         }
     }
-    
-    // ① 기존 태그 제거
-//    tagStackView.arrangedSubviews.forEach {
-//        tagStackView.removeArrangedSubview($0)
-//        $0.removeFromSuperview()
-//    }
-    
-    
-//    func configure(with model: ExploreModel) {
-//        // ① 기존 태그 제거
-//        tagStackView.arrangedSubviews.forEach {
-//            tagStackView.removeArrangedSubview($0)
-//            $0.removeFromSuperview()
-//        }
-//
-//        // ② 새 태그 버튼 추가
-//        model.tags.forEach { tagText in
-//            guard let tagType = TagType(rawValue: tagText) else { return }
-//            let button = TagButton(frame: .zero)
-//            button.configure(type: tagType)
-//            button.isUserInteractionEnabled = false
-//            tagStackView.addArrangedSubview(button)
-//        }
-//
-//        // 제목, 기타 정보 세팅
-//        titleLabel.text = model.name
-//        // 썸네일, 북마크 등도 여기서:
-//        // thumbnailImageView.setImage(...)
-//        // bookmarkButton.isSelected = model.bookmark
-//    }
 }
 
 extension ExploreViewController: UICollectionViewDelegateFlowLayout {
@@ -214,13 +177,10 @@ extension ExploreViewController {
         guard let layout = taleCollectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return nil }
         taleCollectionView.layoutIfNeeded()
         
-        // 그 셀의 attributes (frame/center 등)
         guard let attr = layout.layoutAttributesForItem(at: indexPath) else { return nil }
         
-        // "이 셀의 center.x를 화면 중앙에 맞추려면" 필요한 이상적인 offset
         let idealOffsetX = attr.center.x - taleCollectionView.bounds.width / 2
         
-        // contentInset 고려해서 clamp
         let leftInset = taleCollectionView.contentInset.left
         let rightInset = taleCollectionView.contentInset.right
         let maxOffsetX = taleCollectionView.contentSize.width - taleCollectionView.bounds.width + rightInset
@@ -232,13 +192,9 @@ extension ExploreViewController {
 }
 
 extension ExploreViewController {
-    
-    /// 스크롤이 멈추려는 시점의 proposedOffsetX 기준으로,
-    /// "가운데에 가장 가까운 셀"의 indexPath를 찾아서 리턴
     private func nearestIndexPathToCenter(proposedOffsetX: CGFloat) -> IndexPath? {
         guard let layout = taleCollectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return nil }
         
-        // 스크롤이 멈출 거라고 iOS가 예측한 영역
         let proposedRect = CGRect(
             x: proposedOffsetX,
             y: 0,
@@ -274,10 +230,7 @@ extension ExploreViewController {
     ) {
         let proposedOffsetX = targetContentOffset.pointee.x
         
-        // 1) 가운데에 가장 가까운 셀 찾기
         guard let indexPath = nearestIndexPathToCenter(proposedOffsetX: proposedOffsetX) else { return }
-        
-        // 2) 그 셀을 실제로 중앙에 맞추는 offset 계산 (재사용!)
         guard let finalOffsetX = targetOffsetXToCenterCell(at: indexPath) else { return }
         
         targetContentOffset.pointee.x = finalOffsetX

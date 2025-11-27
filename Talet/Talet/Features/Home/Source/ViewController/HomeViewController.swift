@@ -24,7 +24,7 @@ enum mainBannerImageData: String, CaseIterable {
 enum Section: Int, CaseIterable {
     case mainBanner
     case popularRanking
-    case readingStatus
+//    case readingStatus
     case allBooksPreview
     case randomViews
 }
@@ -68,7 +68,7 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
         rootCollectionView.backgroundColor = .clear
         rootCollectionView.register(MainBannerCell.self, forCellWithReuseIdentifier: "MainBannerCell")
         rootCollectionView.register(RankingBookCell.self, forCellWithReuseIdentifier: "RankingBookCell")
-        rootCollectionView.register(ReadingStatusCell.self, forCellWithReuseIdentifier: "ReadingStatusCell")
+//        rootCollectionView.register(ReadingStatusCell.self, forCellWithReuseIdentifier: "ReadingStatusCell")
         rootCollectionView.register(BookPreviewCell.self, forCellWithReuseIdentifier: "BookPreviewCell")
         rootCollectionView.register(HomeSectionHeaderView.self,forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,withReuseIdentifier: HomeSectionHeaderView.reuseIdentifier)
         
@@ -103,7 +103,9 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
         ].forEach { view.addSubview($0) }
         
         backgroundImageView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+//            $0.edges.equalToSuperview()
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
         }
     }
     
@@ -133,12 +135,13 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
             target: self,
             action: #selector(didTapSearch)
         )
+        searchItem.tintColor = .white
         navigationItem.rightBarButtonItem = searchItem
     }
     
     @objc private func didTapSearch() {
-        // 예: 둘러보기 탭(검색 탭)으로 전환한다고 가정 (인덱스는 상황에 맞게)
-        tabBarController?.selectedIndex = 1
+        print("서치 버튼 눌림")
+//        tabBarController?.selectedIndex = 1
     }
     
     private func bindViewModel() {
@@ -168,8 +171,8 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
                 return HomeLayoutBuilder.mainBannerSection()
             case .popularRanking:
                 return HomeLayoutBuilder.popularSection()
-            case .readingStatus:
-                return HomeLayoutBuilder.readingStatusSection()
+//            case .readingStatus:
+//                return HomeLayoutBuilder.readingStatusSection()
             case .allBooksPreview:
                 return HomeLayoutBuilder.themedBooksSection()
             case .randomViews:
@@ -204,9 +207,9 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RankingBookCell", for: indexPath) as! RankingBookCell
                 cell.configure(with: itemIdentifier.color)
                 return cell
-            case .readingStatus:
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ReadingStatusCell", for: indexPath) as! ReadingStatusCell
-                return cell
+//            case .readingStatus:
+//                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ReadingStatusCell", for: indexPath) as! ReadingStatusCell
+//                return cell
             case .allBooksPreview:
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "BookPreviewCell", for: indexPath) as! BookPreviewCell
                 cell.configure(with: itemIdentifier.color)
@@ -230,7 +233,7 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
                 switch section {
                 case .mainBanner: return nil
                 case .popularRanking: header.configure(title: "친구들이 좋아하는 인기 전래동화")
-                case .readingStatus: return nil
+//                case .readingStatus: return nil
                 case .allBooksPreview: header.configure(title: "전체 책 보기")
                 case .randomViews: header.configure(title: "용기 → 용기있는 주인공 이야기")
                 }

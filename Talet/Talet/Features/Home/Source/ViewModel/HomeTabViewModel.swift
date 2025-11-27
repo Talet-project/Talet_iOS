@@ -58,10 +58,10 @@ final class HomeViewModelImpl: HomeViewModel {
                 .rankingBook(ColorItem(color: .orange)),
                 .rankingBook(ColorItem(color: .green)),
             ]
-        case .readingStatus:
-            return [
-                .readingStatus(ColorItem(color: .cyan)),
-            ]
+//        case .readingStatus:
+//            return [
+//                .readingStatus(ColorItem(color: .cyan)),
+//            ]
         case .allBooksPreview:
             return [
                 .allBooksPreview(ColorItem(color: .gray)),

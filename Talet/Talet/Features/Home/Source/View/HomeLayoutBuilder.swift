@@ -21,7 +21,7 @@ enum HomeLayoutBuilder {
 
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .groupPagingCentered
-        section.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 8, trailing: 16)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 27, leading: 16, bottom: 25, trailing: 16)
         section.interGroupSpacing = 12
         return section
     }
@@ -41,7 +41,7 @@ enum HomeLayoutBuilder {
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
         section.interGroupSpacing = 20
-        section.contentInsets = .init(top: 8, leading: 16, bottom: 8, trailing: 16)
+        section.contentInsets = .init(top: 25, leading: 16, bottom: 22, trailing: 16)
         
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
@@ -57,15 +57,15 @@ enum HomeLayoutBuilder {
         return section
     }
 
-    static func readingStatusSection() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(160))
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-        let group = NSCollectionLayoutGroup.vertical(layoutSize: itemSize, subitems: [item])
-        let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: 8, leading: 16, bottom: 8, trailing: 16)
-        return section
-    }
+//    static func readingStatusSection() -> NSCollectionLayoutSection {
+//        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(160))
+//        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+//
+//        let group = NSCollectionLayoutGroup.vertical(layoutSize: itemSize, subitems: [item])
+//        let section = NSCollectionLayoutSection(group: group)
+//        section.contentInsets = .init(top: 8, leading: 16, bottom: 8, trailing: 16)
+//        return section
+//    }
 
     static func themedBooksSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
@@ -82,7 +82,7 @@ enum HomeLayoutBuilder {
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
         section.interGroupSpacing = 20
-        section.contentInsets = .init(top: 8, leading: 16, bottom: 8, trailing: 16)
+        section.contentInsets = .init(top: 22, leading: 16, bottom: 22, trailing: 16)
         
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
@@ -112,7 +112,7 @@ enum HomeLayoutBuilder {
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
         section.interGroupSpacing = 20
-        section.contentInsets = .init(top: 8, leading: 16, bottom: 8, trailing: 16)
+        section.contentInsets = .init(top: 22, leading: 16, bottom: 22, trailing: 16)
         return section
     }
 }
