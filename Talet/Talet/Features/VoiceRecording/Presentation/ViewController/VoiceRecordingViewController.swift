@@ -399,18 +399,15 @@ final class VoiceRecordingViewController: UIViewController {
     }
         
     private func showTrashAlert() {
-        let alert = CustomAlert(
-            title: "목소리를 삭제하고 다시 녹음하시겠습니까?",
-            message: nil,
-            cancelButtonTitle: "취소",
-            confirmButtonTitle: "네",
-            onConfirm: { [weak self] in
-                // TODO: 실제 녹음 삭제 메서드 연결
-                self?.currentPhase = .normal
-                self?.isPlaying = false
-            }
-        )
-        alert.show(in: self)
+        showDestructiveAlert(title: "목소리를 삭제하고 다시 녹음하시겠습니까?",
+                             message: nil,
+                             cancelTitle: "취소",
+                             confirmTitle: "네",
+                             onConfirm: { [weak self] in
+            
+            self?.currentPhase = .normal
+            self?.isPlaying = false
+        })
     }
     
     private func updatePlayStopButton() {

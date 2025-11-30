@@ -31,13 +31,15 @@ final class NetworkManager: NetworkManagerProtocol {
     
     private let baseURL = "https://talet.site"
     
-    private let encoder = JSONEncoder().then {
-        $0.keyEncodingStrategy = .convertToSnakeCase
-    }
+    private let encoder = JSONEncoder()
+//        .then {
+//        $0.keyEncodingStrategy = .convertToSnakeCase
+//    }
     
-    private let decoder = JSONDecoder().then {
-        $0.keyDecodingStrategy = .convertFromSnakeCase
-    }
+    private let decoder = JSONDecoder()
+//        .then {
+//        $0.keyDecodingStrategy = .convertFromSnakeCase
+//    }
     
     func request<T:Decodable>(
         endpoint: String,

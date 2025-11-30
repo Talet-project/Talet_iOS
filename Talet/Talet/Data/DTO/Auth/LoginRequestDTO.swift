@@ -6,5 +6,5 @@
 //
 
 struct LoginRequestDTO: Encodable {
-    let socialToken: String
+    let idToken: String
 }

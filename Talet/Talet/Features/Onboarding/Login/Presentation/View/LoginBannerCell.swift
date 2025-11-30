@@ -56,7 +56,7 @@ class LoginBannerCell: UICollectionViewCell {
     }
     
     //MARK: Configure
-    func configure(banner: LoginBannerEntity) {
+    func configure(banner: LoginBannerModel) {
         imageView.image = banner.image
         mainLabel.text = banner.mainText
         subLabel.text = banner.subText

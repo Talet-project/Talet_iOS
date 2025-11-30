@@ -18,7 +18,7 @@ final class LoginRepositoryImpl: LoginRepositoryProtocol {
     func socialLogin(socialToken: SocialTokenEntity) -> Single<LoginResultEntity> {
         return network.request(endpoint: "/auth/apple",
                                method: .post,
-                               body: LoginRequestDTO(socialToken: socialToken.socialToken),
+                               body: LoginRequestDTO(idToken: socialToken.socialToken),
                                headers: nil,
                                responseType: LoginResponseDTO.self
         )

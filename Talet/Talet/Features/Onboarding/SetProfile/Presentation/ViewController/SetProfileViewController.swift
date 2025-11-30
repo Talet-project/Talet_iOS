@@ -12,6 +12,8 @@ import Then
 
 
 class SetProfileViewController: UIViewController {
+    private let signUpToken: String
+    
     //MARK: Constants
     private let languageOptions = AppLanguage.allCases
         .filter { $0 != .korean }
@@ -157,7 +159,8 @@ class SetProfileViewController: UIViewController {
     }
     
     //MARK: init
-    init() {
+    init(signUpToken: String) {
+        self.signUpToken = signUpToken
         super.init(nibName: nil, bundle: nil)
     }
     
