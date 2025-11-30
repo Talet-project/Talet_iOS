@@ -12,7 +12,7 @@ import RxSwift
 import SnapKit
 import Then
 
-
+//TODO: 화면 이동 및 비즈니스로직 분리
 class LoginViewController: UIViewController {
     
     private let viewModel: LoginViewModel

@@ -48,9 +48,15 @@ final class LoginViewModel {
         let errorMessageRelay = PublishRelay<String>()
         
         input.appleLoginTapped
-            .flatMapLatest { [weak self] _ -> Single<LoginResultEntity> in
+            .flatMapLatest { [weak self] _ -> Observable<LoginResultEntity> in
                 guard let self else { return .never() }
                 return self.loginUseCase.socialLogin(platform: .apple)
+                    .asObservable()
+                    .catch { error in
+                        let message = (error as? NetworkError)?.errorDescription ?? "로그인에 실패했습니다. 자세한 내용은 관리자에게 문의하세요."
+                        errorMessageRelay.accept(message)
+                        return .empty()
+                    }
             }
             .subscribe(
                 onNext: { result in
@@ -61,10 +67,6 @@ final class LoginViewModel {
                     } else {
                         loginResultRelay.accept(.success)
                     }
-                },
-                onError: { error in
-                    let message = (error as? NetworkError)?.errorDescription ?? "로그인에 실패했습니다."
-                    errorMessageRelay.accept(message)
                 }
             ).disposed(by: disposeBag)
 
