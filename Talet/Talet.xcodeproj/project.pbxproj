@@ -14,8 +14,6 @@
 		EEC0DF8E2E1574E00046294D /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = EEC0DF8D2E1574E00046294D /* Swinject */; };
 		EEC0DF912E1575340046294D /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = EEC0DF902E1575340046294D /* Moya */; };
 		EEC0DF932E1575340046294D /* RxMoya in Frameworks */ = {isa = PBXBuildFile; productRef = EEC0DF922E1575340046294D /* RxMoya */; };
-		EEC0DF962E15757A0046294D /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = EEC0DF952E15757A0046294D /* FirebaseAnalytics */; };
-		EEC0DF982E15757A0046294D /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = EEC0DF972E15757A0046294D /* FirebaseAuth */; };
 		EEC0DF9B2E1576400046294D /* KakaoSDK in Frameworks */ = {isa = PBXBuildFile; productRef = EEC0DF9A2E1576400046294D /* KakaoSDK */; };
 		EEC0DF9D2E1576400046294D /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = EEC0DF9C2E1576400046294D /* KakaoSDKAuth */; };
 		EEC0DF9F2E1576400046294D /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = EEC0DF9E2E1576400046294D /* KakaoSDKCommon */; };
@@ -55,7 +53,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EEC0DFA22E15765C0046294D /* Kingfisher in Frameworks */,
-				EEC0DF962E15757A0046294D /* FirebaseAnalytics in Frameworks */,
 				EEC0DF9F2E1576400046294D /* KakaoSDKCommon in Frameworks */,
 				EEC0DF932E1575340046294D /* RxMoya in Frameworks */,
 				EEC0DF882E1574990046294D /* RxSwift in Frameworks */,
@@ -64,7 +61,6 @@
 				EEC0DF862E1574990046294D /* RxCocoa in Frameworks */,
 				EEC0DF912E1575340046294D /* Moya in Frameworks */,
 				EEC0DF832E15746B0046294D /* SnapKit in Frameworks */,
-				EEC0DF982E15757A0046294D /* FirebaseAuth in Frameworks */,
 				EEC0DF9B2E1576400046294D /* KakaoSDK in Frameworks */,
 				EEC0DF9D2E1576400046294D /* KakaoSDKAuth in Frameworks */,
 			);
@@ -116,8 +112,6 @@
 				EEC0DF8D2E1574E00046294D /* Swinject */,
 				EEC0DF902E1575340046294D /* Moya */,
 				EEC0DF922E1575340046294D /* RxMoya */,
-				EEC0DF952E15757A0046294D /* FirebaseAnalytics */,
-				EEC0DF972E15757A0046294D /* FirebaseAuth */,
 				EEC0DF9A2E1576400046294D /* KakaoSDK */,
 				EEC0DF9C2E1576400046294D /* KakaoSDKAuth */,
 				EEC0DF9E2E1576400046294D /* KakaoSDKCommon */,
@@ -157,7 +151,6 @@
 				EEC0DF842E1574990046294D /* XCRemoteSwiftPackageReference "RxSwift" */,
 				EEC0DF8C2E1574E00046294D /* XCRemoteSwiftPackageReference "Swinject" */,
 				EEC0DF8F2E1575340046294D /* XCRemoteSwiftPackageReference "Moya" */,
-				EEC0DF942E15757A0046294D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				EEC0DF992E1576400046294D /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
 				EEC0DFA02E15765C0046294D /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				CCB6E0B12E2A3FCF00F7AD7F /* XCRemoteSwiftPackageReference "Then" */,
@@ -445,14 +438,6 @@
 				minimumVersion = 15.0.3;
 			};
 		};
-		EEC0DF942E15757A0046294D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 11.15.0;
-			};
-		};
 		EEC0DF992E1576400046294D /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kakao/kakao-ios-sdk";
@@ -506,16 +491,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EEC0DF8F2E1575340046294D /* XCRemoteSwiftPackageReference "Moya" */;
 			productName = RxMoya;
-		};
-		EEC0DF952E15757A0046294D /* FirebaseAnalytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EEC0DF942E15757A0046294D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalytics;
-		};
-		EEC0DF972E15757A0046294D /* FirebaseAuth */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EEC0DF942E15757A0046294D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAuth;
 		};
 		EEC0DF9A2E1576400046294D /* KakaoSDK */ = {
 			isa = XCSwiftPackageProductDependency;
