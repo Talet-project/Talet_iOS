@@ -1,17 +1,29 @@
 {
   "images" : [
     {
+<<<<<<< HEAD
       "filename" : "taileDetailBg.png",
+=======
+      "filename" : "taleDetailBackground.png",
+>>>>>>> origin/dev
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+<<<<<<< HEAD
       "filename" : "taileDetailBg@2x.png",
+=======
+      "filename" : "taleDetailBackground@2x.png",
+>>>>>>> origin/dev
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+<<<<<<< HEAD
       "filename" : "taileDetailBg@3x.png",
+=======
+      "filename" : "taleDetailBackground@3x.png",
+>>>>>>> origin/dev
       "idiom" : "universal",
       "scale" : "3x"
     }

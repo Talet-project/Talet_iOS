@@ -5,6 +5,8 @@
 //  Created by 김승희 on 7/31/25.
 //
 
+
+//TODO: 역할 분리
 import UIKit
 
 enum VoiceDefaultImage: String, CaseIterable {

@@ -17,6 +17,13 @@ class VoiceSelectView: UIView {
     //MARK: Properties
     private var voices: [VoiceEntity] = []
     
+    private let tapSettingButton = PublishRelay<Void>()
+    private let disposeBag = DisposeBag()
+    
+    var tapSetting: Signal<Void> {
+        tapSettingButton.asSignal()
+    }
+    
     //MARK: UI Components
     private let titleLabel = UILabel().then {
         $0.text = "나의 목소리"
@@ -57,6 +64,7 @@ class VoiceSelectView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setLayout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -70,6 +78,11 @@ class VoiceSelectView: UIView {
     }
     
     //MARK: Bindings
+    private func bind() {
+        settingButton.rx.tap
+            .bind(to: tapSettingButton)
+            .disposed(by: disposeBag)
+    }
 
     //MARK: Layout
     private func setLayout() {

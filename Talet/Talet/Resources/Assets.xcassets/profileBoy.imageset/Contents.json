@@ -1,17 +1,29 @@
 {
   "images" : [
     {
+<<<<<<< HEAD
       "filename" : "Property.png",
+=======
+      "filename" : "profileBoy.png",
+>>>>>>> origin/dev
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+<<<<<<< HEAD
       "filename" : "Property@2x.png",
+=======
+      "filename" : "profileBoy@2x.png",
+>>>>>>> origin/dev
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+<<<<<<< HEAD
       "filename" : "Property@3x.png",
+=======
+      "filename" : "profileBoy@3x.png",
+>>>>>>> origin/dev
       "idiom" : "universal",
       "scale" : "3x"
     }
