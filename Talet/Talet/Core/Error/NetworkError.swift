@@ -10,6 +10,7 @@ import Foundation
 
 enum NetworkError: Error, LocalizedError {
     case invalidURL
+    case invalidRequest
     case noData
     case decodingError
     case unauthorized
@@ -21,6 +22,8 @@ enum NetworkError: Error, LocalizedError {
         switch self {
         case .invalidURL:
             return "잘못된 URL입니다."
+        case .invalidRequest:
+            return "잘못된 요청입니다."
         case .noData:
             return "데이터가 없습니다."
         case .decodingError:
