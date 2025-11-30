@@ -9,7 +9,7 @@ import UIKit
 
 enum HomeTabSection: Hashable {
     case mainBanner(BannerToken)
-    case rankingBook(ColorItem)
+    case rankingBook(BookDataEntity)
     case readingStatus(ColorItem)
     case allBooksPreview(ColorItem)
     case randomViews(ColorItem)

@@ -205,7 +205,10 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
                 return cell
             case .popularRanking:
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RankingBookCell", for: indexPath) as! RankingBookCell
-                cell.configure(with: itemIdentifier.color)
+//                cell.configure(with: itemIdentifier.color)
+                if case let .rankingBook(book) = itemIdentifier {
+                    cell.configure(with: book.thumbnailURL)
+                }
                 return cell
 //            case .readingStatus:
 //                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ReadingStatusCell", for: indexPath) as! ReadingStatusCell

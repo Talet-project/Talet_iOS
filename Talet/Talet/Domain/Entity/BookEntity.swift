@@ -28,7 +28,7 @@ struct MyBookEntity {
 struct BookDataEntity: Hashable {
     let id: String
     let name: String
-    let thumbnailURL: String
+    let thumbnailURL: URL?
     let tags: [String]
     let plot: String
 }
@@ -75,4 +75,12 @@ let dummyBooks: [MyBookEntity] = [
     MyBookEntity(id: UUID().uuidString, title: "혹부리 영감", image: URL(string: "https://dummy6")!, readPercentage: 0,  isBookmarked: false),
     MyBookEntity(id: UUID().uuidString, title: "별주부전", image: URL(string: "https://dummy7")!, readPercentage: 0.55, isBookmarked: true),
     MyBookEntity(id: UUID().uuidString, title: "방귀쟁이 며느리", image: URL(string: "https://dummy8")!, readPercentage: 1, isBookmarked: false)
+]
+
+let dummyRankingBooks: [BookDataEntity] = [
+    BookDataEntity(id: UUID().uuidString, name: "선녀와 나무꾼", thumbnailURL: URL(string: "https://dummy1"), tags: ["용기","지혜"], plot: ""),
+    BookDataEntity(id: UUID().uuidString, name: "선녀와 나무꾼", thumbnailURL: URL(string: "https://dummy2"), tags: ["용기"], plot: ""),
+    BookDataEntity(id: UUID().uuidString, name: "선녀와 나무꾼", thumbnailURL: URL(string: "https://dummy3"), tags: ["용기"], plot: ""),
+    BookDataEntity(id: UUID().uuidString, name: "선녀와 나무꾼", thumbnailURL: URL(string: "https://dummy4"), tags: ["용기"], plot: ""),
+    BookDataEntity(id: UUID().uuidString, name: "선녀와 나무꾼", thumbnailURL: URL(string: "https://dummy5"), tags: ["용기"], plot: ""),
 ]
