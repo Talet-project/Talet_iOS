@@ -82,7 +82,7 @@ final class NetworkManager {
                     }
                     
                     //확인용 로그 출력
-                    print("📩 응답 STATUS:", status)
+                    print("응답 STATUS:", status)
                     if let json = String(data: data, encoding: .utf8) {
                         print("RESPONSE:", json)
                     }
@@ -98,7 +98,8 @@ final class NetworkManager {
                         
                     case 400...499, 500...599:
                         if let serverError = try? self.decoder.decode(ErrorResponse.self, from: data) {
-                            single(.failure(NetworkError.apiError(serverError.message)))
+                            let serverErrorMsg = serverError.message ?? "서버 에러 메시지가 없습니다."
+                            single(.failure(NetworkError.apiError(serverErrorMsg)))
                         } else {
                             single(.failure(NetworkError.serverError(status)))
                         }
@@ -235,6 +236,7 @@ final class NetworkManager {
 //                    
 //                case 400...499, 500...599:
 //                    if let serverError = try? self.decoder.decode(ErrorResponse.self, from: data) {
+//                        let serverErrorMsg = serverError.message ?? "서버 에러 메시지가 없습니다."
 //                        single(.failure(NetworkError.apiError(serverError.message)))
 //                    } else {
 //                        single(.failure(NetworkError.serverError(httpResponse.statusCode)))
