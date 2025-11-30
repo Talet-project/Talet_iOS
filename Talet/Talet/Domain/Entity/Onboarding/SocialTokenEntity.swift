@@ -1,11 +1,11 @@
 //
-//  AuthEntity.swift
+//  SocialTokenEntity.swift
 //  Talet
 //
 //  Created by 김승희 on 11/30/25.
 //
 
-struct IdTokenEntity {
-    let idToken: String
+struct SocialTokenEntity {
+    let socialToken: String
     let platform: String
 }

@@ -12,8 +12,19 @@ import RxSwift
 import Then
 
 
+protocol NetworkManagerProtocol {
+    func request<T:Decodable>(
+        endpoint: String,
+        method: HTTPMethod,
+        body: Encodable?,
+        headers: [String:String]?,
+        responseType: T.Type
+    ) -> Single<T>
+}
+
+
 //MARK: - NetworkManager (AlamoFire)
-final class NetworkManager {
+final class NetworkManager: NetworkManagerProtocol {
     static let shared = NetworkManager()
     
     private init() { }
@@ -75,10 +86,12 @@ final class NetworkManager {
                     
                     guard let status = response.response?.statusCode else {
                         single(.failure(NetworkError.unknown))
+                        return
                     }
                     
                     guard let data = response.data else {
                         single(.failure(NetworkError.noData))
+                        return
                     }
                     
                     //확인용 로그 출력

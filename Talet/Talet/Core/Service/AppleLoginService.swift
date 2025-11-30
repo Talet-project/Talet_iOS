@@ -12,7 +12,7 @@ import RxSwift
 
 
 protocol AppleLoginServiceProtocol {
-    func authorize() -> Observable<IdTokenEntity>
+    func authorize() -> Observable<SocialTokenEntity>
 }
 
 final class AppleLoginService: NSObject,
@@ -20,9 +20,9 @@ final class AppleLoginService: NSObject,
                                ASAuthorizationControllerDelegate,
                                ASAuthorizationControllerPresentationContextProviding {
     
-    private let idTokenSubject = PublishSubject<IdTokenEntity>()
+    private let idTokenSubject = PublishSubject<SocialTokenEntity>()
     
-    func authorize() -> Observable<IdTokenEntity> {
+    func authorize() -> Observable<SocialTokenEntity> {
         let appleIDProvider = ASAuthorizationAppleIDProvider()
         let request = appleIDProvider.createRequest()
         request.requestedScopes = [] //이메일, 이름 요청 x
@@ -44,8 +44,9 @@ final class AppleLoginService: NSObject,
             guard let idTokenData = appleIDCredential.identityToken,
             let stringToken = String(data: idTokenData, encoding: .utf8) else {
                 idTokenSubject.onError(NetworkError.noData)
+                return
             }
-            let idTokenEntity = IdTokenEntity(idToken: stringToken, platform: LoginPlatform.apple.rawValue)
+            let idTokenEntity = SocialTokenEntity(socialToken: stringToken, platform: LoginPlatform.apple.rawValue)
             idTokenSubject.onNext(idTokenEntity)
             idTokenSubject.onCompleted()
             

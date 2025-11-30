@@ -9,4 +9,5 @@ struct LoginResultEntity {
     let accessToken: String?
     let refreshToken: String?
     let signUpToken: String?
+    let isSignUpNeeded: Bool
 }
