@@ -15,20 +15,20 @@ enum HomeTabSection: Hashable {
     case randomViews(ColorItem)
     
     
-    var id: UUID {
-        switch self {
-        case .mainBanner(let token): return token.id
-        case .rankingBook(let item): return item.id
-        case .readingStatus(let item): return item.id
-        case .allBooksPreview(let item): return item.id
-        case .randomViews(let item): return item.id
-        }
-    }
+//    var id: UUID {
+//        switch self {
+//        case .mainBanner(let token): return token.id
+//        case .rankingBook(let token): return token.id
+//        case .readingStatus(let item): return item.id
+//        case .allBooksPreview(let item): return item.id
+//        case .randomViews(let item): return item.id
+//        }
+//    }
 
     var color: UIColor {
         switch self {
         case .mainBanner(let item): return .clear
-        case .rankingBook(let item): return item.color
+        case .rankingBook(let item): return .clear
         case .readingStatus(let item): return item.color
         case .allBooksPreview(let item): return item.color
         case .randomViews(let item): return item.color

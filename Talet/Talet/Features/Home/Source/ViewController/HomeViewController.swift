@@ -89,12 +89,6 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
         setupNavigation()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        let indexPath = IndexPath(item: 1, section: Section.mainBanner.rawValue)
-        print("✅ Initial scroll to index 1")
-        rootCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
-    }
 // MARK: - Infinite scroll for mainBanner
     
     private func setLayout() {
@@ -103,7 +97,6 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
         ].forEach { view.addSubview($0) }
         
         backgroundImageView.snp.makeConstraints {
-//            $0.edges.equalToSuperview()
             $0.top.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
         }
@@ -150,16 +143,44 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
         
         output.snapshot
             .drive(onNext: { [weak self] snapshot in
-                print("✅ Snapshot applied, sections: \(snapshot.sectionIdentifiers)")
-                let mainBannerItems = snapshot.itemIdentifiers(inSection: .mainBanner)
-                print("mainBanner items count: \(mainBannerItems.count)")
-                mainBannerItems.enumerated().forEach { idx, item in
-                    print("snapshot mainBanner[\(idx)] → \(item)")
+                guard let self else { return }
+                
+                self.dataSource.apply(snapshot, animatingDifferences: true) {
+                    
+                    let indexPath = IndexPath(item: 1, section: Section.mainBanner.rawValue)
+                    
+                    if self.rootCollectionView.numberOfSections > indexPath.section,
+                       self.rootCollectionView.numberOfItems(inSection: indexPath.section) > indexPath.item {
+                        
+                        self.rootCollectionView.scrollToItem(
+                            at: indexPath,
+                            at: .centeredHorizontally,
+                            animated: false
+                        )
+                    } else {
+                        print("배너 아직 준비안됨")
+                    }
                 }
-                self?.dataSource.apply(snapshot, animatingDifferences: true)
             })
             .disposed(by: disposeBag)
     }
+    
+//    private func bindViewModel() {
+//        let input = HomeViewModelImpl.Input(loadHomeContent: Observable.just(()))
+//        let output = viewModel.transform(input: input)
+//        
+//        output.snapshot
+//            .drive(onNext: { [weak self] snapshot in
+//                print("✅ Snapshot applied, sections: \(snapshot.sectionIdentifiers)")
+//                let mainBannerItems = snapshot.itemIdentifiers(inSection: .mainBanner)
+//                print("mainBanner items count: \(mainBannerItems.count)")
+//                mainBannerItems.enumerated().forEach { idx, item in
+//                    print("snapshot mainBanner[\(idx)] → \(item)")
+//                }
+//                self?.dataSource.apply(snapshot, animatingDifferences: true)
+//            })
+//            .disposed(by: disposeBag)
+//    }
     
     private func createLayout() -> UICollectionViewLayout {
         return UICollectionViewCompositionalLayout { sectionIndex, _ in
