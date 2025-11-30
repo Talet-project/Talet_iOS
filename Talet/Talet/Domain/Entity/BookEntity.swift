@@ -24,6 +24,27 @@ struct MyBookEntity {
     let isBookmarked: Bool
 }
 
+// homepage에서 씀 -> ResponseDTO
+struct BookDataEntity: Hashable {
+    let id: String
+    let name: String
+    let thumbnailURL: String
+    let tags: [String]
+    let plot: String
+}
+
+// 상세보기 에서 씀 -> BookDetailDTO
+struct BookDetailEntity: Hashable {
+    let id: String
+    let name: String
+    let thumbnailURL: String
+    let stillImages: [String]
+    let tags: [String]
+    let shorts: [String: String]
+    let plots: [String: String]
+    let bookmark: Bool
+}
+
 //// 읽고있는책, 북마크, 다읽은책
 //enum MyBookState {
 //    case reading
