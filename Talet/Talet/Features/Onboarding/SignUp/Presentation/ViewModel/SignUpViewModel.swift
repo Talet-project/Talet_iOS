@@ -14,11 +14,11 @@ import RxSwift
 final class SignUpViewModel {
     
     struct Input {
-        let FirstLanguageSelected: Observable<String?>
-        let SecondLanguageSelected: Observable<String?>
+        let firstLanguageSelected: Observable<String>
+        let secondLanguageSelected: Observable<String>
         let nameText: Observable<String>
-        let yearSelected: Observable<String?>
-        let monthSelected: Observable<String?>
+        let yearSelected: Observable<String>
+        let monthSelected: Observable<String>
         let genderSelected: Observable<Gender?>
         let termsServiceAgreed: Observable<Bool>
         let termsPrivacyAgreed: Observable<Bool>
@@ -61,10 +61,7 @@ final class SignUpViewModel {
             input.termsServiceAgreed,
             input.termsPrivacyAgreed
         ) { language1, name, year, month, gender, service, privacy in
-            return language1 != nil &&
-                   !name.isEmpty &&
-                   year != nil &&
-                   month != nil &&
+            return !name.isEmpty &&
                    gender != nil &&
                    service &&
                    privacy
@@ -98,38 +95,36 @@ final class SignUpViewModel {
             .flatMapLatest { [weak self] language1, language2, name, year, month, gender, marketing -> Observable<Void> in
                 guard let self = self else { return .never() }
                 
-                // 언어 배열 생성
-                var languages: [String] = ["한국어"]
-                if let lang1 = language1, lang1 != "없음" {
-                    languages.append(lang1.uppercased())
-                }
-                if let lang2 = language2, lang2 != "없음" {
-                    languages.append(lang2.uppercased())
-                }
-                
-                // 생년월일 변환
-                guard let yearStr = year?.replacingOccurrences(of: "년", with: ""),
-                      let monthStr = month?.replacingOccurrences(of: "월", with: ""),
-                      let yearInt = Int(yearStr),
-                      let monthInt = Int(monthStr),
-                      let genderValue = gender else {
+                guard let yearInt = Int(year.replacingOccurrences(of: "년", with: "")),
+                      let monthInt = Int(month.replacingOccurrences(of: "월", with: "")),
+                      let genderValue = gender
+                else {
                     errorMessageRelay.accept("입력 정보를 확인해주세요.")
                     return .empty()
                 }
-                
+
                 let birthDate = "\(yearInt)-\(String(format: "%02d", monthInt))-01"
+                var languages: [String] = ["한국어"]
+
+                if language1 != "없음" {
+                    languages.append(language1)
+                }
+
+                if language2 != "없음" {
+                    languages.append(language2)
+                }
                 
-                let request = SignUpRequest(
-                    signUpToken: self.signUpToken,
-                    childName: name,
-                    childBirthDate: birthDate,
-                    childGender: genderValue.rawValue,
-                    languages: languages,
-                    marketingAgreed: marketing
+                let request = UserEntity(
+                    name: name,
+                    birth: birthDate,
+                    gender: genderValue.rawValue,
+                    languages: [language1, language2]
                 )
                 
-                return self.signUpUseCase.signUp(request: request)
+                return self.signUpUseCase
+                    .signUp(signUpToken: signUpToken, request: request)
                     .asObservable()
+                    .map { _ in () }
                     .catch { error in
                         let message = (error as? NetworkError)?.errorDescription ?? "회원가입에 실패했습니다."
                         errorMessageRelay.accept(message)

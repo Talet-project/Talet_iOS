@@ -17,7 +17,9 @@ class CheckBoxLabelView: UIView {
     //MARK: Constants
     
     //MARK: Properties
-    let isChecked = BehaviorRelay<Bool>(value: false)
+    var isChecked = BehaviorRelay<Bool>(value: false)
+    private var disposeBag = DisposeBag()
+    
     private let linkURL: URL?
     
     //MARK: UI Components
@@ -47,6 +49,7 @@ class CheckBoxLabelView: UIView {
         setLayout()
         titleLabel.text = text
         checkBoxButton.addTarget(self, action: #selector(checkBoxTapped), for: .touchUpInside)
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -55,10 +58,17 @@ class CheckBoxLabelView: UIView {
     
     //MARK: Methods
     @objc private func checkBoxTapped() {
-        checkBoxButton.isSelected.toggle()
+        isChecked.accept(!isChecked.value)
     }
     
     //MARK: Bindings
+    func bind() {
+        isChecked
+            .bind(with: self) { owner, isChecked in
+                owner.checkBoxButton.isSelected = isChecked
+            }
+            .disposed(by: disposeBag)
+    }
     
     //MARK: Layout
     private func setLayout() {

@@ -116,7 +116,7 @@ class LoginViewController: UIViewController {
     }
     
     private func navigateToSignUp(with signUpToken: String) {
-        let setProfileVC = SetProfileViewController(signUpToken: signUpToken)
+        let setProfileVC = SignUpViewController(signUpToken: signUpToken, viewModel: SignUpViewModel(signUpToken: signUpToken, signUpUseCase: SignUpUseCase(repository: SignUpRepositoryImpl(network: NetworkManager.shared), tokenManager: TokenManager())))
         navigationController?.pushViewController(setProfileVC, animated: true)
     }
     

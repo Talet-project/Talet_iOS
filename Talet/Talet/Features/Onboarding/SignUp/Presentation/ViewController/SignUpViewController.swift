@@ -183,29 +183,31 @@ class SignUpViewController: UIViewController {
         bind()
         setLayout()
         setNavigationController()
+        setupGenderSelection()
     }
     
     //MARK: Methods
     private func setNavigationController() {
         self.navigationController?.setNavigationBarHidden(true, animated: false)
     }
+    
     private func setupGenderSelection() {
         genderPickerBoy.rx.tap
             .subscribe(with: self) { owner, _ in
-                owner.genderSelectedRelay.accept(.boy)
+                owner.genderSelectRelay.accept(.boy)
                 owner.updateGenderUI(selected: .boy)
             }
             .disposed(by: disposeBag)
         
         genderPickerGirl.rx.tap
             .subscribe(with: self) { owner, _ in
-                owner.genderSelectedRelay.accept(.girl)
+                owner.genderSelectRelay.accept(.girl)
                 owner.updateGenderUI(selected: .girl)
             }
             .disposed(by: disposeBag)
     }
     
-    private func updateGenderUI(selected: SetProfileViewModel.Gender) {
+    private func updateGenderUI(selected: SignUpViewModel.Gender) {
         switch selected {
         case .boy:
             genderPickerBoy.setSelected(true)
@@ -219,12 +221,12 @@ class SignUpViewController: UIViewController {
     //MARK: Bindings
     private func bind() {
         let input = SignUpViewModel.Input(
-            FirstLanguageSelected: language1Picker.selectedValue.asObservable(),
-            SecondLanguageSelected: language2Picker.selectedValue.asObservable(),
+            firstLanguageSelected: language1Picker.pickedValue.asObservable(),
+            secondLanguageSelected: language2Picker.pickedValue.asObservable(),
             nameText: infoNameTextField.rx.text.orEmpty.asObservable(),
-            yearSelected: YearPicker.selectedValue.asObservable(),
-            monthSelected: MonthPicker.selectedValue.asObservable(),
-            genderSelected: genderSelectedRelay.asObservable(),
+            yearSelected: YearPicker.pickedValue.asObservable(),
+            monthSelected: MonthPicker.pickedValue.asObservable(),
+            genderSelected: genderSelectRelay.asObservable(),
             termsServiceAgreed: checkBoxLabel2.isChecked.asObservable(),
             termsPrivacyAgreed: checkBoxLabel3.isChecked.asObservable(),
             termsMarketingAgreed: checkBoxLabel4.isChecked.asObservable(),
@@ -242,8 +244,21 @@ class SignUpViewController: UIViewController {
         
         // 전체 동의 자동 체크
         output.termsAllChecked
-            .drive(checkBoxLabel1.rx.isChecked)
+            .drive(with: self) { owner, isChecked in
+                owner.checkBoxLabel1.isChecked.accept(isChecked)
+            }
             .disposed(by: disposeBag)
+        
+        // 전체 동의 클릭 시 모두 체크
+        checkBoxLabel1.isChecked
+            .skip(1)  // 초기값 무시
+            .subscribe(with: self) { owner, isChecked in
+                owner.checkBoxLabel2.isChecked.accept(isChecked)
+                owner.checkBoxLabel3.isChecked.accept(isChecked)
+                owner.checkBoxLabel4.isChecked.accept(isChecked)
+            }
+            .disposed(by: disposeBag)
+
         
         // 회원가입 성공
         output.signUpSuccess
@@ -255,35 +270,9 @@ class SignUpViewController: UIViewController {
         // 에러 메시지
         output.errorMessage
             .emit(with: self) { owner, message in
-                owner.showConfirmAlert(title: "회원가입 실패", message: message)
+                owner.showDefaultAlert(title: "회원가입 실패", message: message)
             }
             .disposed(by: disposeBag)
-        
-        // 전체 동의 클릭 시 모두 체크
-        checkBoxLabel1.isChecked
-            .skip(1)  // 초기값 무시
-            .subscribe(with: self) { owner, isChecked in
-                owner.checkBoxLabel2.setChecked(isChecked)
-                owner.checkBoxLabel3.setChecked(isChecked)
-                owner.checkBoxLabel4.setChecked(isChecked)
-            }
-            .disposed(by: disposeBag)
-        
-        // 하나라도 해제하면 전체 동의 해제
-        Observable.combineLatest(
-            checkBoxLabel2.isChecked,
-            checkBoxLabel3.isChecked,
-            checkBoxLabel4.isChecked
-        )
-        .map { $0 && $1 && $2 }
-        .distinctUntilChanged()
-        .skip(1)  // 초기값 무시
-        .subscribe(with: self) { owner, allChecked in
-            if !allChecked {
-                owner.checkBoxLabel1.setChecked(false)
-            }
-        }
-        .disposed(by: disposeBag)
     }
     
     //MARK: Navigation
@@ -465,7 +454,7 @@ class SignUpViewController: UIViewController {
     }
 }
 
-extension SetProfileViewController: UITextFieldDelegate {
+extension SignUpViewController: UITextFieldDelegate {
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         return true
     }

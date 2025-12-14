@@ -15,8 +15,16 @@ import Then
 
 final class GenderPickerView: UIControl {
     
-    private let imageView = UIImageView()
+    private let genderImageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFit
+    }
     private let nameLabel = UILabel()
+    
+    private let checkIcon = UIImageView().then {
+        $0.contentMode = .scaleAspectFit
+        $0.image = .checkIcon
+        $0.isHidden = true
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -32,33 +40,44 @@ final class GenderPickerView: UIControl {
         layer.cornerRadius = 12
         layer.borderWidth = 0
         
-        addSubview(imageView)
-        addSubview(nameLabel)
+        [genderImageView,
+         nameLabel,
+         checkIcon
+        ].forEach { addSubview($0) }
         
-        imageView.snp.makeConstraints {
+        genderImageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalToSuperview().offset(20)
-            $0.width.height.equalTo(60)
+            $0.height.equalTo(60)
         }
         
         nameLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(imageView.snp.bottom).offset(12)
+            $0.top.equalTo(genderImageView.snp.bottom).offset(12)
+        }
+        
+        checkIcon.snp.makeConstraints {
+            $0.centerY.equalTo(nameLabel)
+            $0.height.equalTo(nameLabel.snp.height)
         }
     }
     
     func configure(image: UIImage?, name: String) {
         imageView.image = image
         nameLabel.text = name
-        nameLabel.font = .pretendard(.body1)
-        nameLabel.textColor = .gray600
+        nameLabel.font = .nanum(.headline1)
+        nameLabel.textColor = .gray400
     }
     
     func setSelected(_ selected: Bool) {
         if selected {
             backgroundColor = .orange500
+            checkIcon.isHidden = false
+            nameLabel.textColor = .white
         } else {
             backgroundColor = .gray50
+            checkIcon.isHidden = true
+            nameLabel.textColor = .gray400
         }
     }
 }
