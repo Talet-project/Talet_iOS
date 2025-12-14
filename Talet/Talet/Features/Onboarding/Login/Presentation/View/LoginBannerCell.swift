@@ -21,11 +21,9 @@ class LoginBannerCell: UICollectionViewCell {
     private var subString: String = ""
     
     //MARK: UI Components
-    private lazy var imageView = UIImageView().then {
+    private lazy var bannerImageView = UIImageView().then {
         $0.image = image
-        $0.contentMode = .center
-        $0.clipsToBounds = true
-        //$0.backgroundColor = .red
+        $0.contentMode = .scaleAspectFit
     }
     
     private lazy var mainLabel = UILabel().then {
@@ -57,38 +55,34 @@ class LoginBannerCell: UICollectionViewCell {
     
     //MARK: Configure
     func configure(banner: LoginBannerModel) {
-        imageView.image = banner.image
+        bannerImageView.image = banner.image
         mainLabel.text = banner.mainText
         subLabel.text = banner.subText
         layoutIfNeeded()
-        print("imageView size: \(imageView.bounds)")
-        print("image size: \(imageView.image?.size ?? .zero)")
     }
     
     //MARK: Layout
     private func setLayout() {
-        [imageView,
+        [bannerImageView,
          mainLabel,
          subLabel
         ].forEach { contentView.addSubview($0) }
         
-        imageView.snp.makeConstraints {
+        bannerImageView.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
             $0.centerX.equalToSuperview()
-            $0.height.equalToSuperview().multipliedBy(0.72)
+            $0.height.equalTo(bannerImageView.snp.width).multipliedBy(Float(302)/Float(390))
         }
         
         mainLabel.snp.makeConstraints {
-            $0.top.equalTo(imageView.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(subLabel.snp.top).offset(-20)
         }
         
         subLabel.snp.makeConstraints {
-            $0.top.equalTo(mainLabel.snp.bottom)
-            $0.leading.equalToSuperview().offset(20)
-            $0.trailing.equalToSuperview().offset(-20)
-            $0.bottom.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.bottom.equalToSuperview().offset(-20)
         }
     }
 }

@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Group 188.png",
+      "filename" : "onboardingFirstImg.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Group 188@2x.png",
+      "filename" : "onboardingFirstImg@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Group 188@3x.png",
+      "filename" : "onboardingFirstImg@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
