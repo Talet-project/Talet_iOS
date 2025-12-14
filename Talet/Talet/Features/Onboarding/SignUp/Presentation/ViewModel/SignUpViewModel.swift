@@ -107,16 +107,17 @@ final class SignUpViewModel {
         }
             .asDriver(onErrorJustReturn: false)
         
-        // 필수 항목 검증 (language1, 이름, 생년월일, 성별, 필수 약관)
+        // 필수 항목 검증
         let isFormValid = Observable.combineLatest(
             input.firstLanguageSelected,
+            input.secondLanguageSelected,
             input.nameText,
             input.yearSelected,
             input.monthSelected,
             input.genderSelected,
             termsServiceRelay,
             termsPrivacyRelay
-        ) { language1, name, year, month, gender, service, privacy in
+        ) { language1, language2, name, year, month, gender, service, privacy in
             return !name.isEmpty &&
             gender != nil &&
             service &&
