@@ -9,5 +9,5 @@ struct UserEntity {
     let name: String
     let birth: String
     let gender: String
-    let languages: [String]
+    let languages: [LanguageEntity]
 }

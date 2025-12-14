@@ -22,12 +22,7 @@ final class SignUpRepositoryImpl: SignUpRepositoryProtocol {
             "Authorization": "Bearer \(SignUpString)"
         ]
         
-        let requestDTO = SignUpRequestDTO(
-            name: request.name,
-            birthDate: request.birth,
-            gender: request.gender,
-            nativeLanguages: request.languages
-        )
+        let requestDTO = SignUpRequestDTO(from: request)
         
         return network.request(
             endpoint: "/auth/apple/sign-up",
