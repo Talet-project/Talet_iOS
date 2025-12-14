@@ -20,17 +20,21 @@ final class SignUpViewModel {
         let yearSelected: Observable<String>
         let monthSelected: Observable<String>
         let genderSelected: Observable<Gender?>
-        let termsServiceAgreed: Observable<Bool>
-        let termsPrivacyAgreed: Observable<Bool>
-        let termsMarketingAgreed: Observable<Bool>
+        let termsAllTapped: Observable<Void>
+        let termsServiceTapped: Observable<Void>
+        let termsPrivacyTapped: Observable<Void>
+        let termsMarketingTapped: Observable<Void>
         let completeButtonTapped: Observable<Void>
     }
     
     struct Output {
         let isCompleteButtonEnabled: Driver<Bool>
-        let termsAllChecked: Driver<Bool>
-        let signUpSuccess: Signal<Void>
-        let errorMessage: Signal<String>
+                let termsAllChecked: Driver<Bool>
+                let termsServiceChecked: Driver<Bool>
+                let termsPrivacyChecked: Driver<Bool>
+                let termsMarketingChecked: Driver<Bool>
+                let signUpSuccess: Signal<Void>
+                let errorMessage: Signal<String>
     }
     
     enum Gender: String {
@@ -51,6 +55,58 @@ final class SignUpViewModel {
         let signUpSuccessRelay = PublishRelay<Void>()
         let errorMessageRelay = PublishRelay<String>()
         
+        // 각 체크박스의 상태 관리
+        let termsServiceRelay = BehaviorRelay<Bool>(value: false)
+        let termsPrivacyRelay = BehaviorRelay<Bool>(value: false)
+        let termsMarketingRelay = BehaviorRelay<Bool>(value: false)
+        
+        // 개별 체크박스 탭 처리
+        input.termsServiceTapped
+            .withLatestFrom(termsServiceRelay)
+            .map { !$0 }
+            .bind(to: termsServiceRelay)
+            .disposed(by: disposeBag)
+        
+        input.termsPrivacyTapped
+            .withLatestFrom(termsPrivacyRelay)
+            .map { !$0 }
+            .bind(to: termsPrivacyRelay)
+            .disposed(by: disposeBag)
+        
+        input.termsMarketingTapped
+            .withLatestFrom(termsMarketingRelay)
+            .map { !$0 }
+            .bind(to: termsMarketingRelay)
+            .disposed(by: disposeBag)
+        
+        // 전체 동의 탭 처리 - 모든 체크박스를 토글
+        input.termsAllTapped
+            .withLatestFrom(Observable.combineLatest(
+                termsServiceRelay,
+                termsPrivacyRelay,
+                termsMarketingRelay
+            ))
+            .map { service, privacy, marketing in
+                let allChecked = service && privacy && marketing
+                return !allChecked
+            }
+            .subscribe(onNext: { newState in
+                termsServiceRelay.accept(newState)
+                termsPrivacyRelay.accept(newState)
+                termsMarketingRelay.accept(newState)
+            })
+            .disposed(by: disposeBag)
+        
+        // 전체 동의 자동 체크 상태 계산
+        let termsAllChecked = Observable.combineLatest(
+            termsServiceRelay,
+            termsPrivacyRelay,
+            termsMarketingRelay
+        ) { service, privacy, marketing in
+            return service && privacy && marketing
+        }
+            .asDriver(onErrorJustReturn: false)
+        
         // 필수 항목 검증 (language1, 이름, 생년월일, 성별, 필수 약관)
         let isFormValid = Observable.combineLatest(
             input.firstLanguageSelected,
@@ -58,28 +114,18 @@ final class SignUpViewModel {
             input.yearSelected,
             input.monthSelected,
             input.genderSelected,
-            input.termsServiceAgreed,
-            input.termsPrivacyAgreed
+            termsServiceRelay,
+            termsPrivacyRelay
         ) { language1, name, year, month, gender, service, privacy in
             return !name.isEmpty &&
-                   gender != nil &&
-                   service &&
-                   privacy
+            gender != nil &&
+            service &&
+            privacy
         }
         
         // 완료 버튼 활성화
         let isCompleteButtonEnabled = isFormValid
             .asDriver(onErrorJustReturn: false)
-        
-        // 전체 동의 자동 체크 (필수 2개 + 선택 1개 모두 체크되면)
-        let termsAllChecked = Observable.combineLatest(
-            input.termsServiceAgreed,
-            input.termsPrivacyAgreed,
-            input.termsMarketingAgreed
-        ) { service, privacy, marketing in
-            return service && privacy && marketing
-        }
-        .asDriver(onErrorJustReturn: false)
         
         // 회원가입 요청
         input.completeButtonTapped
@@ -90,7 +136,7 @@ final class SignUpViewModel {
                 input.yearSelected,
                 input.monthSelected,
                 input.genderSelected,
-                input.termsMarketingAgreed
+                termsMarketingRelay
             ))
             .flatMapLatest { [weak self] language1, language2, name, year, month, gender, marketing -> Observable<Void> in
                 guard let self = self else { return .never() }
@@ -102,14 +148,14 @@ final class SignUpViewModel {
                     errorMessageRelay.accept("입력 정보를 확인해주세요.")
                     return .empty()
                 }
-
+                
                 let birthDate = "\(yearInt)-\(String(format: "%02d", monthInt))-01"
                 var languages: [String] = ["한국어"]
-
+                
                 if language1 != "없음" {
                     languages.append(language1)
                 }
-
+                
                 if language2 != "없음" {
                     languages.append(language2)
                 }
@@ -118,7 +164,7 @@ final class SignUpViewModel {
                     name: name,
                     birth: birthDate,
                     gender: genderValue.rawValue,
-                    languages: [language1, language2]
+                    languages: languages
                 )
                 
                 return self.signUpUseCase
@@ -139,6 +185,9 @@ final class SignUpViewModel {
         return Output(
             isCompleteButtonEnabled: isCompleteButtonEnabled,
             termsAllChecked: termsAllChecked,
+            termsServiceChecked: termsServiceRelay.asDriver(),
+            termsPrivacyChecked: termsPrivacyRelay.asDriver(),
+            termsMarketingChecked: termsMarketingRelay.asDriver(),
             signUpSuccess: signUpSuccessRelay.asSignal(),
             errorMessage: errorMessageRelay.asSignal()
         )

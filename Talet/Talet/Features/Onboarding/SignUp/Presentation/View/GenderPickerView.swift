@@ -28,11 +28,15 @@ final class GenderPickerView: UIControl {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupUI()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        setupUI()
     }
     
     private func setupUI() {
@@ -49,21 +53,23 @@ final class GenderPickerView: UIControl {
             $0.centerX.equalToSuperview()
             $0.top.equalToSuperview().offset(20)
             $0.height.equalTo(60)
+            $0.width.equalTo(genderImageView.snp.height).multipliedBy(Float(104)/Float(77))
         }
         
         nameLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
+            $0.leading.equalTo(genderImageView.snp.leading)
             $0.top.equalTo(genderImageView.snp.bottom).offset(12)
         }
         
         checkIcon.snp.makeConstraints {
+            $0.trailing.equalTo(genderImageView.snp.trailing)
             $0.centerY.equalTo(nameLabel)
             $0.height.equalTo(nameLabel.snp.height)
         }
     }
     
     func configure(image: UIImage?, name: String) {
-        imageView.image = image
+        genderImageView.image = image
         nameLabel.text = name
         nameLabel.font = .nanum(.headline1)
         nameLabel.textColor = .gray400

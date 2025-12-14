@@ -97,23 +97,28 @@ class SignUpViewController: UIViewController {
         $0.textColor = .gray600
     }
 
-    private let infoNameTextField = UITextField().then {
+    private lazy var infoNameTextField = UITextField().then {
         $0.placeholder = "이름을 입력하세요"
-        $0.borderStyle = .roundedRect
+        $0.layer.cornerRadius = 6
+        $0.layer.borderWidth = 0
         $0.backgroundColor = .gray50
         $0.font = .nanum(.display1)
         $0.textColor = .gray300
+        $0.leftView = self.leftPaddingView
+        $0.leftViewMode = .always
     }
-
-    private lazy var YearPicker = CustomPickerView().then {
-        $0.configure(options: yearOptions, placeholder: "2019년")
-    }
+    
+    private let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 40))
     
     private let infoBirth = UILabel().then {
         $0.text = "생년월일"
         $0.font = .pretendard(.body2)
         $0.textColor = .gray600
         $0.setContentHuggingPriority(.required, for: .horizontal)
+    }
+    
+    private lazy var YearPicker = CustomPickerView().then {
+        $0.configure(options: yearOptions, placeholder: "2019년")
     }
     
     private lazy var MonthPicker = CustomPickerView().then {
@@ -227,13 +232,31 @@ class SignUpViewController: UIViewController {
             yearSelected: YearPicker.pickedValue.asObservable(),
             monthSelected: MonthPicker.pickedValue.asObservable(),
             genderSelected: genderSelectRelay.asObservable(),
-            termsServiceAgreed: checkBoxLabel2.isChecked.asObservable(),
-            termsPrivacyAgreed: checkBoxLabel3.isChecked.asObservable(),
-            termsMarketingAgreed: checkBoxLabel4.isChecked.asObservable(),
+            termsAllTapped: checkBoxLabel1.checkBoxButton.rx.tap.asObservable(),
+            termsServiceTapped: checkBoxLabel2.checkBoxButton.rx.tap.asObservable(),
+            termsPrivacyTapped: checkBoxLabel3.checkBoxButton.rx.tap.asObservable(),
+            termsMarketingTapped: checkBoxLabel4.checkBoxButton.rx.tap.asObservable(),
             completeButtonTapped: doneButton.rx.tap.asObservable()
         )
         
         let output = viewModel.transform(input: input)
+        
+        // tap event 전달
+        output.termsAllChecked
+            .drive(checkBoxLabel1.checkBoxButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        output.termsServiceChecked
+            .drive(checkBoxLabel2.checkBoxButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        output.termsPrivacyChecked
+            .drive(checkBoxLabel3.checkBoxButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        output.termsMarketingChecked
+            .drive(checkBoxLabel4.checkBoxButton.rx.isSelected)
+            .disposed(by: disposeBag)
         
         // 완료 버튼 활성화
         output.isCompleteButtonEnabled
@@ -241,24 +264,6 @@ class SignUpViewController: UIViewController {
                 owner.doneButton.configure(title: "완료", isEnabled: isEnabled)
             }
             .disposed(by: disposeBag)
-        
-        // 전체 동의 자동 체크
-        output.termsAllChecked
-            .drive(with: self) { owner, isChecked in
-                owner.checkBoxLabel1.isChecked.accept(isChecked)
-            }
-            .disposed(by: disposeBag)
-        
-        // 전체 동의 클릭 시 모두 체크
-        checkBoxLabel1.isChecked
-            .skip(1)  // 초기값 무시
-            .subscribe(with: self) { owner, isChecked in
-                owner.checkBoxLabel2.isChecked.accept(isChecked)
-                owner.checkBoxLabel3.isChecked.accept(isChecked)
-                owner.checkBoxLabel4.isChecked.accept(isChecked)
-            }
-            .disposed(by: disposeBag)
-
         
         // 회원가입 성공
         output.signUpSuccess
@@ -408,7 +413,7 @@ class SignUpViewController: UIViewController {
         }
 
         infoNameTextField.snp.makeConstraints {
-            $0.leading.equalTo(infoName.snp.trailing).offset(40)
+            $0.leading.equalTo(infoBirth.snp.trailing).offset(20)
             $0.centerY.equalTo(infoName)
             $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.height.equalTo(40)
