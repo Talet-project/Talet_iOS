@@ -9,7 +9,7 @@ import Foundation
 import Security
 
 
-protocol TokenManagerProtocol {
+protocol TokenManagerProtocol: AnyObject {
     var accessToken: String? { get set }
     var refreshToken: String? { get set }
     func clear()
@@ -19,11 +19,12 @@ final class TokenManager: TokenManagerProtocol {
     
     static let shared = TokenManager()
     
+    private init() {}
+    
     enum Key: String {
         case accessToken
         case refreshToken
     }
-    
     
     //MARK: Tokens
     var accessToken: String? {
@@ -31,6 +32,8 @@ final class TokenManager: TokenManagerProtocol {
         set {
             if let value = newValue {
                 save(value: value, key: .accessToken)
+            } else {
+                delete(key: .accessToken)
             }
         }
     }
@@ -40,6 +43,8 @@ final class TokenManager: TokenManagerProtocol {
         set {
             if let value = newValue {
                 save(value: value, key: .refreshToken)
+            } else {
+                delete(key: .refreshToken)
             }
         }
     }

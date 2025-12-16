@@ -16,12 +16,19 @@ final class LoginAssembly: Assembly {
             TokenManager.shared
         }.inObjectScope(.container)
         
+        container.register(NetworkManagerProtocol.self) { _ in
+            NetworkManager.shared
+        }.inObjectScope(.container)
+        
         container.register(AppleLoginService.self) { _ in
             AppleLoginService()
         }
         
-        container.register(LoginRepositoryProtocol.self) { _ in
-            return LoginRepositoryImpl(network: NetworkManager.shared)
+        container.register(LoginRepositoryProtocol.self) { resolver in
+            return LoginRepositoryImpl(
+                network: resolver.resolve(NetworkManagerProtocol.self)!,
+                tokenManager: resolver.resolve(TokenManagerProtocol.self)!
+            )
         }
         
         container.register(AuthUseCaseProtocol.self) { resolver in

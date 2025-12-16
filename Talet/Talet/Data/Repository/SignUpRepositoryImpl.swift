@@ -10,9 +10,11 @@ import RxSwift
 
 final class SignUpRepositoryImpl: SignUpRepositoryProtocol {
     private let network: NetworkManagerProtocol
+    private let tokenManager: TokenManagerProtocol
     
-    init(network: NetworkManagerProtocol) {
+    init(network: NetworkManagerProtocol, tokenManager: TokenManagerProtocol) {
         self.network = network
+        self.tokenManager = tokenManager
     }
     
     func signUp(SignUpString: String,
@@ -31,6 +33,11 @@ final class SignUpRepositoryImpl: SignUpRepositoryProtocol {
             headers: headers,
             responseType: SignUpResponseDTO.self
         )
+        .do(onSuccess: { [weak self] (response: SignUpResponseDTO) in
+            guard let data = response.data else { return }
+            self?.tokenManager.accessToken = data.accessToken
+            self?.tokenManager.refreshToken = data.refreshToken
+        })
         .map { dto in
             LoginResultEntity(
                 accessToken: dto.data?.accessToken,
