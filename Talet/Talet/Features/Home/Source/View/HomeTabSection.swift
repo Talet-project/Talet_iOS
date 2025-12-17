@@ -11,8 +11,8 @@ enum HomeTabSection: Hashable {
     case mainBanner(BannerToken)
     case rankingBook(BookDataEntity)
     case readingStatus(ColorItem)
-    case allBooksPreview(ColorItem)
-    case randomViews(ColorItem)
+    case allBooksPreview(BookDataEntity)
+    case randomViews(TagEntity)
     
     
 //    var id: UUID {
@@ -30,8 +30,8 @@ enum HomeTabSection: Hashable {
         case .mainBanner(let item): return .clear
         case .rankingBook(let item): return .clear
         case .readingStatus(let item): return item.color
-        case .allBooksPreview(let item): return item.color
-        case .randomViews(let item): return item.color
+        case .allBooksPreview(let item): return .clear
+        case .randomViews(let item): return .clear
         }
     }
 }

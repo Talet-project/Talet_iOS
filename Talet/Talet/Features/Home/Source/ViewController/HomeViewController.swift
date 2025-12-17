@@ -11,27 +11,9 @@ import RxCocoa
 import RxSwift
 import SnapKit
 
-enum mainBannerImageData: String, CaseIterable {
-    case first = "bannerPurple"
-    case second = "bannerGreen"
-    case third = "bannerBlue"
-    
-    var image: UIImage? {
-        return UIImage(named: self.rawValue)
-    }
-}
-
-enum Section: Int, CaseIterable {
-    case mainBanner
-    case popularRanking
-//    case readingStatus
-    case allBooksPreview
-    case randomViews
-}
-
 final class HomeViewController: UIViewController, UICollectionViewDelegate {
     private let disposeBag = DisposeBag()
-    private var dataSource: UICollectionViewDiffableDataSource<Section, HomeTabSection>!
+    private var dataSource: UICollectionViewDiffableDataSource<HomeSectionEntity, HomeTabSection>!
     private let viewModel: HomeViewModel
     
     private let bannerBackgroundView: UIView = {
@@ -147,7 +129,7 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
                 
                 self.dataSource.apply(snapshot, animatingDifferences: true) {
                     
-                    let indexPath = IndexPath(item: 1, section: Section.mainBanner.rawValue)
+                    let indexPath = IndexPath(item: 1, section: HomeSectionEntity.mainBanner.rawValue)
                     
                     if self.rootCollectionView.numberOfSections > indexPath.section,
                        self.rootCollectionView.numberOfItems(inSection: indexPath.section) > indexPath.item {
@@ -165,26 +147,9 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
             .disposed(by: disposeBag)
     }
     
-//    private func bindViewModel() {
-//        let input = HomeViewModelImpl.Input(loadHomeContent: Observable.just(()))
-//        let output = viewModel.transform(input: input)
-//        
-//        output.snapshot
-//            .drive(onNext: { [weak self] snapshot in
-//                print("✅ Snapshot applied, sections: \(snapshot.sectionIdentifiers)")
-//                let mainBannerItems = snapshot.itemIdentifiers(inSection: .mainBanner)
-//                print("mainBanner items count: \(mainBannerItems.count)")
-//                mainBannerItems.enumerated().forEach { idx, item in
-//                    print("snapshot mainBanner[\(idx)] → \(item)")
-//                }
-//                self?.dataSource.apply(snapshot, animatingDifferences: true)
-//            })
-//            .disposed(by: disposeBag)
-//    }
-    
     private func createLayout() -> UICollectionViewLayout {
         return UICollectionViewCompositionalLayout { sectionIndex, _ in
-            guard let section = Section(rawValue: sectionIndex) else {
+            guard let section = HomeSectionEntity(rawValue: sectionIndex) else {
                     return HomeLayoutBuilder.defaultSection()
                 }
             switch section {
@@ -203,10 +168,10 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
     }
     
     private func configureDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, HomeTabSection>(collectionView: rootCollectionView) {
+        dataSource = UICollectionViewDiffableDataSource<HomeSectionEntity, HomeTabSection>(collectionView: rootCollectionView) {
             collectionView, indexPath, itemIdentifier in
             
-            guard let section = Section(rawValue: indexPath.section) else {
+            guard let section = HomeSectionEntity(rawValue: indexPath.section) else {
                 fatalError("Invalid section at index \(indexPath.section)")
             }
             
@@ -226,7 +191,6 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
                 return cell
             case .popularRanking:
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RankingBookCell", for: indexPath) as! RankingBookCell
-//                cell.configure(with: itemIdentifier.color)
                 if case let .rankingBook(book) = itemIdentifier {
                     cell.configure(with: book.thumbnailURL)
                 }
@@ -235,12 +199,20 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
 //                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ReadingStatusCell", for: indexPath) as! ReadingStatusCell
 //                return cell
             case .allBooksPreview:
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "BookPreviewCell", for: indexPath) as! BookPreviewCell
-                cell.configure(with: itemIdentifier.color)
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RankingBookCell", for: indexPath) as! RankingBookCell
+                if case let .allBooksPreview(book) = itemIdentifier {
+                    cell.configure(with: book.thumbnailURL)
+                }
                 return cell
             case .randomViews:
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "BookPreviewCell", for: indexPath) as! BookPreviewCell
                 cell.configure(with: itemIdentifier.color)
+//                if case let .randomViews(book) = itemIdentifier {
+//                    cell.configure(
+//                        title: book.title,
+//                        subtitle: book.subtitle
+//                    )
+//                }
                 return cell
             }
         }
@@ -253,13 +225,20 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
                 for: indexPath
             ) as! HomeSectionHeaderView
             
-            if let section = Section(rawValue: indexPath.section) {
+            if let section = HomeSectionEntity(rawValue: indexPath.section) {
                 switch section {
                 case .mainBanner: return nil
                 case .popularRanking: header.configure(title: "친구들이 좋아하는 인기 전래동화")
 //                case .readingStatus: return nil
                 case .allBooksPreview: header.configure(title: "전체 책 보기")
-                case .randomViews: header.configure(title: "용기 → 용기있는 주인공 이야기")
+                case .randomViews:
+                    let items = self.dataSource.snapshot().itemIdentifiers(inSection: .randomViews)
+                    if let first = items.first, case let .randomViews(book) = first {
+                        let subtitle = book.subtitle
+                        header.configure(title: "\(book.title) → \(subtitle)")
+                    } else {
+                        header.configure(title: "오늘의 이야기")
+                    }
                 }
             }
             return header
@@ -271,17 +250,17 @@ extension HomeViewController: UIScrollViewDelegate {
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let visibleItems = rootCollectionView.indexPathsForVisibleItems.sorted()
         guard let currentIndexPath = visibleItems.first,
-              currentIndexPath.section == Section.mainBanner.rawValue else { return }
+              currentIndexPath.section == HomeSectionEntity.mainBanner.rawValue else { return }
         
         let totalCount = dataSource.snapshot().itemIdentifiers(inSection: .mainBanner).count
         print("✅ Scrolled to index: \(currentIndexPath.item), totalCount: \(totalCount)")
         if currentIndexPath.item == 0 {
             print("⬅️ Left edge reached → jump to \(totalCount - 2)")
-            let target = IndexPath(item: totalCount - 2, section: Section.mainBanner.rawValue)
+            let target = IndexPath(item: totalCount - 2, section: HomeSectionEntity.mainBanner.rawValue)
             rootCollectionView.scrollToItem(at: target, at: .centeredHorizontally, animated: false)
         } else if currentIndexPath.item == totalCount - 1 {
             print("➡️ Right edge reached → jump to 1")
-            let target = IndexPath(item: 1, section: Section.mainBanner.rawValue)
+            let target = IndexPath(item: 1, section: HomeSectionEntity.mainBanner.rawValue)
             rootCollectionView.scrollToItem(at: target, at: .centeredHorizontally, animated: false)
         }
     }

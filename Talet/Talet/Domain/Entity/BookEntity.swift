@@ -80,7 +80,7 @@ let dummyBooks: [MyBookEntity] = [
 let dummyRankingBooks: [BookDataEntity] = [
     BookDataEntity(id: UUID().uuidString, name: "선녀와 나무꾼", thumbnailURL: URL(string: "https://dummy1"), tags: ["용기","지혜"], plot: ""),
     BookDataEntity(id: UUID().uuidString, name: "선녀와 나무꾼", thumbnailURL: URL(string: "https://dummy2"), tags: ["용기"], plot: ""),
-    BookDataEntity(id: UUID().uuidString, name: "선녀와 나무꾼", thumbnailURL: URL(string: "https://dummy3"), tags: ["용기"], plot: ""),
-    BookDataEntity(id: UUID().uuidString, name: "선녀와 나무꾼", thumbnailURL: URL(string: "https://dummy4"), tags: ["용기"], plot: ""),
-    BookDataEntity(id: UUID().uuidString, name: "선녀와 나무꾼", thumbnailURL: URL(string: "https://dummy5"), tags: ["용기"], plot: ""),
+    BookDataEntity(id: UUID().uuidString, name: "선녀와 나무꾼", thumbnailURL: URL(string: "https://dummy3"), tags: ["선과 악"], plot: ""),
+    BookDataEntity(id: UUID().uuidString, name: "선녀와 나무꾼", thumbnailURL: URL(string: "https://dummy4"), tags: ["정의","성장"], plot: ""),
+    BookDataEntity(id: UUID().uuidString, name: "선녀와 나무꾼", thumbnailURL: URL(string: "https://dummy5"), tags: ["용기","가족애"], plot: ""),
 ]

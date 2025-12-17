@@ -25,9 +25,9 @@ final class HomeViewModelImpl: HomeViewModel {
     struct Input {
         let loadHomeContent: Observable<Void>
     }
-
+    
     struct Output {
-        let snapshot: Driver<NSDiffableDataSourceSnapshot<Section, HomeTabSection>>
+        let snapshot: Driver<NSDiffableDataSourceSnapshot<HomeSectionEntity, HomeTabSection>>
     }
     
     func transform(input: Input) -> Output {
@@ -41,84 +41,42 @@ final class HomeViewModelImpl: HomeViewModel {
                         return .just(dummyRankingBooks)
                     }
             }
-            .map { dummyRankingBooks -> NSDiffableDataSourceSnapshot<Section, HomeTabSection> in
-                var snapshot = NSDiffableDataSourceSnapshot<Section, HomeTabSection>()
+            .map { dummyRankingBooks -> NSDiffableDataSourceSnapshot<HomeSectionEntity, HomeTabSection> in
+                var snapshot = NSDiffableDataSourceSnapshot<HomeSectionEntity, HomeTabSection>()
                 
-                snapshot.appendSections(Section.allCases)
+                snapshot.appendSections(HomeSectionEntity.allCases)
                 
                 let bannerItems: [HomeTabSection] = mainBannerImageData.allCases.map { _ in
                     HomeTabSection.mainBanner(BannerToken())
                 }
                 snapshot.appendItems(bannerItems, toSection: .mainBanner)
                 
-                
                 let popularItems: [HomeTabSection] = dummyRankingBooks.map { book in
                     HomeTabSection.rankingBook(book)
                 }
                 snapshot.appendItems(popularItems, toSection: .popularRanking)
                 
+                let allBooksItems: [HomeTabSection] = dummyRankingBooks.map { book in
+                    HomeTabSection.allBooksPreview(book)
+                }
+                snapshot.appendItems(allBooksItems, toSection: .allBooksPreview)
+                
+                if let randomTagItems = TagEntity.allCases.randomElement() {
+                    let filtered = dummyRankingBooks.contains { book in
+                        book.tags.contains(randomTagItems.title)
+                    }
+                    
+                    if filtered {
+                        let randomItem = HomeTabSection.randomViews(randomTagItems)
+                        snapshot.appendItems([randomItem], toSection: .randomViews)
+                    } else {
+                        snapshot.appendItems([.randomViews(.courage)], toSection: .randomViews)
+                    }
+                }
                 return snapshot
             }
             .asDriver(onErrorDriveWith: .empty())
         
         return Output(snapshot: snapshotDriver)
     }
-    
-    //    func transform(input: Input) -> Output {
-    //        let snapshot = input.loadHomeContent
-    //            .map { _ in
-    //                var snapshot = NSDiffableDataSourceSnapshot<Section, HomeTabSection>()
-    //                Section.allCases.forEach { section in
-    //                    snapshot.appendSections([section])
-    //                    let dummyItems: [HomeTabSection] = Self.dummyItems(for: section)
-    //                    snapshot.appendItems(dummyItems, toSection: section)
-    //                }
-    //                return snapshot
-    //            }
-    //            .asDriver(onErrorDriveWith: .empty())
-    //
-    //        return Output(snapshot: snapshot)
-    //    }
-    
-    //    private static func dummyItems(for section: Section) -> [HomeTabSection] {
-    //        switch section {
-    //        case .mainBanner:
-    //            let imageCount = 3
-    //            let total = imageCount + 2
-    //            let placeholders = (0..<total).map { _ in HomeTabSection.mainBanner(BannerToken()) }
-    //            print("✅ mainBanner placeholders count: \(placeholders.count)")
-    //            return placeholders
-    //        case .popularRanking:
-    //            return [
-    //                .rankingBook(ColorItem(color: .orange)),
-    //                .rankingBook(ColorItem(color: .green)),
-    //                .rankingBook(ColorItem(color: .orange)),
-    //                .rankingBook(ColorItem(color: .green)),
-    //                .rankingBook(ColorItem(color: .orange)),
-    //                .rankingBook(ColorItem(color: .green)),
-    //            ]
-    ////        case .readingStatus:
-    ////            return [
-    ////                .readingStatus(ColorItem(color: .cyan)),
-    ////            ]
-    //        case .allBooksPreview:
-    //            return [
-    //                .allBooksPreview(ColorItem(color: .gray)),
-    //                .allBooksPreview(ColorItem(color: .lightGray)),
-    //                .allBooksPreview(ColorItem(color: .gray)),
-    //                .allBooksPreview(ColorItem(color: .lightGray)),
-    //                .allBooksPreview(ColorItem(color: .gray)),
-    //                .allBooksPreview(ColorItem(color: .lightGray)),
-    //            ]
-    //        case .randomViews:
-    //            return [
-    //                .randomViews(ColorItem(color: .systemPink)),
-    //                .randomViews(ColorItem(color: .systemTeal)),
-    //                .randomViews(ColorItem(color: .systemPink)),
-    //                .randomViews(ColorItem(color: .systemTeal)),
-    //                .randomViews(ColorItem(color: .systemPink)),
-    //                .randomViews(ColorItem(color: .systemTeal)),
-    //            ]
-    //        }
-    //    }
 }
