@@ -46,4 +46,43 @@ final class LoginRepositoryImpl: LoginRepositoryProtocol {
             )
         }
     }
+    
+    func validateAccessToken() -> Single<Void> {
+        guard let accessToken = tokenManager.accessToken else {
+            return .error(AuthError.noToken)
+        }
+        
+        return network.request(
+            endpoint: "/auth/validate",
+            method: .get,
+            body: nil,
+            headers: [
+                "Authorization": "Bearer \(accessToken)"
+            ],
+            responseType: EmptyResponseDTO.self
+        )
+        .map { _ in () } // <Void> 으로 변환
+    }
+    
+    func refreshAccessToken() -> Single<Void> {
+        guard let refreshToken = tokenManager.refreshToken else {
+            return .error(AuthError.noToken)
+        }
+        
+        return network.request(
+            endpoint: "/auth/refresh",
+            method: .post,
+            body: nil as String?,
+            headers: [
+                "Authorization": "Bearer \(refreshToken)"
+            ],
+            responseType: RefreshResponseDTO.self
+        )
+        .do(onSuccess: { [weak self] response in
+            guard let data = response.data else { return }
+            self?.tokenManager.accessToken = data.accessToken
+            self?.tokenManager.refreshToken = data.refreshToken
+        })
+        .map { _ in () }
+    }
 }

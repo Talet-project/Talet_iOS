@@ -10,6 +10,7 @@ import RxSwift
 
 protocol AuthUseCaseProtocol {
     func socialLogin(platform: LoginPlatform) -> Single<LoginResultEntity>
+    func autoLogin() -> Single<Void>
 }
 
 final class AuthUseCase: AuthUseCaseProtocol {
@@ -62,5 +63,39 @@ final class AuthUseCase: AuthUseCaseProtocol {
             }
                 
             )
+    }
+    
+    func autoLogin() -> Single<Void> {
+        guard let accessToken = tokenManager.accessToken else {
+            return .error(AuthError.noToken)
+        }
+        return repository.validateAccessToken()
+            .catch { [weak self] error in
+                guard let self else { return .error(error) }
+                
+                if case NetworkError.detailedError(let errorResponse) = error,
+                   let errorCode = errorResponse.code {
+                    switch errorCode {
+                    case "AUTH_UNAUTHORIZED":
+                        self.tokenManager.clear()
+                        return .error(error)
+                    case "AUTH_TOKEN_EXPIRED":
+                        return self.repository.refreshAccessToken()
+                            .catch { refreshError -> Single<Void> in
+                                self.tokenManager.clear()
+                                return .error(refreshError)
+                            }
+                    case "AUTH_TOKEN_INVALID":
+                        self.tokenManager.clear()
+                        return .error(error)
+                    case "AUTH_CLAIM_PARSING_FAILED":
+                        self.tokenManager.clear()
+                        return .error(error)
+                    default:
+                        return .error(error)
+                    }
+                }
+                return .error(error)
+            }
     }
 }

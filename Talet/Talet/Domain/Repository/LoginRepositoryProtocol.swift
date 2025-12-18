@@ -10,4 +10,6 @@ import RxSwift
 
 protocol LoginRepositoryProtocol {
     func socialLogin(socialToken: SocialTokenEntity) -> Single<LoginResultEntity>
+    func validateAccessToken() -> Single<Void>
+    func refreshAccessToken() -> Single<Void>
 }

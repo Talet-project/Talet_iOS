@@ -12,7 +12,7 @@ import RxSwift
 import Then
 
 
-protocol NetworkManagerProtocol {
+protocol NetworkManagerProtocol: AnyObject {
     func request<T:Decodable>(
         endpoint: String,
         method: HTTPMethod,
@@ -108,13 +108,17 @@ final class NetworkManager: NetworkManagerProtocol {
                         break
                         
                     case 401:
-                        single(.failure(NetworkError.unauthorized))
+                        if let error = try? self.decoder.decode(ErrorResponse.self, from: data) {
+                            single(.failure(NetworkError.detailedError(error)))
+                        } else {
+                            single(.failure(NetworkError.serverError(status)))
+                        }
                         return
                         
                     case 400...499, 500...599:
-                        if let serverError = try? self.decoder.decode(ErrorResponse.self, from: data) {
-                            let serverErrorMsg = serverError.message ?? "서버 에러 메시지가 없습니다."
-                            single(.failure(NetworkError.apiError(serverErrorMsg)))
+                        if let error = try? self.decoder.decode(ErrorResponse.self, from: data) {
+                            let errorMsg = error.message ?? "서버 에러 메시지가 없습니다."
+                            single(.failure(NetworkError.apiError(errorMsg)))
                         } else {
                             single(.failure(NetworkError.serverError(status)))
                         }
