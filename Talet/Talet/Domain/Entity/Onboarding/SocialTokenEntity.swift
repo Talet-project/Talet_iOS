@@ -6,6 +6,6 @@
 //
 
 struct SocialTokenEntity {
-    let socialToken: String
+    let socialToken: String // 추후 idToken으로 변경되어 서버로 전달
     let platform: String
 }

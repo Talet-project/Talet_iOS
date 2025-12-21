@@ -1,5 +1,5 @@
 //
-//  SetProfileViewController.swift
+//  SignUpViewController.swift
 //  Talet
 //
 //  Created by 김승희 on 7/18/25.
@@ -7,19 +7,29 @@
 
 import UIKit
 
+import RxCocoa
+import RxSwift
 import SnapKit
 import Then
 
 
-class SetProfileViewController: UIViewController {
+class SignUpViewController: UIViewController {
+    private let signUpToken: String
+    private let viewModel: SignUpViewModel
+    private let disposeBag = DisposeBag()
+    
     //MARK: Constants
-    private let languageOptions = AppLanguage.allCases
-        .filter { $0 != .korean }
-        .map { $0.rawValue }
+    private let language1Options = SignUpLanguage.allCases
+            .filter { $0 != .korean }
+            .map { $0.rawValue }
+    private let language2Options = ["없음"] + SignUpLanguage.allCases
+            .filter { $0 != .korean }
+            .map { $0.rawValue }
     private let yearOptions = (2010...2025).map { "\($0)년" }
     private let monthOptions = (1...12).map { "\($0)월" }
     
     //MARK: Properties
+    private let genderSelectRelay = BehaviorRelay<SignUpViewModel.Gender?>(value: nil)
     
     //MARK: UI Components
     private let scrollView = UIScrollView()
@@ -66,12 +76,12 @@ class SetProfileViewController: UIViewController {
     }
     
     private lazy var language1Picker = CustomPickerView().then {
-        $0.configure(options: languageOptions, placeholder: "언어를 선택해주세요")
+        $0.configure(options: language1Options, placeholder: "언어를 선택해주세요")
         $0.setContentHuggingPriority(.defaultLow, for: .horizontal)
     }
 
     private lazy var language2Picker = CustomPickerView().then {
-        $0.configure(options: languageOptions, placeholder: "언어를 선택해주세요")
+        $0.configure(options: language2Options, placeholder: "없음")
         $0.setContentHuggingPriority(.defaultLow, for: .horizontal)
     }
 
@@ -85,29 +95,30 @@ class SetProfileViewController: UIViewController {
         $0.text = "이름"
         $0.font = .pretendard(.body2)
         $0.textColor = .gray600
-        $0.setContentHuggingPriority(.required, for: .horizontal)
     }
 
-    private let infoNameTextField = UITextField().then {
+    private lazy var infoNameTextField = UITextField().then {
         $0.placeholder = "이름을 입력하세요"
-        $0.borderStyle = .roundedRect
+        $0.layer.cornerRadius = 6
+        $0.layer.borderWidth = 0
         $0.backgroundColor = .gray50
         $0.font = .nanum(.display1)
         $0.textColor = .gray300
-        $0.setContentHuggingPriority(.defaultLow, for: .horizontal)
-//        $0.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0))
-//        $0.leftViewMode = .always
+        $0.leftView = self.leftPaddingView
+        $0.leftViewMode = .always
     }
-
-    private lazy var YearPicker = CustomPickerView().then {
-        $0.configure(options: yearOptions, placeholder: "2019년")
-    }
+    
+    private let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 40))
     
     private let infoBirth = UILabel().then {
         $0.text = "생년월일"
         $0.font = .pretendard(.body2)
         $0.textColor = .gray600
         $0.setContentHuggingPriority(.required, for: .horizontal)
+    }
+    
+    private lazy var YearPicker = CustomPickerView().then {
+        $0.configure(options: yearOptions, placeholder: "2019년")
     }
     
     private lazy var MonthPicker = CustomPickerView().then {
@@ -148,16 +159,21 @@ class SetProfileViewController: UIViewController {
     }
     
     private let checkBoxLabel1 = CheckBoxLabelView(text: "전체 동의합니다")
-    private let checkBoxLabel2 = CheckBoxLabelView(text: "[필수] 이용약관 동의", linkURL: URL(string: "https://github.com/Talet-project/Talet_iOS"))
-    private let checkBoxLabel3 = CheckBoxLabelView(text: "[필수] 개인정보 수집 및 이용동의", linkURL: URL(string: "https://github.com/Talet-project/Talet_iOS"))
-    private let checkBoxLabel4 = CheckBoxLabelView(text: "[선택] 마케팅 동의", linkURL: URL(string: "https://github.com/Talet-project/Talet_iOS"))
+    private let checkBoxLabel2 = CheckBoxLabelView(text: "[필수] 이용약관 동의",
+                                                   linkURL: URL(string: "https://github.com/Talet-project/Talet_iOS"))
+    private let checkBoxLabel3 = CheckBoxLabelView(text: "[필수] 개인정보 수집 및 이용동의",
+                                                   linkURL: URL(string: "https://github.com/Talet-project/Talet_iOS"))
+    private let checkBoxLabel4 = CheckBoxLabelView(text: "[선택] 마케팅 동의",
+                                                   linkURL: URL(string: "https://github.com/Talet-project/Talet_iOS"))
     
     private let doneButton = CustomButton().then {
-        $0.configure(title: "완료", isEnabled: true)
+        $0.configure(title: "완료", isEnabled: false)
     }
     
     //MARK: init
-    init() {
+    init(signUpToken: String, viewModel: SignUpViewModel) {
+        self.signUpToken = signUpToken
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -171,15 +187,111 @@ class SetProfileViewController: UIViewController {
         infoNameTextField.delegate = self
         bind()
         setLayout()
-        
-        self.navigationController?.setNavigationBarHidden(true, animated: false)
+        setNavigationController()
+        setupGenderSelection()
     }
     
     //MARK: Methods
+    private func setNavigationController() {
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+    
+    private func setupGenderSelection() {
+        genderPickerBoy.rx.tap
+            .subscribe(with: self) { owner, _ in
+                owner.genderSelectRelay.accept(.boy)
+                owner.updateGenderUI(selected: .boy)
+            }
+            .disposed(by: disposeBag)
+        
+        genderPickerGirl.rx.tap
+            .subscribe(with: self) { owner, _ in
+                owner.genderSelectRelay.accept(.girl)
+                owner.updateGenderUI(selected: .girl)
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func updateGenderUI(selected: SignUpViewModel.Gender) {
+        switch selected {
+        case .boy:
+            genderPickerBoy.setSelected(true)
+            genderPickerGirl.setSelected(false)
+        case .girl:
+            genderPickerBoy.setSelected(false)
+            genderPickerGirl.setSelected(true)
+        }
+    }
     
     //MARK: Bindings
     private func bind() {
+        let input = SignUpViewModel.Input(
+            firstLanguageSelected: language1Picker.pickedValue.asObservable(),
+            secondLanguageSelected: language2Picker.pickedValue.asObservable(),
+            nameText: infoNameTextField.rx.text.orEmpty.asObservable(),
+            yearSelected: YearPicker.pickedValue.asObservable(),
+            monthSelected: MonthPicker.pickedValue.asObservable(),
+            genderSelected: genderSelectRelay.asObservable(),
+            termsAllTapped: checkBoxLabel1.checkBoxButton.rx.tap.asObservable(),
+            termsServiceTapped: checkBoxLabel2.checkBoxButton.rx.tap.asObservable(),
+            termsPrivacyTapped: checkBoxLabel3.checkBoxButton.rx.tap.asObservable(),
+            termsMarketingTapped: checkBoxLabel4.checkBoxButton.rx.tap.asObservable(),
+            completeButtonTapped: doneButton.rx.tap.asObservable()
+        )
         
+        let output = viewModel.transform(input: input)
+        
+        // tap event 전달
+        output.termsAllChecked
+            .drive(checkBoxLabel1.checkBoxButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        output.termsServiceChecked
+            .drive(checkBoxLabel2.checkBoxButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        output.termsPrivacyChecked
+            .drive(checkBoxLabel3.checkBoxButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        output.termsMarketingChecked
+            .drive(checkBoxLabel4.checkBoxButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        // 완료 버튼 활성화
+        output.isCompleteButtonEnabled
+            .drive(with: self) { owner, isEnabled in
+                owner.doneButton.configure(title: "완료", isEnabled: isEnabled)
+            }
+            .disposed(by: disposeBag)
+        
+        // 회원가입 성공
+        output.signUpSuccess
+            .emit(with: self) { owner, _ in
+                owner.navigateToMain()
+            }
+            .disposed(by: disposeBag)
+        
+        // 에러 메시지
+        output.errorMessage
+            .emit(with: self) { owner, message in
+                owner.showDefaultAlert(title: "회원가입 실패", message: message)
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    //MARK: Navigation
+    private func navigateToMain() {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first else { return }
+        
+        let mainVC = AppDIContainer.shared.makeMainTabBarController()
+        window.rootViewController = mainVC
+        
+        UIView.transition(with: window,
+                          duration: 0.3,
+                          options: .transitionCrossDissolve,
+                          animations: nil)
     }
     
     //MARK: Layout
@@ -301,7 +413,7 @@ class SetProfileViewController: UIViewController {
         }
 
         infoNameTextField.snp.makeConstraints {
-            $0.leading.equalTo(infoName.snp.trailing).offset(40)
+            $0.leading.equalTo(infoBirth.snp.trailing).offset(20)
             $0.centerY.equalTo(infoName)
             $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.height.equalTo(40)
@@ -347,7 +459,7 @@ class SetProfileViewController: UIViewController {
     }
 }
 
-extension SetProfileViewController: UITextFieldDelegate {
+extension SignUpViewController: UITextFieldDelegate {
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         return true
     }

@@ -7,19 +7,18 @@
 
 import UIKit
 
+import RxCocoa
+import RxSwift
 import SnapKit
 import Then
 
-
+//TODO: 화면 이동 및 비즈니스로직 분리
 class LoginViewController: UIViewController {
-    //MARK: Constants
     
-    //MARK: Properties
-    private let bannerList: [LoginBannerEntity] = [
-        LoginBannerEntity(image: .onboardingFirstImg, mainText: "테일릿에 오신 것을 환영해요!" , subText: "우리 아이가 한국 전래동화를 자연스럽게 이해하고,\n함께 이야기 나눌 수 있는 따뜻한 공간이에요."),
-        LoginBannerEntity(image: .onboardingSecondImg, mainText: "부모님의 목소리로 동화를 읽어주세요." , subText: "바빠도, 멀리 있어도 괜찮아요. AI가 엄마 아빠의 목소리를 저장해 언제든지 동화를 읽어줄 수 있어요."),
-        LoginBannerEntity(image: .onboardingThirdImg, mainText: "동화를 고르는 시간도 즐겁게!" , subText: "아이의 호기심을 자극하는 둘러보기 기능으로\n재미있는 동화를 쉽게 찾을 수 있어요.")
-    ]
+    private let viewModel: LoginViewModel
+    private let disposeBag = DisposeBag()
+    
+    private let banners = LoginBannerModel.onboardingBanners
     
     //MARK: UI Components
     private let onboardingStackView = UIStackView().then {
@@ -60,7 +59,8 @@ class LoginViewController: UIViewController {
         $0.setImage(.loginPreviewButton, for: .normal)
         // 임시 뷰넘김 처리
         $0.addAction(UIAction(handler: { [weak self] _ in
-            self?.navigationController?.pushViewController(SetProfileViewController(), animated: true)
+            guard let self else { return }
+            self.navigateToMain()
         }), for: .touchUpInside)
     }
     
@@ -77,7 +77,8 @@ class LoginViewController: UIViewController {
     }
     
     //MARK: init
-    init() {
+    init(loginViewModel: LoginViewModel) {
+        self.viewModel = loginViewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -99,11 +100,62 @@ class LoginViewController: UIViewController {
         collectionViewLayout.itemSize = loginBannerCollectionView.bounds.size
     }
     
-    //MARK: Methods
+    //MARK: Navigation
+    //TODO: 추후 Coordinator로 리팩터링
+    private func navigateToMain() {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first else { return }
+        
+        let mainVC = AppDIContainer.shared.makeMainTabBarController()
+        window.rootViewController = mainVC
+        
+        UIView.transition(with: window,
+                          duration: 0.3,
+                          options: .transitionCrossDissolve,
+                          animations: nil)
+    }
+    
+    private func navigateToSignUp(with signUpToken: String) {
+        let setProfileVC = SignUpViewController(
+            signUpToken: signUpToken,
+            viewModel: SignUpViewModel(
+                signUpToken: signUpToken,
+                signUpUseCase: SignUpUseCase(
+                    repository: SignUpRepositoryImpl(
+                        network: NetworkManager.shared,
+                        tokenManager: TokenManager.shared
+                    ), tokenManager: TokenManager.shared
+                )
+            )
+        )
+                                                                                                     
+        navigationController?.pushViewController(setProfileVC, animated: true)
+    }
     
     //MARK: Bindings
     private func bind() {
+        let input = LoginViewModel.Input(
+            appleLoginTapped: appleLoginButton.rx.tap.asObservable()
+        )
         
+        let output = viewModel.transform(input: input)
+        
+        output.loginSuccess
+            .emit(with: self) { owner, result in
+                switch result {
+                case .success:
+                    owner.navigateToMain()
+                case .needSignUp(let signUpToken):
+                    owner.navigateToSignUp(with: signUpToken)
+                }
+            }
+            .disposed(by: disposeBag)
+        
+        output.errorMessage
+            .emit(with: self) { owner, message in
+                owner.showDefaultAlert(title: "에러", message: "로그인에 실패했습니다.")
+            }
+            .disposed(by: disposeBag)
     }
     
     //MARK: Layout
@@ -119,7 +171,7 @@ class LoginViewController: UIViewController {
         
         [previewButton,
          appleLoginButton,
-         kakaoLoginButton,
+         //kakaoLoginButton,
          googleLoginButton
         ].forEach { buttonStack.addArrangedSubview($0) }
         
@@ -137,7 +189,7 @@ class LoginViewController: UIViewController {
         
         buttonStack.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.height.equalTo(216)
+            $0.height.equalTo(160)
             $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-20)
         }
     }
@@ -152,12 +204,12 @@ extension LoginViewController: UICollectionViewDelegate {
 
 extension LoginViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        bannerList.count
+        banners.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LoginBannerCell.id, for: indexPath) as! LoginBannerCell
-        cell.configure(banner: bannerList[indexPath.item])
+        cell.configure(banner: banners[indexPath.item])
         return cell
     }
     

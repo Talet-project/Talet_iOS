@@ -7,26 +7,63 @@
 
 import UIKit
 
+import RxSwift
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    private let disposeBag = DisposeBag()
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
-//            window.rootViewController = AppDIContainer.shared.makeMainTabBarController()
-        window.rootViewController = LoginViewController()
+        //            window.rootViewController = AppDIContainer.shared.makeMainTabBarController()
+//        let loginVC = AppDIContainer.shared.makeLoginViewController()
+//        let navigationController = UINavigationController(rootViewController: loginVC)
+//        window.rootViewController = navigationController
+//        window.makeKeyAndVisible()
         
-            self.window = window
-            window.makeKeyAndVisible()
-        window.makeKeyAndVisible()
-        
+        checkAutoLogin()
         self.window = window
         
         /// keyboard 포커싱 해제 메서드
         let tap = UITapGestureRecognizer(target: window, action: #selector(UIView.endEditing(_:)))
         tap.cancelsTouchesInView = false
         window.addGestureRecognizer(tap)
+        
+        
+        
+    }
+    
+    private func checkAutoLogin() {
+        let authUseCase = AppDIContainer.shared.resolve(AuthUseCaseProtocol.self)
+        
+        authUseCase.autoLogin()
+            .observe(on: MainScheduler.instance)
+            .subscribe(
+                onSuccess: { [weak self] _ in
+                    self?.showMainScreen()
+                },
+                onFailure: { [weak self] error in
+                    print("오토로그인 실패: \(error)")
+                    self?.showLoginScreen()
+                }
+            )
+            .disposed(by: disposeBag)
+    }
+    
+    // TODO: Coordinator으로 전환
+    private func showLoginScreen() {
+        let loginVC = AppDIContainer.shared.makeLoginViewController()
+        let navigationController = UINavigationController(rootViewController: loginVC)
+        window?.rootViewController = navigationController
+        window?.makeKeyAndVisible()
+    }
+    
+    private func showMainScreen() {
+        let mainVC = AppDIContainer.shared.makeMainTabBarController()
+        window?.rootViewController = mainVC
+        window?.makeKeyAndVisible()
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {

@@ -17,6 +17,7 @@ enum NetworkError: Error, LocalizedError {
     case serverError(Int)
     case apiError(String)
     case unknown
+    case detailedError(ErrorResponse)
     
     var errorDescription: String? {
         switch self {
@@ -36,6 +37,8 @@ enum NetworkError: Error, LocalizedError {
             return "api 에러 (\(errorMessage))"
         case .unknown:
             return "알 수 없는 에러"
+        case .detailedError(let errorResponse):
+            return errorResponse.message ?? "오류가 발생했습니다."
         }
     }
 }

@@ -22,17 +22,21 @@ class CustomPickerView: UITextField {
     private var options = [String]()
     
     //MARK: UI Components
-    private let pickerView = UIPickerView()
+    private lazy var pickerView = UIPickerView().then {
+        $0.delegate = self
+        $0.dataSource = self
+    }
     private let downIcon = UIImageView(image: UIImage.downIcon).then {
         $0.contentMode = .scaleAspectFit
         $0.frame = CGRect(x: 0, y: 0, width: 10, height: 40)
     }
-    private let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 40))
+    private let rightPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 40))
+    private let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 40))
     
     //MARK: init
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setup()
+        setUpTextField()
         setLayout()
     }
     
@@ -41,16 +45,17 @@ class CustomPickerView: UITextField {
     }
     
     //MARK: Methods
-    private func setup() {
-        pickerView.delegate = self
-        pickerView.dataSource = self
-        self.font = UIFont.nanum(.display1)
-        self.borderStyle = .roundedRect
+    private func setUpTextField() {
+        self.font = .nanum(.display1)
+        self.layer.cornerRadius = 6
+        self.layer.borderWidth = 0
         self.backgroundColor = .gray50
         self.textColor = .gray300
         self.inputView = pickerView
-        self.rightView = paddingView
+        self.rightView = rightPaddingView
         self.rightViewMode = .always
+        self.leftView = leftPaddingView
+        self.leftViewMode = .always
         self.tintColor = .clear
     }
     
@@ -70,7 +75,7 @@ class CustomPickerView: UITextField {
     
     //MARK: Layout
     private func setLayout() {
-        paddingView.addSubview(downIcon)
+        rightPaddingView.addSubview(downIcon)
     }
 }
 

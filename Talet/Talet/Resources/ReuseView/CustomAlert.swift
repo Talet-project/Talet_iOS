@@ -11,7 +11,15 @@ import SnapKit
 import Then
 
 
+//TODO: 이거 앱 전역에서 쓰는지 확인 필요
 final class CustomAlert: UIView {
+    
+    // MARK: - Style
+    enum Style {
+        case twoButton  // 취소 + 확인
+        case oneButton  // 확인만
+    }
+    
     // MARK: - UI Components
     private let dimmedView = UIView().then {
         $0.backgroundColor = .black.withAlphaComponent(0.4)
@@ -24,7 +32,7 @@ final class CustomAlert: UIView {
     }
     
     private let titleLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 16, weight: .medium)
+        $0.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.textColor = .black
         $0.textAlignment = .center
         $0.numberOfLines = 0
@@ -44,31 +52,35 @@ final class CustomAlert: UIView {
     }
     
     private let cancelButton = UIButton(type: .system).then {
-        $0.titleLabel?.font = .systemFont(ofSize: 15, weight: .medium)
-        $0.setTitleColor(.gray, for: .normal)
-        $0.backgroundColor = .systemGray6
-        $0.layer.cornerRadius = 8
+        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
+        $0.setTitleColor(.gray600, for: .normal)
+        $0.backgroundColor = .gray200
+        $0.layer.cornerRadius = 12
     }
     
     private let confirmButton = UIButton(type: .system).then {
-        $0.titleLabel?.font = .systemFont(ofSize: 15, weight: .medium)
+        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
         $0.setTitleColor(.white, for: .normal)
-        $0.backgroundColor = .systemOrange
-        $0.layer.cornerRadius = 8
+        $0.backgroundColor = .orange500
+        $0.layer.cornerRadius = 12
     }
     
     // MARK: - Properties
     private var onConfirm: (() -> Void)?
     private var onCancel: (() -> Void)?
+    private let style: Style
     
     // MARK: - Initializer
-    init(title: String,
-         message: String? = nil,
-         cancelButtonTitle: String = "취소",
-         confirmButtonTitle: String = "확인",
-         onCancel: (() -> Void)? = nil,
-         onConfirm: (() -> Void)? = nil) {
-        
+    init(
+        style: Style,
+        title: String,
+        message: String? = nil,
+        cancelButtonTitle: String = "취소",
+        confirmButtonTitle: String = "확인",
+        onCancel: (() -> Void)? = nil,
+        onConfirm: (() -> Void)? = nil
+    ) {
+        self.style = style
         super.init(frame: .zero)
         
         self.titleLabel.text = title
@@ -87,8 +99,7 @@ final class CustomAlert: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - func
-    
+    // MARK: - Setup
     private func setupActions() {
         cancelButton.addAction(UIAction { [weak self] _ in
             self?.onCancel?()
@@ -124,7 +135,7 @@ final class CustomAlert: UIView {
         }
     }
     
-    func dismiss() {
+    private func dismiss() {
         UIView.animate(withDuration: 0.2, animations: {
             self.alpha = 0
             self.containerView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
@@ -133,7 +144,7 @@ final class CustomAlert: UIView {
         })
     }
     
-    // MARK: - layout
+    // MARK: - Layout
     private func setupLayout() {
         addSubview(dimmedView)
         addSubview(containerView)
@@ -142,8 +153,13 @@ final class CustomAlert: UIView {
             containerView.addSubview($0)
         }
         
-        [cancelButton, confirmButton].forEach {
-            buttonStackView.addArrangedSubview($0)
+        // 스타일에 따라 버튼 추가
+        switch style {
+        case .twoButton:
+            buttonStackView.addArrangedSubview(cancelButton)
+            buttonStackView.addArrangedSubview(confirmButton)
+        case .oneButton:
+            buttonStackView.addArrangedSubview(confirmButton)
         }
         
         dimmedView.snp.makeConstraints {
@@ -156,24 +172,24 @@ final class CustomAlert: UIView {
         }
         
         titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(32)
-            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.top.equalToSuperview().offset(40)
+            $0.leading.trailing.equalToSuperview().inset(24)
         }
         
         messageLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(12)
-            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.leading.trailing.equalToSuperview().inset(24)
         }
         
         buttonStackView.snp.makeConstraints {
             if messageLabel.isHidden {
-                $0.top.equalTo(titleLabel.snp.bottom).offset(32)
+                $0.top.equalTo(titleLabel.snp.bottom).offset(40)
             } else {
-                $0.top.equalTo(messageLabel.snp.bottom).offset(24)
+                $0.top.equalTo(messageLabel.snp.bottom).offset(32)
             }
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.bottom.equalToSuperview().inset(20)
-            $0.height.equalTo(48)
+            $0.height.equalTo(56)
         }
     }
 }

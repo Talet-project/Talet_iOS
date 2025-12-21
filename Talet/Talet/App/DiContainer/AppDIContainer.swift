@@ -16,6 +16,7 @@ final class AppDIContainer {
         container = Container()
         
         assembler = Assembler([
+            LoginAssembly(),
             HomeDataSourceAssembly(),
             HomeRepositoryAssembly(),
             HomeUseCaseAssembly(),
@@ -35,6 +36,10 @@ final class AppDIContainer {
 }
 
 extension AppDIContainer {
+    func makeLoginViewController() -> LoginViewController {
+        return resolve(LoginViewController.self)
+    }
+    
     func makeMainTabBarController() -> MainTabBarController {
         let homeVC = resolve(HomeViewController.self)
         let exploreVC = resolve(ExploreViewController.self)
