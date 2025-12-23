@@ -12,7 +12,7 @@ enum HomeTabSection: Hashable {
     case rankingBook(BookDataEntity)
     case readingStatus(ColorItem)
     case allBooksPreview(BookDataEntity)
-    case randomViews(TagEntity)
+    case randomViews(BookDataEntity)
     
     
 //    var id: UUID {

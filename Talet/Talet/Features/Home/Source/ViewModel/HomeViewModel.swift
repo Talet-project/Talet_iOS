@@ -28,10 +28,11 @@ final class HomeViewModelImpl: HomeViewModel {
     
     struct Output {
         let snapshot: Driver<NSDiffableDataSourceSnapshot<HomeSectionEntity, HomeTabSection>>
+        let randomTag: Driver<TagEntity>
     }
     
     func transform(input: Input) -> Output {
-        let snapshotDriver = input.loadHomeContent
+        let content = input.loadHomeContent
             .flatMapLatest { [weak self] _ -> Observable<[BookDataEntity]> in
                 guard let self else { return .empty() }
                 return self.popularRankingBookUseCase.execute()
@@ -41,42 +42,58 @@ final class HomeViewModelImpl: HomeViewModel {
                         return .just(dummyRankingBooks)
                     }
             }
-            .map { dummyRankingBooks -> NSDiffableDataSourceSnapshot<HomeSectionEntity, HomeTabSection> in
+        
+            .map { books -> (all: [BookDataEntity], tag: TagEntity, filtered: [BookDataEntity]) in
+                let availableTags = TagEntity.allCases.filter { tag in
+                    books.contains { $0.tags.contains(tag.title) }
+                }
+
+                guard let pickedTag = availableTags.randomElement() else {
+                    return (books, .courage, [])
+                }
+
+                let filtered = books.filter { $0.tags.contains(pickedTag.title) }
+                return (books, pickedTag, filtered)
+            }
+            .share(replay: 1)
+
+        let snapshotDriver = content
+            .map { payload -> NSDiffableDataSourceSnapshot<HomeSectionEntity, HomeTabSection> in
                 var snapshot = NSDiffableDataSourceSnapshot<HomeSectionEntity, HomeTabSection>()
-                
+
                 snapshot.appendSections(HomeSectionEntity.allCases)
-                
+
                 let bannerItems: [HomeTabSection] = mainBannerImageData.allCases.map { _ in
                     HomeTabSection.mainBanner(BannerToken())
                 }
                 snapshot.appendItems(bannerItems, toSection: .mainBanner)
-                
-                let popularItems: [HomeTabSection] = dummyRankingBooks.map { book in
+
+                let popularItems: [HomeTabSection] = payload.all.map { book in
                     HomeTabSection.rankingBook(book)
                 }
                 snapshot.appendItems(popularItems, toSection: .popularRanking)
-                
-                let allBooksItems: [HomeTabSection] = dummyRankingBooks.map { book in
+
+                let allBooksItems: [HomeTabSection] = payload.all.map { book in
                     HomeTabSection.allBooksPreview(book)
                 }
                 snapshot.appendItems(allBooksItems, toSection: .allBooksPreview)
-                
-                if let randomTagItems = TagEntity.allCases.randomElement() {
-                    let filtered = dummyRankingBooks.contains { book in
-                        book.tags.contains(randomTagItems.title)
-                    }
-                    
-                    if filtered {
-                        let randomItem = HomeTabSection.randomViews(randomTagItems)
-                        snapshot.appendItems([randomItem], toSection: .randomViews)
-                    } else {
-                        snapshot.appendItems([.randomViews(.courage)], toSection: .randomViews)
-                    }
+
+                let randomItems: [HomeTabSection] = payload.filtered.map { book in
+                    HomeTabSection.randomViews(book)
                 }
+                snapshot.appendItems(randomItems, toSection: .randomViews)
+
                 return snapshot
             }
             .asDriver(onErrorDriveWith: .empty())
-        
-        return Output(snapshot: snapshotDriver)
+
+        let randomTagDriver = content
+            .map { $0.tag }
+            .asDriver(onErrorDriveWith: .empty())
+
+        return Output(
+            snapshot: snapshotDriver,
+            randomTag: randomTagDriver
+        )
     }
 }

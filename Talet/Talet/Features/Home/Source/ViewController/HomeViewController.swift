@@ -15,6 +15,7 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
     private let disposeBag = DisposeBag()
     private var dataSource: UICollectionViewDiffableDataSource<HomeSectionEntity, HomeTabSection>!
     private let viewModel: HomeViewModel
+    private var randomHeaderTitle: String = "오늘의 이야기"
     
     private let bannerBackgroundView: UIView = {
         let view = UIView()
@@ -123,6 +124,13 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
         let input = HomeViewModelImpl.Input(loadHomeContent: Observable.just(()))
         let output = viewModel.transform(input: input)
         
+        output.randomTag
+            .drive(onNext: { [weak self] tag in
+                guard let self else { return }
+                self.randomHeaderTitle = "\(tag.title) → \(tag.subtitle)"
+            })
+            .disposed(by: disposeBag)
+        
         output.snapshot
             .drive(onNext: { [weak self] snapshot in
                 guard let self else { return }
@@ -205,14 +213,10 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
                 }
                 return cell
             case .randomViews:
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "BookPreviewCell", for: indexPath) as! BookPreviewCell
-                cell.configure(with: itemIdentifier.color)
-//                if case let .randomViews(book) = itemIdentifier {
-//                    cell.configure(
-//                        title: book.title,
-//                        subtitle: book.subtitle
-//                    )
-//                }
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RankingBookCell", for: indexPath) as! RankingBookCell
+                if case let .randomViews(book) = itemIdentifier {
+                    cell.configure(with: book.thumbnailURL)
+                }
                 return cell
             }
         }
@@ -232,13 +236,7 @@ final class HomeViewController: UIViewController, UICollectionViewDelegate {
 //                case .readingStatus: return nil
                 case .allBooksPreview: header.configure(title: "전체 책 보기")
                 case .randomViews:
-                    let items = self.dataSource.snapshot().itemIdentifiers(inSection: .randomViews)
-                    if let first = items.first, case let .randomViews(book) = first {
-                        let subtitle = book.subtitle
-                        header.configure(title: "\(book.title) → \(subtitle)")
-                    } else {
-                        header.configure(title: "오늘의 이야기")
-                    }
+                    header.configure(title: self.randomHeaderTitle)
                 }
             }
             return header
