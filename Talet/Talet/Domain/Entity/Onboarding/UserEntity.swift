@@ -9,5 +9,6 @@ struct UserEntity {
     let name: String
     let birth: String
     let gender: String
+    let profileImage: String?
     let languages: [LanguageEntity]
 }

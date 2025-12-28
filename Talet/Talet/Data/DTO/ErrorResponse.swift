@@ -11,5 +11,3 @@ struct ErrorResponse: Decodable {
     let message: String?
     let details: [String]?
 }
-
-struct EmptyData: Decodable { }

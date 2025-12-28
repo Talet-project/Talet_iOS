@@ -22,6 +22,7 @@ final class AppDIContainer {
             HomeUseCaseAssembly(),
             HomeAssembly(),
             ExploreAssembly(),
+            MypageAssembly()
             
         ], container: container)
     }
@@ -43,7 +44,7 @@ extension AppDIContainer {
     func makeMainTabBarController() -> MainTabBarController {
         let homeVC = resolve(HomeViewController.self)
         let exploreVC = resolve(ExploreViewController.self)
-        let myPageVC = MypageViewController()
+        let myPageVC = resolve(MypageViewController.self)
         
 //        let exploreVC = resolve(ExploreTabViewController.self)
 //        let myPageVC = resolve(MyPageViewController.self)

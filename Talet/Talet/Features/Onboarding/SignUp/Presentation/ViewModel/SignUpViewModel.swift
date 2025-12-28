@@ -166,6 +166,7 @@ final class SignUpViewModel {
                     name: name,
                     birth: birthDate,
                     gender: genderValue.rawValue,
+                    profileImage: nil,
                     languages: languages
                 )
                 

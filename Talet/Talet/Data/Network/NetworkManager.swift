@@ -106,7 +106,7 @@ final class NetworkManager: NetworkManagerProtocol {
                         break
                         
                     case 401:
-                        if let data = try? self.decoder.decode(BaseResponse<EmptyData>.self, from: data),
+                        if let data = try? self.decoder.decode(BaseResponse<EmptyResponse>.self, from: data),
                            let error = data.error {
                                 single(.failure(NetworkError.detailedError(error)))
                             }
@@ -116,7 +116,7 @@ final class NetworkManager: NetworkManagerProtocol {
                         return
                         
                     case 400...499, 500...599:
-                        if let data = try? self.decoder.decode(BaseResponse<EmptyData>.self, from: data),
+                        if let data = try? self.decoder.decode(BaseResponse<EmptyResponse>.self, from: data),
                            let error = data.error {
                             let errorMsg = error.message ?? "서버 에러 메시지가 없습니다."
                             single(.failure(NetworkError.apiError(errorMsg)))

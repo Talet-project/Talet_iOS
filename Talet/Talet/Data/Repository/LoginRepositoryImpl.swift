@@ -59,7 +59,7 @@ final class LoginRepositoryImpl: LoginRepositoryProtocol {
             headers: [
                 "Authorization": "Bearer \(accessToken)"
             ],
-            responseType: EmptyResponseDTO.self
+            responseType: EmptyResponse.self
         )
         .map { _ in () } // <Void> 으로 변환
     }
