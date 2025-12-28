@@ -49,7 +49,6 @@ final class NetworkManager: NetworkManagerProtocol {
         responseType: T.Type
     ) -> Single<T> {
         return Single.create { single in
-            
             //MARK: URL 생성
             let url = self.baseURL + endpoint
             
@@ -79,7 +78,6 @@ final class NetworkManager: NetworkManagerProtocol {
                 encoding: method == .get ? URLEncoding.default : JSONEncoding.default,
                 headers: httpHeaders
             )
-                .validate(statusCode: 200...599)
                 .responseData { response in
                     if let error = response.error {
                         single(.failure(error))
@@ -108,15 +106,18 @@ final class NetworkManager: NetworkManagerProtocol {
                         break
                         
                     case 401:
-                        if let error = try? self.decoder.decode(ErrorResponse.self, from: data) {
-                            single(.failure(NetworkError.detailedError(error)))
-                        } else {
+                        if let data = try? self.decoder.decode(BaseResponse<EmptyData>.self, from: data),
+                           let error = data.error {
+                                single(.failure(NetworkError.detailedError(error)))
+                            }
+                        else {
                             single(.failure(NetworkError.serverError(status)))
                         }
                         return
                         
                     case 400...499, 500...599:
-                        if let error = try? self.decoder.decode(ErrorResponse.self, from: data) {
+                        if let data = try? self.decoder.decode(BaseResponse<EmptyData>.self, from: data),
+                           let error = data.error {
                             let errorMsg = error.message ?? "서버 에러 메시지가 없습니다."
                             single(.failure(NetworkError.apiError(errorMsg)))
                         } else {

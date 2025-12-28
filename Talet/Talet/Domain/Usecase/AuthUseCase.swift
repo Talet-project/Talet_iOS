@@ -66,36 +66,34 @@ final class AuthUseCase: AuthUseCaseProtocol {
     }
     
     func autoLogin() -> Single<Void> {
-        guard let accessToken = tokenManager.accessToken else {
-            return .error(AuthError.noToken)
-        }
-        return repository.validateAccessToken()
-            .catch { [weak self] error in
-                guard let self else { return .error(error) }
-                
-                if case NetworkError.detailedError(let errorResponse) = error,
-                   let errorCode = errorResponse.code {
-                    switch errorCode {
-                    case "AUTH_UNAUTHORIZED":
-                        self.tokenManager.clear()
+        return Single.deferred { [weak self] in
+            guard let self else {
+                return .error(AuthError.noToken)
+            }
+
+            return self.repository.validateAccessToken()
+                .catch { error in
+                    guard case NetworkError.detailedError(let errorResponse) = error,
+                          let code = errorResponse.code else {
                         return .error(error)
+                    }
+
+                    switch code {
                     case "AUTH_TOKEN_EXPIRED":
                         return self.repository.refreshAccessToken()
-                            .catch { refreshError -> Single<Void> in
-                                self.tokenManager.clear()
-                                return .error(refreshError)
-                            }
-                    case "AUTH_TOKEN_INVALID":
+                            .flatMap { self.repository.validateAccessToken() }
+
+                    case "AUTH_TOKEN_INVALID",
+                         "AUTH_CLAIM_PARSING_FAILED",
+                         "AUTH_UNAUTHORIZED":
                         self.tokenManager.clear()
                         return .error(error)
-                    case "AUTH_CLAIM_PARSING_FAILED":
-                        self.tokenManager.clear()
-                        return .error(error)
+
                     default:
                         return .error(error)
                     }
                 }
-                return .error(error)
-            }
+        }
     }
+    
 }

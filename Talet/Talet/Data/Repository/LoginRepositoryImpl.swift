@@ -65,6 +65,7 @@ final class LoginRepositoryImpl: LoginRepositoryProtocol {
     }
     
     func refreshAccessToken() -> Single<Void> {
+        print("refreshAccessToken called")
         guard let refreshToken = tokenManager.refreshToken else {
             return .error(AuthError.noToken)
         }
@@ -79,6 +80,7 @@ final class LoginRepositoryImpl: LoginRepositoryProtocol {
             responseType: RefreshResponseDTO.self
         )
         .do(onSuccess: { [weak self] response in
+            print("받아오는데까지 갔음")
             guard let data = response.data else { return }
             self?.tokenManager.accessToken = data.accessToken
             self?.tokenManager.refreshToken = data.refreshToken

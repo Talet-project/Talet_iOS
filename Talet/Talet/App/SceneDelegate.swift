@@ -30,9 +30,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let tap = UITapGestureRecognizer(target: window, action: #selector(UIView.endEditing(_:)))
         tap.cancelsTouchesInView = false
         window.addGestureRecognizer(tap)
-        
-        
-        
     }
     
     private func checkAutoLogin() {
@@ -44,8 +41,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 onSuccess: { [weak self] _ in
                     self?.showMainScreen()
                 },
-                onFailure: { [weak self] error in
-                    print("오토로그인 실패: \(error)")
+                onFailure: { [weak self] _ in
                     self?.showLoginScreen()
                 }
             )
