@@ -168,15 +168,16 @@ class MypageViewController: UIViewController {
             .drive(profileName.rx.text)
             .disposed(by: disposeBag)
         
-        output.profileImageUrl
-            .drive(onNext: { [weak self] urlString in
-                guard
-                    let self,
-                    let urlString,
-                    let url = URL(string: urlString)
-                else { return }
+        output.profileImage
+            .drive(onNext: { [weak self] profileImage in
+                guard let self else { return }
                 
-                self.profileButton.kf.setImage(with: url, for: .normal)
+                if let urlString = profileImage.url,
+                   let url = URL(string: urlString) {
+                    self.profileButton.kf.setImage(with: url, for: .normal)
+                } else {
+                    self.profileButton.setImage(profileImage.fallback, for: .normal)
+                }
             })
             .disposed(by: disposeBag)
         

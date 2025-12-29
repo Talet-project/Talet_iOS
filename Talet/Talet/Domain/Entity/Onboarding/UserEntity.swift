@@ -8,7 +8,7 @@
 struct UserEntity {
     let name: String
     let birth: String
-    let gender: String
+    let gender: GenderEntity
     let profileImage: String?
     let languages: [LanguageEntity]
 }

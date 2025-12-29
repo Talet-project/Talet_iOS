@@ -22,7 +22,7 @@ class MypageViewModel {
     struct Output {
         let profileName: Driver<String>
         let profileGender: Driver<String>
-        let profileImageUrl: Driver<String?>
+        let profileImage: Driver<ProfileImage>
         let errorMessage: Signal<String>
 //        let voices: Driver<[VoiceEntity]>
 //        let books: Driver<[MyBookEntity]>
@@ -49,6 +49,15 @@ class MypageViewModel {
         let user = result
             .compactMap { $0.element }
         
+        let profileImage = user
+            .map { user in
+                ProfileImage(
+                    url: user.profileImage,
+                    fallback: user.gender.defaultProfileImage
+                )
+            }
+            .asDriver(onErrorJustReturn: ProfileImage(url: nil, fallback: .profileBoy))
+        
         let errorMessage = result
             .compactMap { $0.error }
             .map { error -> String in
@@ -69,11 +78,15 @@ class MypageViewModel {
                 .map { "\($0.name) | \($0.gender)" }
                 .asDriver(onErrorJustReturn: ""),
             
-            profileImageUrl: user
-                .map { $0.profileImage }
-                .asDriver(onErrorJustReturn: nil),
+            profileImage: profileImage,
             
             errorMessage: errorMessage
         )
     }
+}
+
+
+struct ProfileImage {
+    let url: String?
+    let fallback: UIImage
 }
