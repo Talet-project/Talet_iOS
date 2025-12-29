@@ -57,9 +57,13 @@ class MypageSettingViewController: UIViewController {
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
         
-        let backButton = UIButton().then {
-            $0.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-            $0.tintColor = .black
+        let backButton = UIButton(type: .system).then {
+            var config = UIButton.Configuration.plain()
+            config.image = UIImage(systemName: "chevron.left")
+            config.baseForegroundColor = .black
+            config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 10)
+            
+            $0.configuration = config
             $0.addAction(UIAction(handler: { [weak self] _ in
                 self?.navigationController?.popViewController(animated: true)
             }), for: .touchUpInside)
