@@ -110,7 +110,7 @@ class MypageViewController: UIViewController {
         let rightButton = UIButton().then {
             $0.setImage(.mypageSettingIcon, for: .normal)
             $0.addAction(UIAction(handler: { [weak self] _ in
-                let nextVC = MypageSettingViewController()
+                let nextVC = AppDIContainer.shared.makeMypageSettingViewController()
                 self?.navigationController?.pushViewController(nextVC, animated: true)
             }), for: .touchUpInside)
         }
