@@ -86,6 +86,10 @@ class MypageViewController: UIViewController {
         setLayout()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        setNavigationBar()
+    }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         profileButton.layer.cornerRadius = profileButton.frame.width * 0.5
@@ -112,6 +116,11 @@ class MypageViewController: UIViewController {
         }
         let rightItem = UIBarButtonItem(customView: rightButton)
         self.navigationItem.rightBarButtonItem = rightItem
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
     }
     
     //TODO: 추후 Coordinator 연결로 화면이동 로직 분리    

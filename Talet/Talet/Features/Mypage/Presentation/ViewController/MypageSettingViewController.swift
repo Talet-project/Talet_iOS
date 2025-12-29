@@ -39,6 +39,7 @@ class MypageSettingViewController: UIViewController {
     //MARK: View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setNavigationBar()
         setLayout()
         setupTableView()
@@ -122,6 +123,8 @@ extension MypageSettingViewController: UITableViewDelegate, UITableViewDataSourc
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
         switch indexPath.row {
         case 0:
             print("서비스 이용약관 선택")
