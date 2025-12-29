@@ -14,9 +14,17 @@ struct SignUpRequestDTO: Encodable {
     init(from entity: UserEntity) {
         self.name = entity.name
         self.birthDate = entity.birth
-        self.gender = entity.gender
+        self.gender = Self.toAPIFormat(entity.gender)
         self.nativeLanguages = entity.languages.map { language in
             Self.toAPIFormat(language)
+        }
+    }
+    
+    // TODO: 여러곳에서 똑같이 사용된다면 분리를 할지 고민해봐야 할 것 같음
+    private static func toAPIFormat(_ gender: GenderEntity) -> String {
+        switch gender {
+        case .girl: return "여성"
+        case .boy: return "남성"
         }
     }
     
@@ -29,6 +37,29 @@ struct SignUpRequestDTO: Encodable {
         case .japanese: return "JAPANESE"
         case .vietnamese: return "VIETNAMESE"
         case .thai: return "THAI"
+        }
+    }
+}
+
+extension UserInfoDataResponseDTO {
+    func toEntity() throws -> UserEntity {
+        UserEntity(
+            name: nickname,
+            birth: birthday,
+            gender: try Self.toGenderEntity(gender),
+            profileImage: profileImage,
+            languages: languages.compactMap { LanguageEntity(rawValue: $0) }
+        )
+    }
+
+    private static func toGenderEntity(_ value: String) throws -> GenderEntity {
+        switch value {
+        case "여성":
+            return .girl
+        case "남성":
+            return .boy
+        default:
+            throw NetworkError.decodingError
         }
     }
 }

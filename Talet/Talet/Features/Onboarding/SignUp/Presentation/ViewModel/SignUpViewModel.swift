@@ -19,7 +19,7 @@ final class SignUpViewModel {
         let nameText: Observable<String>
         let yearSelected: Observable<String>
         let monthSelected: Observable<String>
-        let genderSelected: Observable<Gender?>
+        let genderSelected: Observable<GenderEntity?>
         let termsAllTapped: Observable<Void>
         let termsServiceTapped: Observable<Void>
         let termsPrivacyTapped: Observable<Void>
@@ -35,11 +35,6 @@ final class SignUpViewModel {
                 let termsMarketingChecked: Driver<Bool>
                 let signUpSuccess: Signal<Void>
                 let errorMessage: Signal<String>
-    }
-    
-    enum Gender: String {
-        case boy = "남성"
-        case girl = "여성"
     }
     
     private let signUpToken: String
@@ -165,7 +160,7 @@ final class SignUpViewModel {
                 let request = UserEntity(
                     name: name,
                     birth: birthDate,
-                    gender: genderValue.rawValue,
+                    gender: genderValue,
                     profileImage: nil,
                     languages: languages
                 )

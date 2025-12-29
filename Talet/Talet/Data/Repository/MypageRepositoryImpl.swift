@@ -37,15 +37,7 @@ class MypageRepositoryImpl: MypageRepositoryProtocol {
                 }
                 return .error(NetworkError.unknown)
             }
-            return .just(
-                UserEntity(
-                    name: data.nickname,
-                    birth: data.birthday,
-                    gender: data.gender,
-                    profileImage: data.profileImage,
-                    languages: data.languages.compactMap { LanguageEntity(rawValue: $0) }
-                )
-            )
+            return .just(try data.toEntity())
         }
     }
 }

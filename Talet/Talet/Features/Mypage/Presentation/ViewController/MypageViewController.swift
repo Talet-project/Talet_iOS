@@ -32,6 +32,7 @@ class MypageViewController: UIViewController {
     private let profileIconView = UIView()
     
     private lazy var profileButton = UIButton().then {
+        $0.setImage(.placeholder, for: .normal)
         $0.clipsToBounds = true
         $0.layer.borderWidth = 2
         $0.layer.borderColor = UIColor.orange400.cgColor
@@ -133,7 +134,7 @@ class MypageViewController: UIViewController {
             .drive(profileName.rx.text)
             .disposed(by: disposeBag)
         
-        output.profileGender
+        output.profileInfoText
             .drive(profileGender.rx.text)
             .disposed(by: disposeBag)
         
@@ -160,7 +161,7 @@ class MypageViewController: UIViewController {
         //                self?.moveToVoiceCloning()
         //            }).disposed(by: disposeBag)
         
-        output.profileGender
+        output.profileInfoText
             .drive(profileGender.rx.text)
             .disposed(by: disposeBag)
         
@@ -174,7 +175,11 @@ class MypageViewController: UIViewController {
                 
                 if let urlString = profileImage.url,
                    let url = URL(string: urlString) {
-                    self.profileButton.kf.setImage(with: url, for: .normal)
+                    self.profileButton.kf.setImage(
+                        with: url,
+                        for: .normal,
+                        placeholder: UIImage.placeholder
+                    )
                 } else {
                     self.profileButton.setImage(profileImage.fallback, for: .normal)
                 }

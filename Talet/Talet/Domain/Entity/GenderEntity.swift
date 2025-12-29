@@ -6,6 +6,6 @@
 //
 
 enum GenderEntity {
-    case female
-    case male
+    case girl
+    case boy
 }

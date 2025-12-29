@@ -21,7 +21,7 @@ class MypageViewModel {
 
     struct Output {
         let profileName: Driver<String>
-        let profileGender: Driver<String>
+        let profileInfoText: Driver<String>
         let profileImage: Driver<ProfileImage>
         let errorMessage: Signal<String>
 //        let voices: Driver<[VoiceEntity]>
@@ -49,6 +49,22 @@ class MypageViewModel {
         let user = result
             .compactMap { $0.element }
         
+        let ageText = user
+            .map { user in
+                guard let age = self.calculateAge(from: user.birth) else {
+                    return ""
+                }
+                return "\(age)세"
+            }
+            .share()
+        
+        let profileInfoText = Observable
+            .combineLatest(user, ageText)
+            .map { user, ageText in
+                "\(ageText) | \(user.gender.displayText)"
+            }
+            .asDriver(onErrorJustReturn: "")
+        
         let profileImage = user
             .map { user in
                 ProfileImage(
@@ -74,14 +90,27 @@ class MypageViewModel {
                 .map { $0.name }
                 .asDriver(onErrorJustReturn: ""),
             
-            profileGender: user
-                .map { "\($0.name) | \($0.gender)" }
-                .asDriver(onErrorJustReturn: ""),
+            profileInfoText: profileInfoText,
             
             profileImage: profileImage,
             
             errorMessage: errorMessage
         )
+    }
+    
+    private func calculateAge(from birth: String) -> Int? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM"
+
+        guard let birthDate = formatter.date(from: birth) else { return nil }
+
+        let calendar = Calendar.current
+        let now = Date()
+
+        let birthYear = calendar.component(.year, from: birthDate)
+        let currentYear = calendar.component(.year, from: now)
+
+        return currentYear - birthYear + 1
     }
 }
 

@@ -11,18 +11,18 @@ import UIKit
 extension GenderEntity {
     var displayText: String {
         switch self {
-        case .female:
+        case .girl:
             return "여아"
-        case .male:
+        case .boy:
             return "남아"
         }
     }
     
     var defaultProfileImage: UIImage {
         switch self {
-        case .female:
+        case .girl:
             return .profileGirl
-        case .male:
+        case .boy:
             return .profileBoy
         }
     }
