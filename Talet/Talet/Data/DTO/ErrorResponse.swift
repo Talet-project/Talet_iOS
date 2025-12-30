@@ -7,7 +7,7 @@
 
 struct ErrorResponse: Decodable {
     let code: String?
-    let status: Int?
+    let status: String?
     let message: String?
     let details: [String]?
 }

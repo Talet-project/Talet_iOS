@@ -82,17 +82,13 @@ final class AuthUseCase: AuthUseCaseProtocol {
                     }
                     
                     switch code {
-                    case "AUTH_TOKEN_EXPIRED":
+                    case "0203":
+                        print("0203 called")
                         return self.repository.refreshAccessToken()
                             .flatMap { self.repository.validateAccessToken() }
                         
-                    case "AUTH_TOKEN_INVALID",
-                        "AUTH_CLAIM_PARSING_FAILED",
-                        "AUTH_UNAUTHORIZED":
-                        self.tokenManager.clear()
-                        return .error(error)
-                        
                     default:
+                        self.tokenManager.clear()
                         return .error(error)
                     }
                 }

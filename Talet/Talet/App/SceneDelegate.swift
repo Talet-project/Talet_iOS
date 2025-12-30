@@ -33,7 +33,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.addGestureRecognizer(tap)
     }
     
-    private func checkAutoLogin() {        
+    private func checkAutoLogin() {
+        let accessToken = TokenManager.shared.accessToken
+        let refreshToken = TokenManager.shared.refreshToken
+        print("accessToken: \(String(describing: accessToken)), refreshToken: \(String(describing: refreshToken))")
+        
         let authUseCase = AppDIContainer.shared.resolve(AuthUseCaseProtocol.self)
         
         authUseCase.autoLogin()

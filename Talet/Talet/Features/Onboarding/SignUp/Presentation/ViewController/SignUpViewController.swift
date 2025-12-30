@@ -199,7 +199,7 @@ class SignUpViewController: UIViewController {
     private func setupGenderSelection() {
         genderPickerBoy.rx.tap
             .subscribe(with: self) { owner, _ in
-                owner.genderSelectRelay.accept(.girl)
+                owner.genderSelectRelay.accept(.boy)
                 owner.updateGenderUI(selected: .boy)
             }
             .disposed(by: disposeBag)

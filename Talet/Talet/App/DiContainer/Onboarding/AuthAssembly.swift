@@ -63,7 +63,7 @@ final class AuthAssembly: Assembly {
         }
         
         container.register(SignUpViewController.self) { (resolver, SignUpToken: String) in
-            let viewModel = resolver.resolve(SignUpViewModel.self)!
+            let viewModel = resolver.resolve(SignUpViewModel.self, argument: SignUpToken)!
             return SignUpViewController(signUpToken: SignUpToken, viewModel: viewModel)
         }
     }
