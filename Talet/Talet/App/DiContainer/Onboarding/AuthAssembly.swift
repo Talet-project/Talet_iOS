@@ -8,10 +8,11 @@
 import Swinject
 
 
-final class LoginAssembly: Assembly {
+final class AuthAssembly: Assembly {
     
     func assemble(container: Container) {
         
+        //MARK: - Service
         container.register(TokenManagerProtocol.self) { _ in
             TokenManager.shared
         }.inObjectScope(.container)
@@ -24,16 +25,18 @@ final class LoginAssembly: Assembly {
             AppleLoginService()
         }
         
-        container.register(LoginRepositoryProtocol.self) { resolver in
-            return LoginRepositoryImpl(
+        //MARK: - Repository
+        container.register(AuthRepositoryProtocol.self) { resolver in
+            return AuthRepositoryImpl(
                 network: resolver.resolve(NetworkManagerProtocol.self)!,
                 tokenManager: resolver.resolve(TokenManagerProtocol.self)!
             )
         }
         
+        //MARK: - UseCase
         container.register(AuthUseCaseProtocol.self) { resolver in
             let appleService = resolver.resolve(AppleLoginService.self)!
-            let repository = resolver.resolve(LoginRepositoryProtocol.self)!
+            let repository = resolver.resolve(AuthRepositoryProtocol.self)!
             let tokenManager = resolver.resolve(TokenManagerProtocol.self)!
             return AuthUseCase(
                 appleService: appleService,
@@ -42,14 +45,26 @@ final class LoginAssembly: Assembly {
             )
         }
         
+        //MARK: - ViewModel
         container.register(LoginViewModel.self) { resolver in
             let authUseCase = resolver.resolve(AuthUseCaseProtocol.self)!
             return LoginViewModel(loginUseCase: authUseCase)
         }
         
+        container.register(SignUpViewModel.self) { (resolver, signUpToken: String) in
+            let authUseCase = resolver.resolve(AuthUseCaseProtocol.self)!
+            return SignUpViewModel(signUpToken: signUpToken, useCase: authUseCase)
+        }
+        
+        //MARK: - ViewController
         container.register(LoginViewController.self) { resolver in
             let viewModel = resolver.resolve(LoginViewModel.self)!
             return LoginViewController(loginViewModel: viewModel)
+        }
+        
+        container.register(SignUpViewController.self) { (resolver, SignUpToken: String) in
+            let viewModel = resolver.resolve(SignUpViewModel.self)!
+            return SignUpViewController(signUpToken: SignUpToken, viewModel: viewModel)
         }
     }
 }

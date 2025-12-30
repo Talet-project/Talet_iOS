@@ -38,12 +38,12 @@ final class SignUpViewModel {
     }
     
     private let signUpToken: String
-    private let signUpUseCase: SignUpUseCaseProtocol
+    private let useCase: AuthUseCaseProtocol
     var disposeBag = DisposeBag()
     
-    init(signUpToken: String, signUpUseCase: SignUpUseCaseProtocol) {
+    init(signUpToken: String, useCase: AuthUseCaseProtocol) {
         self.signUpToken = signUpToken
-        self.signUpUseCase = signUpUseCase
+        self.useCase = useCase
     }
     
     func transform(input: Input) -> Output {
@@ -165,7 +165,7 @@ final class SignUpViewModel {
                     languages: languages
                 )
                 
-                return self.signUpUseCase
+                return self.useCase
                     .signUp(signUpToken: signUpToken, request: request)
                     .asObservable()
                     .map { _ in () }

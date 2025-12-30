@@ -1,5 +1,5 @@
 //
-//  LoginRepositoryImpl.swift
+//  AuthRepositoryImpl.swift
 //  Talet
 //
 //  Created by 김승희 on 11/30/25.
@@ -8,7 +8,7 @@
 import RxSwift
 
 
-final class LoginRepositoryImpl: LoginRepositoryProtocol {
+final class AuthRepositoryImpl: AuthRepositoryProtocol {
     private let network: NetworkManagerProtocol
     private let tokenManager: TokenManagerProtocol
     
@@ -86,5 +86,34 @@ final class LoginRepositoryImpl: LoginRepositoryProtocol {
             self?.tokenManager.refreshToken = data.refreshToken
         })
         .map { _ in () }
+    }
+    
+    func signUp(SignUpString: String, request: UserEntity) -> Single<LoginResultEntity> {
+        
+        let headers = [
+            "Authorization": "Bearer \(SignUpString)"
+        ]
+        
+        let requestDTO = SignUpRequestDTO(from: request)
+        
+        return network.request(
+            endpoint: "/auth/apple/sign-up",
+            method: .post,
+            body: requestDTO,
+            headers: headers,
+            responseType: SignUpResponseDTO.self
+        )
+        .do(onSuccess: { [weak self] (response: SignUpResponseDTO) in
+            guard let data = response.data else { return }
+            self?.tokenManager.accessToken = data.accessToken
+            self?.tokenManager.refreshToken = data.refreshToken
+        })
+        .map { dto in
+            LoginResultEntity(
+                accessToken: dto.data?.accessToken,
+                refreshToken: dto.data?.refreshToken,
+                signUpToken: dto.data?.signUpToken,
+                isSignUpNeeded: false)
+        }
     }
 }

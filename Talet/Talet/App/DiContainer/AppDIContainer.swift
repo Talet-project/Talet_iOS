@@ -16,14 +16,13 @@ final class AppDIContainer {
         container = Container()
         
         assembler = Assembler([
-            LoginAssembly(),
+            AuthAssembly(),
             HomeDataSourceAssembly(),
             HomeRepositoryAssembly(),
             HomeUseCaseAssembly(),
             HomeAssembly(),
             ExploreAssembly(),
-            MypageAssembly(),
-            MypageSettingAssembly()
+            MypageAssembly()
             
         ], container: container)
     }
@@ -39,7 +38,11 @@ final class AppDIContainer {
 
 extension AppDIContainer {
     func makeLoginViewController() -> LoginViewController {
-        return resolve(LoginViewController.self)
+        return container.resolve(LoginViewController.self)!
+    }
+    
+    func makeSignUpViewController(signUpToken: String) -> SignUpViewController {
+        return container.resolve(SignUpViewController.self, argument: signUpToken)!
     }
     
     func makeMypageSettingViewController() -> MypageSettingViewController {

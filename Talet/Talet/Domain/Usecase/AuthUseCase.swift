@@ -11,16 +11,17 @@ import RxSwift
 protocol AuthUseCaseProtocol {
     func socialLogin(platform: LoginPlatform) -> Single<LoginResultEntity>
     func autoLogin() -> Single<Void>
+    func signUp(signUpToken: String, request: UserEntity) -> Single<LoginResultEntity>
 }
 
 final class AuthUseCase: AuthUseCaseProtocol {
     
     private let appleService: AppleLoginService
-    private let repository: LoginRepositoryProtocol
+    private let repository: AuthRepositoryProtocol
     private var tokenManager: TokenManagerProtocol
     
     init(appleService: AppleLoginService,
-         repository: LoginRepositoryProtocol,
+         repository: AuthRepositoryProtocol,
          tokenManager: TokenManagerProtocol = TokenManager.shared
     ) {
         self.appleService = appleService
@@ -95,5 +96,24 @@ final class AuthUseCase: AuthUseCaseProtocol {
                 }
         }
     }
+    
+    func signUp(
+        signUpToken: String,
+        request: UserEntity) -> Single<LoginResultEntity> {
+            return repository
+                .signUp(SignUpString: signUpToken, request: request)
+                .flatMap { [weak self] result -> Single<LoginResultEntity> in
+                    
+                    guard let self else { return .just(result) }
+                    if let accessToken = result.accessToken {
+                        self.tokenManager.accessToken = accessToken
+                    }
+                    if let refreshToken = result.refreshToken {
+                        self.tokenManager.refreshToken = refreshToken
+                    }
+                    
+                    return .just(result)
+                }
+        }
     
 }

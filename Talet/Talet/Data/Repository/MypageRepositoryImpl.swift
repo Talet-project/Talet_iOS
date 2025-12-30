@@ -8,7 +8,7 @@
 import RxSwift
 
 
-class MypageRepositoryImpl: MypageRepositoryProtocol {
+class MypageRepositoryImpl: UserRepositoryProtocol {
     private let tokenManager: TokenManagerProtocol
     private let networkManager: NetworkManagerProtocol
     
