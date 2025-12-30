@@ -116,4 +116,43 @@ final class AuthRepositoryImpl: AuthRepositoryProtocol {
                 isSignUpNeeded: false)
         }
     }
+    
+    func logout() -> Single<Void> {
+        
+        guard let token = self.tokenManager.accessToken else {
+            return .error(AuthError.noToken)
+        }
+        
+        let headers = [
+            "Authorization": "Bearer \(token)"
+        ]
+        
+        return network.request(
+            endpoint: "/auth/logout",
+            method: .post,
+            body: nil,
+            headers: headers,
+            responseType: EmptyResponse.self
+        )
+        .map { _ in () }
+    }
+    
+    func deleteAccount() -> Single<Void> {
+        guard let token = self.tokenManager.accessToken else {
+            return .error(AuthError.noToken)
+        }
+        
+        let headers = [
+            "Authorization": "Bearer \(token)"
+        ]
+        
+        return network.request(
+            endpoint: "/auth/delete",
+            method: .delete,
+            body: nil,
+            headers: headers,
+            responseType: EmptyResponse.self
+        )
+        .map { _ in () }
+    }
 }

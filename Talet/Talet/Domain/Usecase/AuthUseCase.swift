@@ -12,6 +12,8 @@ protocol AuthUseCaseProtocol {
     func socialLogin(platform: LoginPlatform) -> Single<LoginResultEntity>
     func autoLogin() -> Single<Void>
     func signUp(signUpToken: String, request: UserEntity) -> Single<LoginResultEntity>
+    func logout() -> Single<Void>
+    func deleteAccount() -> Single<Void>
 }
 
 final class AuthUseCase: AuthUseCaseProtocol {
@@ -71,25 +73,25 @@ final class AuthUseCase: AuthUseCaseProtocol {
             guard let self else {
                 return .error(AuthError.noToken)
             }
-
+            
             return self.repository.validateAccessToken()
-                .catch { error in
+                .catch { error in                    
                     guard case NetworkError.detailedError(let errorResponse) = error,
                           let code = errorResponse.code else {
                         return .error(error)
                     }
-
+                    
                     switch code {
                     case "AUTH_TOKEN_EXPIRED":
                         return self.repository.refreshAccessToken()
                             .flatMap { self.repository.validateAccessToken() }
-
+                        
                     case "AUTH_TOKEN_INVALID",
-                         "AUTH_CLAIM_PARSING_FAILED",
-                         "AUTH_UNAUTHORIZED":
+                        "AUTH_CLAIM_PARSING_FAILED",
+                        "AUTH_UNAUTHORIZED":
                         self.tokenManager.clear()
                         return .error(error)
-
+                        
                     default:
                         return .error(error)
                     }
@@ -116,4 +118,18 @@ final class AuthUseCase: AuthUseCaseProtocol {
                 }
         }
     
+    func logout() -> Single<Void> {
+        return repository.logout()
+            .do(onSuccess: { [weak self] _ in
+                self?.tokenManager.clear()
+            })
+    }
+    
+    func deleteAccount() -> Single<Void> {
+        return repository.deleteAccount()
+            .do(onSuccess: { [weak self] _ in
+                self?.tokenManager.clear()
+            })
+    }
 }
+    

@@ -13,4 +13,6 @@ protocol AuthRepositoryProtocol {
     func validateAccessToken() -> Single<Void>
     func refreshAccessToken() -> Single<Void>
     func signUp(SignUpString: String, request: UserEntity) -> Single<LoginResultEntity>
+    func logout() -> Single<Void>
+    func deleteAccount() -> Single<Void>
 }

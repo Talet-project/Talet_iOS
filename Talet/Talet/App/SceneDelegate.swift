@@ -17,6 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
+        self.window = window
         //            window.rootViewController = AppDIContainer.shared.makeMainTabBarController()
 //        let loginVC = AppDIContainer.shared.makeLoginViewController()
 //        let navigationController = UINavigationController(rootViewController: loginVC)
@@ -24,7 +25,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        window.makeKeyAndVisible()
         
         checkAutoLogin()
-        self.window = window
+        window.makeKeyAndVisible()
         
         /// keyboard 포커싱 해제 메서드
         let tap = UITapGestureRecognizer(target: window, action: #selector(UIView.endEditing(_:)))
@@ -32,7 +33,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.addGestureRecognizer(tap)
     }
     
-    private func checkAutoLogin() {
+    private func checkAutoLogin() {        
         let authUseCase = AppDIContainer.shared.resolve(AuthUseCaseProtocol.self)
         
         authUseCase.autoLogin()
@@ -49,17 +50,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     // TODO: Coordinator으로 전환
-    private func showLoginScreen() {
+    func showLoginScreen() {
         let loginVC = AppDIContainer.shared.makeLoginViewController()
         let navigationController = UINavigationController(rootViewController: loginVC)
         window?.rootViewController = navigationController
-        window?.makeKeyAndVisible()
     }
     
-    private func showMainScreen() {
+    func showMainScreen() {
         let mainVC = AppDIContainer.shared.makeMainTabBarController()
         window?.rootViewController = mainVC
-        window?.makeKeyAndVisible()
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {

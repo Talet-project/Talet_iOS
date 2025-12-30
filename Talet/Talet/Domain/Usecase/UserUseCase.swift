@@ -1,5 +1,5 @@
 //
-//  MypageUseCase.swift
+//  UserUseCase.swift
 //  Talet
 //
 //  Created by 김승희 on 12/28/25.
@@ -8,11 +8,11 @@
 import RxSwift
 
 
-protocol MypageUseCaseProtocol: AnyObject {
+protocol UserUseCaseProtocol: AnyObject {
     func fetchUserInfo() -> Single<UserEntity>
 }
 
-class MypageUseCase: MypageUseCaseProtocol {
+class UserUseCase: UserUseCaseProtocol {
     private let repository: UserRepositoryProtocol
     
     init(repository: UserRepositoryProtocol) {

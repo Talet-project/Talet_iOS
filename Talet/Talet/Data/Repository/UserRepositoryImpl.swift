@@ -1,5 +1,5 @@
 //
-//  MypageRepositoryImpl.swift
+//  UserRepositoryImpl.swift
 //  Talet
 //
 //  Created by 김승희 on 12/28/25.
@@ -8,7 +8,7 @@
 import RxSwift
 
 
-class MypageRepositoryImpl: UserRepositoryProtocol {
+class UserRepositoryImpl: UserRepositoryProtocol {
     private let tokenManager: TokenManagerProtocol
     private let networkManager: NetworkManagerProtocol
     

@@ -7,8 +7,8 @@
 
 import Foundation
 
-import RxSwift
 import RxCocoa
+import RxSwift
 
 
 protocol MypageSettingViewModelType {
@@ -25,46 +25,56 @@ final class MypageSettingViewModel: MypageSettingViewModelType {
     
     struct Output {
         let openPrivacyPolicy: Signal<URL>
-        let showLogoutConfirm: Signal<Void>
-        let showWithdrawConfirm: Signal<Void>
+        let logoutSuccess: Signal<Void>
+        let withdrawSuccess: Signal<Void>
+        let errorMessage: Signal<String>
     }
     
     private let disposeBag = DisposeBag()
+    private let useCase: AuthUseCaseProtocol
     
-    // TODO: UseCase 추가
-    // private let authUseCase: AuthUseCaseProtocol
-    
-    init() {
-        // TODO: UseCase 주입
-        // self.authUseCase = authUseCase
+    init(useCase: AuthUseCaseProtocol) {
+        self.useCase = useCase
     }
     
     func transform(input: Input) -> Output {
+        let errorRelay = PublishRelay<String>()
+        
         let openPrivacyPolicy = input.privacyPolicyTap
             .compactMap { _ -> URL? in
                 return URL(string: "https://palrang22.notion.site/2d8ce2dd63a98026a7b3f3ff19f5eda5?pvs=74")
             }
         
-        let showLogoutConfirm = input.logoutTap
-            .map { _ in () }
+        let logoutSuccess = input.logoutTap
+            .flatMapLatest { [weak self] _ -> Signal<Void> in
+                guard let self else { return .empty() }
+                
+                return self.useCase.logout()
+                    .asSignal(onErrorRecover: { error in
+                        let message = (error as? NetworkError)?.errorDescription ?? "로그아웃에 실패했습니다. 해당 현상이 반복될 경우 지원팀에 문의하세요."
+                        errorRelay.accept(message)
+                        return .empty()
+                    })
+            }
         
-        let showWithdrawConfirm = input.withdrawTap
-            .map { _ in () }
+        let withdrawSuccess = input.withdrawTap
+            .flatMapLatest { [weak self] _ -> Signal<Void> in
+                guard let self else { return .empty() }
+                
+                return self.useCase.deleteAccount()
+                    .asSignal(onErrorRecover: { error in
+                        let message = (error as? NetworkError)?.errorDescription ?? "회원 탈퇴에 실패했습니다. 해당 현상이 반복될 경우 지원팀에 문의하세요."
+                        errorRelay.accept(message)
+                        return .empty()
+                    })
+            }
+        
         
         return Output(
             openPrivacyPolicy: openPrivacyPolicy,
-            showLogoutConfirm: showLogoutConfirm,
-            showWithdrawConfirm: showWithdrawConfirm
+            logoutSuccess: logoutSuccess,
+            withdrawSuccess: withdrawSuccess,
+            errorMessage: errorRelay.asSignal()
         )
     }
-    
-    // TODO: 로그아웃 기능 구현
-    // func logout() -> Single<Void> {
-    //     return authUseCase.logout()
-    // }
-    
-    // TODO: 탈퇴 기능 구현
-    // func withdraw() -> Single<Void> {
-    //     return authUseCase.withdraw()
-    // }
 }

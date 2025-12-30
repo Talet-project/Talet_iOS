@@ -71,15 +71,21 @@ class MypageSettingViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        output.showLogoutConfirm
+        output.logoutSuccess
             .emit(onNext: { [weak self] in
-                self?.showLogoutAlert()
+                self?.navigateToLogin()
             })
             .disposed(by: disposeBag)
         
-        output.showWithdrawConfirm
+        output.withdrawSuccess
             .emit(onNext: { [weak self] in
-                self?.showWithdrawAlert()
+                self?.navigateToLogin()
+            })
+            .disposed(by: disposeBag)
+        
+        output.errorMessage
+            .emit(onNext: { [weak self] message in
+                self?.showDefaultAlert(title: "오류", message: message)
             })
             .disposed(by: disposeBag)
     }
@@ -124,8 +130,7 @@ class MypageSettingViewController: UIViewController {
             cancelTitle: "취소",
             confirmTitle: "로그아웃",
             onConfirm:  { [weak self] in
-                // TODO: 로그아웃 처리
-                print("로그아웃 실행")
+                self?.logoutTapSubject.onNext(())
             })
     }
 
@@ -136,9 +141,15 @@ class MypageSettingViewController: UIViewController {
             cancelTitle: "취소",
             confirmTitle: "탈퇴",
             onConfirm:  { [weak self] in
-                // TODO: 탈퇴 처리
-                print("탈퇴 실행")
+                self?.withdrawTapSubject.onNext(())
             })
+    }
+    
+    private func navigateToLogin() {
+        guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else {
+            return
+        }
+        sceneDelegate.showLoginScreen()
     }
     
     //MARK: Layout
@@ -196,9 +207,9 @@ extension MypageSettingViewController: UITableViewDelegate, UITableViewDataSourc
         case 0:
             privacyPolicyTapSubject.onNext(())
         case 1:
-            logoutTapSubject.onNext(())
+            showLogoutAlert()
         case 2:
-            withdrawTapSubject.onNext(())
+            showWithdrawAlert()
         default:
             break
         }

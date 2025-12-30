@@ -11,28 +11,17 @@ final class MypageAssembly: Assembly {
     
     func assemble(container: Container) {
         
-        //MARK: - Services
-        container.register(TokenManagerProtocol.self) { _ in
-            TokenManager.shared
-        }
-        .inObjectScope(.container)
-        
-        container.register(NetworkManagerProtocol.self) { _ in
-            NetworkManager.shared
-        }
-        .inObjectScope(.container)
-        
         //MARK: - Repositories
         container.register(UserRepositoryProtocol.self) { resolver in
-            MypageRepositoryImpl(
+            UserRepositoryImpl(
                 tokenManager: resolver.resolve(TokenManagerProtocol.self)!,
                 networkManager: resolver.resolve(NetworkManagerProtocol.self)!
             )
         }
         
         //MARK: - UseCases
-        container.register(MypageUseCaseProtocol.self) { resolver in
-            MypageUseCase(
+        container.register(UserUseCaseProtocol.self) { resolver in
+            UserUseCase(
                 repository: resolver.resolve(UserRepositoryProtocol.self)!
             )
         }
@@ -40,12 +29,13 @@ final class MypageAssembly: Assembly {
         //MARK: - ViewModels
         container.register(MypageViewModel.self) { resolver in
             MypageViewModel(
-                useCase: resolver.resolve(MypageUseCaseProtocol.self)!
+                useCase: resolver.resolve(UserUseCaseProtocol.self)!
             )
         }
         
         container.register(MypageSettingViewModel.self) { resolver in
             MypageSettingViewModel(
+                useCase: resolver.resolve(AuthUseCaseProtocol.self)!
             )
         }
         

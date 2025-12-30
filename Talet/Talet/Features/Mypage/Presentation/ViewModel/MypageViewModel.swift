@@ -28,10 +28,10 @@ class MypageViewModel {
 //        let books: Driver<[MyBookEntity]>
     }
     
-    private let useCase: MypageUseCaseProtocol
+    private let useCase: UserUseCaseProtocol
     private let disposeBag = DisposeBag()
     
-    init(useCase: MypageUseCaseProtocol) {
+    init(useCase: UserUseCaseProtocol) {
         self.useCase = useCase
     }
 
