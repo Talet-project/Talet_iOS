@@ -11,7 +11,6 @@ import SnapKit
 import Then
 
 
-//TODO: 이거 앱 전역에서 쓰는지 확인 필요
 final class CustomAlert: UIView {
     
     // MARK: - Style

@@ -5,4 +5,4 @@
 //  Created by 김승희 on 12/16/25.
 //
 
-struct EmptyResponseDTO: Decodable {}
+struct EmptyResponse: Decodable {}

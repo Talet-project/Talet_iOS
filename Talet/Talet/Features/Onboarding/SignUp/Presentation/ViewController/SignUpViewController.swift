@@ -29,7 +29,7 @@ class SignUpViewController: UIViewController {
     private let monthOptions = (1...12).map { "\($0)월" }
     
     //MARK: Properties
-    private let genderSelectRelay = BehaviorRelay<SignUpViewModel.Gender?>(value: nil)
+    private let genderSelectRelay = BehaviorRelay<GenderEntity?>(value: nil)
     
     //MARK: UI Components
     private let scrollView = UIScrollView()
@@ -212,7 +212,7 @@ class SignUpViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
-    private func updateGenderUI(selected: SignUpViewModel.Gender) {
+    private func updateGenderUI(selected: GenderEntity) {
         switch selected {
         case .boy:
             genderPickerBoy.setSelected(true)

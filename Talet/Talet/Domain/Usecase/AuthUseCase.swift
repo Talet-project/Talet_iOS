@@ -11,16 +11,19 @@ import RxSwift
 protocol AuthUseCaseProtocol {
     func socialLogin(platform: LoginPlatform) -> Single<LoginResultEntity>
     func autoLogin() -> Single<Void>
+    func signUp(signUpToken: String, request: UserEntity) -> Single<LoginResultEntity>
+    func logout() -> Single<Void>
+    func deleteAccount() -> Single<Void>
 }
 
 final class AuthUseCase: AuthUseCaseProtocol {
     
     private let appleService: AppleLoginService
-    private let repository: LoginRepositoryProtocol
+    private let repository: AuthRepositoryProtocol
     private var tokenManager: TokenManagerProtocol
     
     init(appleService: AppleLoginService,
-         repository: LoginRepositoryProtocol,
+         repository: AuthRepositoryProtocol,
          tokenManager: TokenManagerProtocol = TokenManager.shared
     ) {
         self.appleService = appleService
@@ -66,36 +69,63 @@ final class AuthUseCase: AuthUseCaseProtocol {
     }
     
     func autoLogin() -> Single<Void> {
-        guard let accessToken = tokenManager.accessToken else {
-            return .error(AuthError.noToken)
-        }
-        return repository.validateAccessToken()
-            .catch { [weak self] error in
-                guard let self else { return .error(error) }
-                
-                if case NetworkError.detailedError(let errorResponse) = error,
-                   let errorCode = errorResponse.code {
-                    switch errorCode {
-                    case "AUTH_UNAUTHORIZED":
-                        self.tokenManager.clear()
+        return Single.deferred { [weak self] in
+            guard let self else {
+                return .error(AuthError.noToken)
+            }
+            
+            return self.repository.validateAccessToken()
+                .catch { error in                    
+                    guard case NetworkError.detailedError(let errorResponse) = error,
+                          let code = errorResponse.code else {
                         return .error(error)
-                    case "AUTH_TOKEN_EXPIRED":
+                    }
+                    
+                    switch code {
+                    case "0203":
+                        print("0203 called")
                         return self.repository.refreshAccessToken()
-                            .catch { refreshError -> Single<Void> in
-                                self.tokenManager.clear()
-                                return .error(refreshError)
-                            }
-                    case "AUTH_TOKEN_INVALID":
-                        self.tokenManager.clear()
-                        return .error(error)
-                    case "AUTH_CLAIM_PARSING_FAILED":
-                        self.tokenManager.clear()
-                        return .error(error)
+                            .flatMap { self.repository.validateAccessToken() }
+                        
                     default:
+                        self.tokenManager.clear()
                         return .error(error)
                     }
                 }
-                return .error(error)
-            }
+        }
+    }
+    
+    func signUp(
+        signUpToken: String,
+        request: UserEntity) -> Single<LoginResultEntity> {
+            return repository
+                .signUp(SignUpString: signUpToken, request: request)
+                .flatMap { [weak self] result -> Single<LoginResultEntity> in
+                    
+                    guard let self else { return .just(result) }
+                    if let accessToken = result.accessToken {
+                        self.tokenManager.accessToken = accessToken
+                    }
+                    if let refreshToken = result.refreshToken {
+                        self.tokenManager.refreshToken = refreshToken
+                    }
+                    
+                    return .just(result)
+                }
+        }
+    
+    func logout() -> Single<Void> {
+        return repository.logout()
+            .do(onSuccess: { [weak self] _ in
+                self?.tokenManager.clear()
+            })
+    }
+    
+    func deleteAccount() -> Single<Void> {
+        return repository.deleteAccount()
+            .do(onSuccess: { [weak self] _ in
+                self?.tokenManager.clear()
+            })
     }
 }
+    
