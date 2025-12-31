@@ -31,6 +31,7 @@ final class MypageEditViewModel {
     // MARK: - Output
     struct Output {
         let currentUserInfo: Driver<UserEntity>
+        let profileImage: Driver<ProfileImage>
         let isSaveButtonEnabled: Driver<Bool>
         let saveSuccess: Signal<Void>
         let errorMessage: Signal<String>
@@ -56,6 +57,21 @@ final class MypageEditViewModel {
                     }
             }
             .asDriver(onErrorDriveWith: .empty())
+        
+        let profileImage = currentUserInfo
+            .map { user in
+                ProfileImage(
+                    url: user.profileImage,
+                    fallback: user.gender.defaultProfileImage
+                )
+            }
+        
+        let name = Observable.merge(
+            currentUserInfo
+                .map { $0.name }
+                .asObservable(),
+            input.nameText
+        )
         
         let language1Entity = input.firstLanguageSelected
             .map { selected -> LanguageEntity? in
@@ -89,7 +105,7 @@ final class MypageEditViewModel {
             .startWith("")
         
         let allInputs = Observable.combineLatest(
-            input.nameText.startWith(""),
+            name,
             language1Entity,
             language2Entity,
             birthYear,
@@ -166,6 +182,7 @@ final class MypageEditViewModel {
         
         return Output(
             currentUserInfo: currentUserInfo,
+            profileImage: profileImage,
             isSaveButtonEnabled: isSaveButtonEnabled,
             saveSuccess: saveSuccessTracker.asSignal(),
             errorMessage: errorTracker.asSignal()

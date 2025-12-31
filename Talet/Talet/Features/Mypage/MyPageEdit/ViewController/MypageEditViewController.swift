@@ -28,7 +28,9 @@ class MypageEditViewController: UIViewController {
     //MARK: Properties
     private let viewModel: MypageEditViewModel
     private let disposeBag = DisposeBag()
+    
     private let imageSelectedRelay = PublishRelay<Data>()
+    private let genderSelectRelay = BehaviorRelay<GenderEntity?>(value: nil)
     
     //MARK: UI Components
     private lazy var profileButton = UIButton().then {
@@ -50,7 +52,7 @@ class MypageEditViewController: UIViewController {
         $0.layer.borderWidth = 0
         $0.backgroundColor = .gray50
         $0.font = .nanum(.display1)
-        $0.textColor = .gray300
+        $0.textColor = .black
         $0.leftView = self.leftPaddingView
         $0.leftViewMode = .always
     }
@@ -144,6 +146,7 @@ class MypageEditViewController: UIViewController {
         super.viewDidLoad()
         bind()
         setLayout()
+        setupGenderSelection()
     }
     
     override func viewDidLayoutSubviews() {
@@ -152,12 +155,37 @@ class MypageEditViewController: UIViewController {
     }
     
     //MARK: Methods
+    private func setupGenderSelection() {
+        genderPickerBoy.rx.tap
+            .subscribe(with: self) { owner, _ in
+                owner.genderSelectRelay.accept(.boy)
+                owner.updateGenderUI(selected: .boy)
+            }
+            .disposed(by: disposeBag)
+        
+        genderPickerGirl.rx.tap
+            .subscribe(with: self) { owner, _ in
+                owner.genderSelectRelay.accept(.girl)
+                owner.updateGenderUI(selected: .girl)
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func updateGenderUI(selected: GenderEntity) {
+        switch selected {
+        case .boy:
+            genderPickerBoy.setSelected(true)
+            genderPickerGirl.setSelected(false)
+        case .girl:
+            genderPickerBoy.setSelected(false)
+            genderPickerGirl.setSelected(true)
+        }
+    }
     
     //MARK: Bindings
     private func bind() {
         
         // MARK: Input
-        
         let input = MypageEditViewModel.Input(
             viewDidLoad: Observable.just(()),
             
@@ -169,28 +197,24 @@ class MypageEditViewController: UIViewController {
             yearSelected: YearPicker.pickedValue.asObservable(),
             monthSelected: MonthPicker.pickedValue.asObservable(),
             
-            genderSelected: Observable.merge(
-                genderPickerBoy.rx.tap.map { GenderEntity.boy },
-                genderPickerGirl.rx.tap.map { GenderEntity.girl }
-            ),
+            genderSelected: genderSelectRelay
+                .compactMap { $0 }
+                .asObservable(),
             
             imageSelected: imageSelectedRelay.asObservable(),
             
             saveButtonTapped: saveButton.rx.tap.asObservable()
         )
         
+        //MARK: Output
         let output = viewModel.transform(input: input)
-        
-        // MARK: Output - 현재 사용자 정보 반영
         
         output.currentUserInfo
             .drive(onNext: { [weak self] user in
                 guard let self else { return }
                 
-                // 이름
                 self.infoNameTextField.text = user.name
                 
-                // 생년월일 (YYYY-MM)
                 let parts = user.birth.split(separator: "-")
                 if parts.count == 2 {
                     let yearText = "\(parts[0])년"
@@ -202,17 +226,9 @@ class MypageEditViewController: UIViewController {
                     self.MonthPicker.setSelectedValue(monthText)
                 }
                 
-                // 성별 선택 UI (GenderPickerView의 API에 맞춰서 호출)
-                switch user.gender {
-                case .boy:
-                    self.genderPickerBoy.setSelected(true)
-                    self.genderPickerGirl.setSelected(false)
-                case .girl:
-                    self.genderPickerBoy.setSelected(false)
-                    self.genderPickerGirl.setSelected(true)
-                }
+                self.genderSelectRelay.accept(user.gender)
+                self.updateGenderUI(selected: user.gender)
                 
-                // 언어 세팅 (korean 제외)
                 let langs = user.languages.filter { $0 != .korean }
                 if let first = langs.first {
                     self.language1Picker.setSelectedValue(first.displayText)
@@ -223,38 +239,42 @@ class MypageEditViewController: UIViewController {
                 } else {
                     self.language2Picker.setSelectedValue("없음")
                 }
+            })
+            .disposed(by: disposeBag)
+        
+        output.profileImage
+            .drive(onNext: { [weak self] image in
+                guard let self else { return }
                 
-                // 프로필 이미지
-                if let urlString = user.profileImage,
+                if let urlString = image.url,
                    let url = URL(string: urlString) {
                     self.profileButton.kf.setImage(with: url, for: .normal)
+                } else {
+                    self.profileButton.setImage(image.fallback, for: .normal)
                 }
             })
             .disposed(by: disposeBag)
         
-        // MARK: 저장 버튼 활성화
-        
         output.isSaveButtonEnabled
-            .drive(saveButton.rx.isEnabled)
+            .drive(onNext: { [weak self] isEnabled in
+                self?.saveButton.configure(
+                    title: "저장",
+                    isEnabled: isEnabled
+                )
+            })
             .disposed(by: disposeBag)
-        
-        // MARK: 저장 성공
-        
+
         output.saveSuccess
             .emit(onNext: { [weak self] in
                 self?.navigationController?.popViewController(animated: true)
             })
             .disposed(by: disposeBag)
         
-        
-        // MARK: 프로필 이미지 선택 (갤러리)
-        
         profileButton.rx.tap
             .subscribe(onNext: { [weak self] in
                 self?.presentImagePicker()
             })
             .disposed(by: disposeBag)
-        
     }
     
     //MARK: Layout
@@ -278,16 +298,12 @@ class MypageEditViewController: UIViewController {
         [YearPicker, MonthPicker].forEach { datepickerStackView.addArrangedSubview($0) }
         [genderPickerBoy, genderPickerGirl].forEach { genderStackView.addArrangedSubview($0) }
         
-        // 프로필 이미지
         profileButton.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(40)
             $0.centerX.equalToSuperview()
             $0.width.height.equalTo(120)
         }
-        
-        // 프로필 버튼 cornerRadius는 layoutSubviews에서 설정
-        
-        // 이름
+
         infoName.snp.makeConstraints {
             $0.top.equalTo(profileButton.snp.bottom).offset(40)
             $0.leading.equalToSuperview().offset(20)
@@ -295,14 +311,13 @@ class MypageEditViewController: UIViewController {
         
         infoNameTextField.snp.makeConstraints {
             $0.centerY.equalTo(infoName)
-            $0.leading.equalTo(infoName.snp.trailing).offset(60)
+            $0.leading.equalTo(language1Picker)
             $0.trailing.equalToSuperview().inset(20)
             $0.height.equalTo(40)
         }
         
-        // 생년월일
         infoBirth.snp.makeConstraints {
-            $0.top.equalTo(infoName.snp.bottom).offset(24)
+            $0.top.equalTo(infoName.snp.bottom).offset(30)
             $0.leading.equalTo(infoName)
         }
         
@@ -313,7 +328,6 @@ class MypageEditViewController: UIViewController {
             $0.height.equalTo(40)
         }
         
-        // 성별
         infoGender.snp.makeConstraints {
             $0.top.equalTo(infoBirth.snp.bottom).offset(24)
             $0.leading.equalTo(infoName)
@@ -326,7 +340,6 @@ class MypageEditViewController: UIViewController {
             $0.height.equalTo(130)
         }
         
-        // Language 1
         languageLabel1.snp.makeConstraints {
             $0.top.equalTo(genderStackView.snp.bottom).offset(40)
             $0.leading.equalTo(infoName)
@@ -339,7 +352,6 @@ class MypageEditViewController: UIViewController {
             $0.height.equalTo(40)
         }
         
-        // Language 2
         languageLabel2.snp.makeConstraints {
             $0.top.equalTo(languageLabel1.snp.bottom).offset(30)
             $0.leading.equalTo(infoName)
@@ -352,7 +364,6 @@ class MypageEditViewController: UIViewController {
             $0.height.equalTo(40)
         }
         
-        // 저장 버튼
         saveButton.snp.makeConstraints {
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.leading.trailing.equalToSuperview().inset(20)
