@@ -185,15 +185,7 @@ class MypageEditViewController: UIViewController {
     
     private func setNavigationBar() {
         self.title = "내 정보 수정"
-        
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .white
-        appearance.shadowColor = .clear
-        
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
-        
+
         let backButton = UIButton(type: .system).then {
             var config = UIButton.Configuration.plain()
             config.image = UIImage(systemName: "chevron.left")
