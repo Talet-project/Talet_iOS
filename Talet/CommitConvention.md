@@ -1,11 +1,11 @@
 Commit Style Guide
 =================
 
-### Commit Type: 커밋의 타입 구성
+### [Commit Type] 커밋의 타입 구성
 
-> 태그: 제목 <br>
-> :(space)제목 으로 :뒤에만 space를 넣는다.<br>
-> ex) Feat: 결제하기 기능 버튼 추가
+> [태그] 제목 <br>
+> ](space)제목 으로 ] 뒤에 space를 넣는다.<br>
+> ex) [Feat] 결제하기 기능 버튼 추가
 
 | Tag Name | Description |
 |---|---|
@@ -24,4 +24,4 @@ Commit Style Guide
 | Remove | 파일을 삭제하는 작업만 수행한 경우 |
 
 * 추가적인 문맥 정보를 제공하기 위한 목적으로 괄호 안에 적을 수도 있다.<br>
-ex) Fix: 결제하기 기능 수정(UIAction 사용)
+ex) [Fix] 결제하기 기능 수정(UIAction 사용)
