@@ -5,6 +5,7 @@
 //  Created by 김승희 on 12/31/25.
 //
 
+import Photos
 import UIKit
 
 import Kingfisher
@@ -395,6 +396,47 @@ class MypageEditViewController: UIViewController {
 extension MypageEditViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     func presentImagePicker() {
+        let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        
+        switch status {
+        case .authorized, .limited:
+            showImagePicker()
+            
+        case .notDetermined:
+            PHPhotoLibrary.requestAuthorization(for: .readWrite) { [weak self] newStatus in
+                DispatchQueue.main.async {
+                    if newStatus == .authorized || newStatus == .limited {
+                        self?.showImagePicker()
+                    }
+                }
+            }
+            
+        case .denied, .restricted:
+            presentPhotoPermissionAlert()
+            
+        @unknown default:
+            break
+        }
+    }
+    
+    private func presentPhotoPermissionAlert() {
+        let alert = UIAlertController(
+            title: "사진 접근 권한 필요",
+            message: "프로필 사진 변경을 위해 사진 보관함 접근 권한이 필요합니다.\n설정에서 권한을 허용해주세요.",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        alert.addAction(UIAlertAction(title: "설정으로 이동", style: .default) { _ in
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url)
+            }
+        })
+        
+        present(alert, animated: true)
+    }
+    
+    private func showImagePicker() {
         let picker = UIImagePickerController()
         picker.sourceType = .photoLibrary
         picker.delegate = self
