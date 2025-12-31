@@ -6,11 +6,11 @@
 //
 
 
-enum LanguageEntity: String, CaseIterable {
-    case korean = "한국어"
-    case english = "English"
-    case chinese = "中文"
-    case japanese = "日本語"
-    case vietnamese = "Tiếng Việt"
-    case thai = "ภาษาไทย"
+enum LanguageEntity: CaseIterable {
+    case korean
+    case english
+    case chinese
+    case japanese
+    case vietnamese
+    case thai
 }

@@ -12,36 +12,23 @@ final class AuthAssembly: Assembly {
     
     func assemble(container: Container) {
         
-        //MARK: - Service
-        container.register(TokenManagerProtocol.self) { _ in
-            TokenManager.shared
-        }.inObjectScope(.container)
-        
-        container.register(NetworkManagerProtocol.self) { _ in
-            NetworkManager.shared
-        }.inObjectScope(.container)
-        
+        //MARK: - Service        
         container.register(AppleLoginService.self) { _ in
             AppleLoginService()
         }
         
         //MARK: - Repository
         container.register(AuthRepositoryProtocol.self) { resolver in
-            return AuthRepositoryImpl(
-                network: resolver.resolve(NetworkManagerProtocol.self)!,
-                tokenManager: resolver.resolve(TokenManagerProtocol.self)!
-            )
+            return AuthRepositoryImpl()
         }
         
         //MARK: - UseCase
         container.register(AuthUseCaseProtocol.self) { resolver in
             let appleService = resolver.resolve(AppleLoginService.self)!
             let repository = resolver.resolve(AuthRepositoryProtocol.self)!
-            let tokenManager = resolver.resolve(TokenManagerProtocol.self)!
             return AuthUseCase(
                 appleService: appleService,
-                repository: repository,
-                tokenManager: tokenManager
+                repository: repository
             )
         }
         

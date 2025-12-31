@@ -36,6 +36,12 @@ class MypageViewController: UIViewController {
         $0.clipsToBounds = true
         $0.layer.borderWidth = 2
         $0.layer.borderColor = UIColor.orange400.cgColor
+        
+        $0.addAction(UIAction(handler: { [weak self] _ in
+            guard let self else { return }
+            let editVC = AppDIContainer.shared.makeMypageEditViewController()
+            self.navigationController?.pushViewController(editVC, animated: true)
+        }), for: .touchUpInside)
     }
     
     private let profileEditIcon = UIImageView().then {

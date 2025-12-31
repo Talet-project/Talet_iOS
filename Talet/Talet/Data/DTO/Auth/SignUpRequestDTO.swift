@@ -40,26 +40,3 @@ struct SignUpRequestDTO: Encodable {
         }
     }
 }
-
-extension UserInfoDataResponseDTO {
-    func toEntity() throws -> UserEntity {
-        UserEntity(
-            name: nickname,
-            birth: birthday,
-            gender: try Self.toGenderEntity(gender),
-            profileImage: profileImage,
-            languages: languages.compactMap { LanguageEntity(rawValue: $0) }
-        )
-    }
-
-    private static func toGenderEntity(_ value: String) throws -> GenderEntity {
-        switch value {
-        case "여성":
-            return .girl
-        case "남성":
-            return .boy
-        default:
-            throw NetworkError.decodingError
-        }
-    }
-}

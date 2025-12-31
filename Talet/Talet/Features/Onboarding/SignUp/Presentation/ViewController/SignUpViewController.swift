@@ -19,12 +19,12 @@ class SignUpViewController: UIViewController {
     private let disposeBag = DisposeBag()
     
     //MARK: Constants
-    private let language1Options = SignUpLanguage.allCases
+    private let language1Options = LanguageEntity.allCases
             .filter { $0 != .korean }
-            .map { $0.rawValue }
-    private let language2Options = ["없음"] + SignUpLanguage.allCases
+            .map { $0.displayText }
+    private let language2Options = ["없음"] + LanguageEntity.allCases
             .filter { $0 != .korean }
-            .map { $0.rawValue }
+            .map { $0.displayText }
     private let yearOptions = (2010...2025).map { "\($0)년" }
     private let monthOptions = (1...12).map { "\($0)월" }
     
