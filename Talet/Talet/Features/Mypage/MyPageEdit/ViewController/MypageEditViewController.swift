@@ -147,6 +147,7 @@ class MypageEditViewController: UIViewController {
         bind()
         setLayout()
         setupGenderSelection()
+        setNavigationBar()
     }
     
     override func viewDidLayoutSubviews() {
@@ -181,6 +182,33 @@ class MypageEditViewController: UIViewController {
             genderPickerGirl.setSelected(true)
         }
     }
+    
+    private func setNavigationBar() {
+        self.title = "내 정보 수정"
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .white
+        appearance.shadowColor = .clear
+        
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        
+        let backButton = UIButton(type: .system).then {
+            var config = UIButton.Configuration.plain()
+            config.image = UIImage(systemName: "chevron.left")
+            config.baseForegroundColor = .black
+            config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 10)
+            
+            $0.configuration = config
+            $0.addAction(UIAction(handler: { [weak self] _ in
+                self?.navigationController?.popViewController(animated: true)
+            }), for: .touchUpInside)
+        }
+        let backItem = UIBarButtonItem(customView: backButton)
+        self.navigationItem.leftBarButtonItem = backItem
+    }
+    
     
     //MARK: Bindings
     private func bind() {
