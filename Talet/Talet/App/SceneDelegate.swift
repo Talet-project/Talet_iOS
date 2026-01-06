@@ -7,29 +7,68 @@
 
 import UIKit
 
+import RxSwift
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    private let disposeBag = DisposeBag()
+    
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+        let window = UIWindow(windowScene: windowScene)
+        self.window = window
+        //            window.rootViewController = AppDIContainer.shared.makeMainTabBarController()
+//        let loginVC = AppDIContainer.shared.makeLoginViewController()
+//        let navigationController = UINavigationController(rootViewController: loginVC)
+//        window.rootViewController = navigationController
+//        window.makeKeyAndVisible()
+        
+        checkAutoLogin()
+        window.makeKeyAndVisible()
+        
+        /// keyboard 포커싱 해제 메서드
+        let tap = UITapGestureRecognizer(target: window, action: #selector(UIView.endEditing(_:)))
+        tap.cancelsTouchesInView = false
+        window.addGestureRecognizer(tap)
+    }
+    
+    private func checkAutoLogin() {
+        let accessToken = TokenManager.shared.accessToken
+        let refreshToken = TokenManager.shared.refreshToken
+        print("accessToken: \(String(describing: accessToken)), refreshToken: \(String(describing: refreshToken))")
+        
+        let authUseCase = AppDIContainer.shared.resolve(AuthUseCaseProtocol.self)
+        
+        authUseCase.autoLogin()
+            .observe(on: MainScheduler.instance)
+            .subscribe(
+                onSuccess: { [weak self] _ in
+                    self?.showMainScreen()
+                },
+                onFailure: { [weak self] _ in
+                    self?.showLoginScreen()
+                }
+            )
+            .disposed(by: disposeBag)
+    }
+    
+    // TODO: Coordinator으로 전환
+    func showLoginScreen() {
+        let loginVC = AppDIContainer.shared.makeLoginViewController()
+        let navigationController = UINavigationController(rootViewController: loginVC)
+        window?.rootViewController = navigationController
+    }
+    
+    func showMainScreen() {
+        let mainVC = AppDIContainer.shared.makeMainTabBarController()
+        window?.rootViewController = mainVC
+    }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-            guard let windowScene = (scene as? UIWindowScene) else { return }
-            let window = UIWindow(windowScene: windowScene)
-            window.rootViewController = ViewController()
-            window.makeKeyAndVisible()
-            self.window = window
-        }
         return true
     }
-
-
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
-    }
-
+    
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.
