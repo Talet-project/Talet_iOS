@@ -148,13 +148,13 @@ final class SignUpViewModel {
                 let birthDate = "\(yearInt)-\(String(format: "%02d", monthInt))"
                 var languages: [LanguageEntity] = []
                 
-                if let appLang1 = SignUpLanguage.allCases.first(where: { $0.rawValue == language1 }) {
-                    languages.append(appLang1.toEntity)
+                if let appLang1 = LanguageEntity.allCases.first(where: { $0.displayText == language1 }) {
+                    languages.append(appLang1)
                 }
                 
                 if language2 != "없음",
-                   let appLang2 = SignUpLanguage.allCases.first(where: { $0.rawValue == language2 }) {
-                    languages.append(appLang2.toEntity)
+                   let appLang2 = LanguageEntity.allCases.first(where: { $0.displayText == language2 }) {
+                    languages.append(appLang2)
                 }
                 
                 let request = UserEntity(

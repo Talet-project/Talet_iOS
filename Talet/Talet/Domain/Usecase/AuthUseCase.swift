@@ -20,15 +20,13 @@ final class AuthUseCase: AuthUseCaseProtocol {
     
     private let appleService: AppleLoginService
     private let repository: AuthRepositoryProtocol
-    private var tokenManager: TokenManagerProtocol
+    private var tokenManager = TokenManager.shared
     
     init(appleService: AppleLoginService,
-         repository: AuthRepositoryProtocol,
-         tokenManager: TokenManagerProtocol = TokenManager.shared
+         repository: AuthRepositoryProtocol
     ) {
         self.appleService = appleService
         self.repository = repository
-        self.tokenManager = tokenManager
     }
     
     func socialLogin(platform: LoginPlatform) -> Single<LoginResultEntity> {

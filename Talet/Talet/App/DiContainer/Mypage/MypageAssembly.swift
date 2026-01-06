@@ -13,10 +13,7 @@ final class MypageAssembly: Assembly {
         
         //MARK: - Repositories
         container.register(UserRepositoryProtocol.self) { resolver in
-            UserRepositoryImpl(
-                tokenManager: resolver.resolve(TokenManagerProtocol.self)!,
-                networkManager: resolver.resolve(NetworkManagerProtocol.self)!
-            )
+            UserRepositoryImpl()
         }
         
         //MARK: - UseCases
@@ -39,6 +36,12 @@ final class MypageAssembly: Assembly {
             )
         }
         
+        container.register(MypageEditViewModel.self) { resolver in
+            MypageEditViewModel(
+                useCase: resolver.resolve(UserUseCaseProtocol.self)!
+            )
+        }
+        
         //MARK: - ViewControllers
         container.register(MypageViewController.self) { resolver in
             MypageViewController(
@@ -51,5 +54,12 @@ final class MypageAssembly: Assembly {
                 viewModel: resolver.resolve(MypageSettingViewModel.self)!
             )
         }
+        
+        container.register(MypageEditViewController.self) { resolver in
+            MypageEditViewController(
+                viewModel: resolver.resolve(MypageEditViewModel.self)!
+            )
+        }
+        
     }
 }

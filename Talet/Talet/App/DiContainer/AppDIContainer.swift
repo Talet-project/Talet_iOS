@@ -49,6 +49,10 @@ extension AppDIContainer {
         return container.resolve(MypageSettingViewController.self)!
     }
     
+    func makeMypageEditViewController() -> MypageEditViewController {
+        return container.resolve(MypageEditViewController.self)!
+    }
+    
     func makeMainTabBarController() -> MainTabBarController {
         let homeVC = resolve(HomeViewController.self)
         let exploreVC = resolve(ExploreViewController.self)

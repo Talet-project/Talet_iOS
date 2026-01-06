@@ -36,6 +36,12 @@ class MypageViewController: UIViewController {
         $0.clipsToBounds = true
         $0.layer.borderWidth = 2
         $0.layer.borderColor = UIColor.orange400.cgColor
+        
+        $0.addAction(UIAction(handler: { [weak self] _ in
+            guard let self else { return }
+            let editVC = AppDIContainer.shared.makeMypageEditViewController()
+            self.navigationController?.pushViewController(editVC, animated: true)
+        }), for: .touchUpInside)
     }
     
     private let profileEditIcon = UIImageView().then {
@@ -59,14 +65,14 @@ class MypageViewController: UIViewController {
     }
     
     //TODO: 보이스클론 생기면 연결하고 뷰에 올리기
-//    private lazy var voiceSelectView = VoiceSelectView().then {
-//        $0.setEntity(with: dummyVoices)
-//    }
+    private lazy var voiceSelectView = VoiceSelectView().then {
+        $0.setEntity(with: dummyVoices)
+    }
     
-    //TODO: 책 처리 방법 논의후 뷰에 올리기
-//    private lazy var myBookView = MyBookView().then {
-//        $0.setEntity(with: dummyBooks)
-//    }
+    //TODO: 책 처리 방법 논의
+    private lazy var myBookView = MyBookView().then {
+        $0.setEntity(with: dummyBooks)
+    }
     
     //MARK: init
     init(viewModel: MypageViewModel) {
@@ -147,28 +153,28 @@ class MypageViewController: UIViewController {
             .drive(profileGender.rx.text)
             .disposed(by: disposeBag)
         
-        //        output.voices
-        //            .drive(onNext: { [weak self] voices in
-        //                self?.voiceSelectView.setEntity(with: voices)
-        //            })
-        //            .disposed(by: disposeBag)
+//                output.voices
+//                    .drive(onNext: { [weak self] voices in
+//                        self?.voiceSelectView.setEntity(with: voices)
+//                    })
+//                    .disposed(by: disposeBag)
+//        
+//                output.books
+//                    .drive(onNext: { [weak self] books in
+//                        self?.myBookView.setEntity(with: books)
+//                    })
+//                    .disposed(by: disposeBag)
         
-        //        output.books
-        //            .drive(onNext: { [weak self] books in
-        //                self?.myBookView.setEntity(with: books)
-        //            })
-        //            .disposed(by: disposeBag)
-        //
-        //        myBookView.seeAllTap
-        //            .bind(with: self) { owner, _ in
-        //                owner.navigationController?.pushViewController(MyBookDetailViewController(), animated: true)
-        //            }
-        //            .disposed(by: disposeBag)
+                myBookView.seeAllTap
+                    .bind(with: self) { owner, _ in
+                        owner.navigationController?.pushViewController(MyBookDetailViewController(), animated: true)
+                    }
+                    .disposed(by: disposeBag)
         
-        //        voiceSelectView.tapSetting
-        //            .emit(onNext: { [weak self] _ in
-        //                self?.moveToVoiceCloning()
-        //            }).disposed(by: disposeBag)
+                voiceSelectView.tapSetting
+                    .emit(onNext: { [weak self] _ in
+                        self?.moveToVoiceCloning()
+                    }).disposed(by: disposeBag)
         
         output.profileInfoText
             .drive(profileGender.rx.text)
@@ -256,8 +262,8 @@ class MypageViewController: UIViewController {
         scrollView.addSubview(contentView)
         
         [
-//         voiceSelectView,
-//         myBookView
+         voiceSelectView,
+         myBookView
         ].forEach { contentView.addSubview($0) }
         
         scrollView.snp.makeConstraints {
@@ -271,20 +277,20 @@ class MypageViewController: UIViewController {
             $0.width.equalTo(scrollView.frameLayoutGuide)
         }
         
-//        voiceSelectView.snp.makeConstraints {
-//            $0.top.equalToSuperview()
-//            $0.width.equalToSuperview()
-//            $0.height.equalTo(240)
-//            $0.centerX.equalToSuperview()
-//        }
+        voiceSelectView.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.width.equalToSuperview()
+            $0.height.equalTo(240)
+            $0.centerX.equalToSuperview()
+        }
         
-//        myBookView.snp.makeConstraints {
-//            $0.top.equalToSuperview()
-//            $0.width.equalToSuperview()
-//            $0.centerX.equalToSuperview()
-//            $0.height.equalTo(300)
-//            $0.bottom.equalToSuperview()
-//        }
+        myBookView.snp.makeConstraints {
+            $0.top.equalTo(voiceSelectView.snp.bottom)
+            $0.width.equalToSuperview()
+            $0.centerX.equalToSuperview()
+            $0.height.equalTo(300)
+            $0.bottom.equalToSuperview()
+        }
     }
     
     //MARK: Extensions

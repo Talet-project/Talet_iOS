@@ -65,23 +65,25 @@ final class VoiceCloningGuideViewController: UIViewController {
         view.backgroundColor = .systemGroupedBackground
         setupLayout()
         setupActions()
-        setNavigation()
+        setNavigationBar()
     }
     
     //MARK: - Methods
     //TODO: 화면 이동 로직 분리
-    private func setNavigation() {
-        let backButton = UIBarButtonItem(
-            image: UIImage.navigationBackButton,
-            style: .plain,
-            target: nil,
-            action: nil
-        )
-        backButton.tintColor = .black
-        backButton.primaryAction = UIAction { [weak self] _ in
-            self?.navigationController?.popViewController(animated: true)
+    private func setNavigationBar() {
+        let backButton = UIButton(type: .system).then {
+            var config = UIButton.Configuration.plain()
+            config.image = UIImage(systemName: "chevron.left")
+            config.baseForegroundColor = .black
+            config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 10)
+            
+            $0.configuration = config
+            $0.addAction(UIAction(handler: { [weak self] _ in
+                self?.navigationController?.popViewController(animated: true)
+            }), for: .touchUpInside)
         }
-        navigationItem.leftBarButtonItem = backButton
+        let backItem = UIBarButtonItem(customView: backButton)
+        self.navigationItem.leftBarButtonItem = backItem
     }
     
     // MARK: - Actions

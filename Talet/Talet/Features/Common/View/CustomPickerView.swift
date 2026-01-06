@@ -71,6 +71,17 @@ class CustomPickerView: UITextField {
         }
     }
     
+    func setSelectedValue(_ value: String?) {
+        guard let value = value,
+              let index = options.firstIndex(of: value) else {
+            return
+        }
+        pickerView.selectRow(index, inComponent: 0, animated: false)
+        self.text = value
+        self.textColor = .gray600
+        pickedValue.onNext(value)
+    }
+    
     //MARK: Bindings
     
     //MARK: Layout

@@ -12,34 +12,33 @@ import RxSwift
 import Then
 
 
-protocol NetworkManagerProtocol: AnyObject {
-    func request<T:Decodable>(
-        endpoint: String,
-        method: HTTPMethod,
-        body: Encodable?,
-        headers: [String:String]?,
-        responseType: T.Type
-    ) -> Single<T>
-}
+//protocol NetworkManagerProtocol: AnyObject {
+//    func request<T:Decodable>(
+//        endpoint: String,
+//        method: HTTPMethod,
+//        body: Encodable?,
+//        headers: [String:String]?,
+//        responseType: T.Type
+//    ) -> Single<T>
+//}
 
 
 //MARK: - NetworkManager (AlamoFire)
-final class NetworkManager: NetworkManagerProtocol {
+final class NetworkManager {
     static let shared = NetworkManager()
-    
     private init() { }
     
     private let baseURL = "https://talet.site"
     
     private let encoder = JSONEncoder()
-//        .then {
-//        $0.keyEncodingStrategy = .convertToSnakeCase
-//    }
+    //        .then {
+    //        $0.keyEncodingStrategy = .convertToSnakeCase
+    //    }
     
     private let decoder = JSONDecoder()
-//        .then {
-//        $0.keyDecodingStrategy = .convertFromSnakeCase
-//    }
+    //        .then {
+    //        $0.keyDecodingStrategy = .convertFromSnakeCase
+    //    }
     
     func request<T:Decodable>(
         endpoint: String,
@@ -108,8 +107,8 @@ final class NetworkManager: NetworkManagerProtocol {
                     case 401:
                         if let data = try? self.decoder.decode(BaseResponse<EmptyResponse>.self, from: data),
                            let error = data.error {
-                                single(.failure(NetworkError.detailedError(error)))
-                            }
+                            single(.failure(NetworkError.detailedError(error)))
+                        }
                         else {
                             single(.failure(NetworkError.serverError(status)))
                         }
@@ -141,5 +140,54 @@ final class NetworkManager: NetworkManagerProtocol {
             
             return Disposables.create { request.cancel() }
         }
+    }
+    
+    
+    /// multipart 업로드
+    func upload<T: Decodable>(
+        endpoint: String,
+        imageData: Data,
+        headers: [String: String]?,
+        responseType: T.Type
+    ) -> Single<T> {
+        
+        return Single.create { single in
+            let url = self.baseURL + endpoint
+            let httpHeaders = HTTPHeaders(headers ?? [:])
+            
+            AF.upload(
+                multipartFormData: { multipart in
+                    multipart.append(
+                        imageData,
+                        withName: "profile",
+                        fileName: "profile.jpg",
+                        mimeType: "image/jpeg"
+                    )
+                },
+                to: url,
+                headers: httpHeaders
+            )
+            .responseData { response in
+                if let error = response.error {
+                    single(.failure(error))
+                    return
+                }
+                
+                guard let data = response.data else {
+                    single(.failure(NetworkError.noData))
+                    return
+                }
+                
+                do {
+                    let decoded = try self.decoder.decode(responseType, from: data)
+                    single(.success(decoded))
+                } catch {
+                    single(.failure(NetworkError.decodingError))
+                }
+            }
+            
+            return Disposables.create()
+        }
+        
     }
 }

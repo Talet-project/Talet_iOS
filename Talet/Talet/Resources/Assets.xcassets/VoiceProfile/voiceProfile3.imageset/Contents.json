@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Property 1=Group 121.png",
+      "filename" : "voiceProfile3.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "voiceProfile3@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "voiceProfile3@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
