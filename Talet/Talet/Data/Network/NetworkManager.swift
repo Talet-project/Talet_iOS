@@ -12,21 +12,28 @@ import RxSwift
 import Then
 
 
-//protocol NetworkManagerProtocol: AnyObject {
-//    func request<T:Decodable>(
-//        endpoint: String,
-//        method: HTTPMethod,
-//        body: Encodable?,
-//        headers: [String:String]?,
-//        responseType: T.Type
-//    ) -> Single<T>
-//}
+protocol NetworkManagerProtocol {
+    func request<T: Decodable>(
+        endpoint: String,
+        method: HTTPMethod,
+        body: Encodable?,
+        headers: [String: String]?,
+        responseType: T.Type
+    ) -> Single<T>
+
+    func upload<T: Decodable>(
+        endpoint: String,
+        imageData: Data,
+        headers: [String: String]?,
+        responseType: T.Type
+    ) -> Single<T>
+}
 
 
 //MARK: - NetworkManager (AlamoFire)
-final class NetworkManager {
+final class NetworkManager: NetworkManagerProtocol {
     static let shared = NetworkManager()
-    private init() { }
+    init() { }
     
     private let baseURL = "https://talet.site"
     

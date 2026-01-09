@@ -9,8 +9,16 @@ import RxSwift
 
 
 final class AuthRepositoryImpl: AuthRepositoryProtocol {
-    private let network = NetworkManager.shared
-    private let tokenManager = TokenManager.shared
+    private let network: NetworkManagerProtocol
+    private var tokenManager: TokenManagerProtocol
+
+    init(
+        network: NetworkManagerProtocol = NetworkManager.shared,
+        tokenManager: TokenManagerProtocol = TokenManager.shared
+    ) {
+        self.network = network
+        self.tokenManager = tokenManager
+    }
     
     func socialLogin(socialToken: SocialTokenEntity) -> Single<LoginResultEntity> {
         return network.request(

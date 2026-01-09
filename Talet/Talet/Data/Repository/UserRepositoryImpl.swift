@@ -10,13 +10,20 @@ import Foundation
 import RxSwift
 
 
-class UserRepositoryImpl: UserRepositoryProtocol {
-    private let networkManager = NetworkManager.shared
-    
-    private let accessToken = TokenManager.shared.accessToken
+final class UserRepositoryImpl: UserRepositoryProtocol {
+    private let networkManager: NetworkManagerProtocol
+    private let tokenManager: TokenManagerProtocol
+
+    init(
+        networkManager: NetworkManagerProtocol = NetworkManager.shared,
+        tokenManager: TokenManagerProtocol = TokenManager.shared
+    ) {
+        self.networkManager = networkManager
+        self.tokenManager = tokenManager
+    }
 
     func fetchUserInfo() -> Single<UserEntity> {
-        guard let accessToken = accessToken else {
+        guard let accessToken = tokenManager.accessToken else {
             return .error(AuthError.noToken)
         }
         
@@ -53,7 +60,7 @@ class UserRepositoryImpl: UserRepositoryProtocol {
     // MARK: - Update Info
     
     func updateUserInfo(request user: UserEntity) -> Single<UserEntity> {
-        guard let accessToken = accessToken else {
+        guard let accessToken = tokenManager.accessToken else {
             return .error(AuthError.noToken)
         }
         
@@ -92,7 +99,7 @@ class UserRepositoryImpl: UserRepositoryProtocol {
     // MARK: - Update Image
     
     func updateUserImage(imageData: Data) -> Single<UserEntity> {
-        guard let accessToken = accessToken else {
+        guard let accessToken = tokenManager.accessToken else {
             return .error(AuthError.noToken)
         }
         
