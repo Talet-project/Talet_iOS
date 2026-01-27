@@ -13,6 +13,7 @@ protocol BookRepositoryProtocol {
     func fetchBooks(tag: BookTag) -> Single<[BookEntity]>
     func fetchLikedBooks() -> Single<[BookWithLikeStatus]>
     func fetchBookDetail(bookId: String) -> Single<BookWithLikeStatus>
+    func fetchUserBooks() -> Single<[UserBookEntity]>
     
     func likeBook(bookId: String) -> Single<Void>
     func dislikeBook(bookId: String) -> Single<Void>

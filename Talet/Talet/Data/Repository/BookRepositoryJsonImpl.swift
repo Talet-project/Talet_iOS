@@ -14,6 +14,7 @@ final class BookRepositoryJsonImpl: BookRepositoryProtocol {
 
     // MARK: - Properties
     private var cachedBooks: [BookEntity] = []
+    private var userBooks: [UserBookEntity] = []
     private var likedBookIds: Set<String> = []
     private let jsonDecoder = JSONDecoder()
 
@@ -54,6 +55,10 @@ final class BookRepositoryJsonImpl: BookRepositoryProtocol {
             return Disposables.create()
         }
     }
+    
+    func fetchUserBooks() -> Single<[UserBookEntity]> {
+        <#code#>
+    }
 
     func likeBook(bookId: String) -> Single<Void> {
         return Single.create { [weak self] single in
@@ -72,8 +77,6 @@ final class BookRepositoryJsonImpl: BookRepositoryProtocol {
     }
 
     func updateReadingPage(bookId: String, page: Int) -> Single<Void> {
-        // Mock implementation - just returns success
-        // In real implementation, this would update reading progress
         return .just(())
     }
 
@@ -87,20 +90,29 @@ final class BookRepositoryJsonImpl: BookRepositoryProtocol {
         guard let url = Bundle.main.url(forResource: "books", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let response = try? jsonDecoder.decode(MockBooksResponse.self, from: data) else {
-            print("[BookRepositoryJsonImpl] Failed to load books.json")
             return
         }
 
         cachedBooks = response.books.compactMap { $0.toEntity() }
-        print("[BookRepositoryJsonImpl] Loaded \(cachedBooks.count) books")
     }
 
     private func loadUserBooks() {
         guard let url = Bundle.main.url(forResource: "user_books", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let response = try? jsonDecoder.decode(MockUserBooksResponse.self, from: data) else {
-            print("[BookRepositoryJsonImpl] Failed to load user_books.json")
             return
+        }
+
+        userBooks = response.userBooks.compactMap { dto in
+            guard let book = cachedBooks.first(where: { $0.id == dto.bookId }) else {
+                return nil
+            }
+            
+            return UserBookEntity(
+                book: book,
+                currentPage: dto.currentPage,
+                isLiked: dto.isLiked
+            )
         }
 
         likedBookIds = Set(
@@ -108,6 +120,5 @@ final class BookRepositoryJsonImpl: BookRepositoryProtocol {
                 .filter { $0.isLiked }
                 .map { $0.bookId }
         )
-        print("[BookRepositoryJsonImpl] Loaded \(likedBookIds.count) liked books")
     }
 }
