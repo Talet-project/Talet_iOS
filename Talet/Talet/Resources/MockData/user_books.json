@@ -2,22 +2,27 @@
   "user_books": [
     {
       "book_id": "book_001",
+      "current_page": 20,
       "is_liked": true
     },
     {
       "book_id": "book_002",
+      "current_page": 28,
       "is_liked": true
     },
     {
       "book_id": "book_003",
+      "current_page": 10,
       "is_liked": false
     },
     {
       "book_id": "book_005",
+      "current_page": 0,
       "is_liked": true
     },
     {
       "book_id": "book_008",
+      "current_page": 5,
       "is_liked": true
     }
   ]

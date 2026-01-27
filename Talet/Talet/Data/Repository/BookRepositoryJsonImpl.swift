@@ -57,7 +57,7 @@ final class BookRepositoryJsonImpl: BookRepositoryProtocol {
     }
     
     func fetchUserBooks() -> Single<[UserBookEntity]> {
-        <#code#>
+        return .just(userBooks)
     }
 
     func likeBook(bookId: String) -> Single<Void> {
@@ -107,12 +107,7 @@ final class BookRepositoryJsonImpl: BookRepositoryProtocol {
             guard let book = cachedBooks.first(where: { $0.id == dto.bookId }) else {
                 return nil
             }
-            
-            return UserBookEntity(
-                book: book,
-                currentPage: dto.currentPage,
-                isLiked: dto.isLiked
-            )
+            return dto.toUserBookEntity(with: book)
         }
 
         likedBookIds = Set(

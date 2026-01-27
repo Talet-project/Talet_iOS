@@ -6,11 +6,11 @@
 //
 
 enum GenderMapper {
-    static func fromAPI(_ value: String) throws -> GenderEntity {
+    static func fromAPI(_ value: String) -> GenderEntity? {
         switch value {
         case "여성": return .girl
         case "남성": return .boy
-        default: throw NetworkError.decodingError
+        default: return nil
         }
     }
     
@@ -45,6 +45,23 @@ enum LanguageMapper {
         case .japanese: return "JAPANESE"
         case .vietnamese: return "VIETNAMESE"
         case .thai: return "THAI"
+        }
+    }
+}
+
+
+enum BookTagMapper {
+    static func fromAPI(_ value: String) -> BookTag? {
+        switch value {
+        case "courage": return .courage
+        case "wisdom": return .wisdom
+        case "goodAndEvil": return .goodAndEvil
+        case "sharing": return .sharing
+        case "familyLove": return .familyLove
+        case "friendship": return .friendship
+        case "justice": return .justice
+        case "growth": return .growth
+        default: return nil
         }
     }
 }

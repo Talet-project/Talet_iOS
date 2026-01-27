@@ -12,7 +12,7 @@ struct BookEntity {
     let id: String
     let title: String
     let image: URL
-    let tag: [BookTagEntity]
+    let tags: [BookTag]
     let shortSummary: [String:String]
     let longSummary: [String:String]
     let totalPage: Int
