@@ -1,0 +1,24 @@
+{
+  "user_books": [
+    {
+      "book_id": "book_001",
+      "is_liked": true
+    },
+    {
+      "book_id": "book_002",
+      "is_liked": true
+    },
+    {
+      "book_id": "book_003",
+      "is_liked": false
+    },
+    {
+      "book_id": "book_005",
+      "is_liked": true
+    },
+    {
+      "book_id": "book_008",
+      "is_liked": true
+    }
+  ]
+}

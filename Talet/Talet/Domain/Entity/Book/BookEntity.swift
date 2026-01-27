@@ -7,12 +7,13 @@
 
 import Foundation
 
-//필요시수정
+
 struct BookEntity {
     let id: String
     let title: String
     let image: URL
-    let shortSummary: String
-    let longSummary: String
+    let tag: [BookTagEntity]
+    let shortSummary: [String:String]
+    let longSummary: [String:String]
     let totalPage: Int
 }
