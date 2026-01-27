@@ -34,38 +34,18 @@ final class UserRepositoryImpl: UserRepositoryProtocol {
             headers: ["Authorization": "Bearer \(accessToken)"],
             responseType: UserInfoResponseDTO.self
         )
-        .flatMap { response in
-            guard let dto = response.data else {
-                if let error = response.error {
-                    return .error(NetworkError.detailedError(error))
-                }
-                return .error(NetworkError.unknown)
-            }
-            
-            do {
-                let entity = UserEntity(
-                    name: dto.nickname,
-                    birth: dto.birthday,
-                    gender: try GenderMapper.fromAPI(dto.gender),
-                    profileImage: dto.profileImage,
-                    languages: dto.languages.compactMap(LanguageMapper.fromAPI)
-                )
-                return .just(entity)
-            } catch {
-                return .error(error)
-            }
-        }
+        .map { try $0.unwrapData().toEntity() }
     }
-    
+
     // MARK: - Update Info
-    
+
     func updateUserInfo(request user: UserEntity) -> Single<UserEntity> {
         guard let accessToken = tokenManager.accessToken else {
             return .error(AuthError.noToken)
         }
-        
+
         let requestDTO = UserUpdateRequestDTO(from: user)
-        
+
         return networkManager.request(
             endpoint: "/member/update",
             method: .post,
@@ -73,62 +53,22 @@ final class UserRepositoryImpl: UserRepositoryProtocol {
             headers: ["Authorization": "Bearer \(accessToken)"],
             responseType: UserInfoResponseDTO.self
         )
-        .flatMap { response in
-            guard let dto = response.data else {
-                if let error = response.error {
-                    return .error(NetworkError.detailedError(error))
-                }
-                return .error(NetworkError.unknown)
-            }
-            
-            do {
-                let entity = UserEntity(
-                    name: dto.nickname,
-                    birth: dto.birthday,
-                    gender: try GenderMapper.fromAPI(dto.gender),
-                    profileImage: dto.profileImage,
-                    languages: dto.languages.compactMap(LanguageMapper.fromAPI)
-                )
-                return .just(entity)
-            } catch {
-                return .error(error)
-            }
-        }
+        .map { try $0.unwrapData().toEntity() }
     }
-    
+
     // MARK: - Update Image
-    
+
     func updateUserImage(imageData: Data) -> Single<UserEntity> {
         guard let accessToken = tokenManager.accessToken else {
             return .error(AuthError.noToken)
         }
-        
+
         return networkManager.upload(
             endpoint: "/member/update/image",
             imageData: imageData,
             headers: ["Authorization": "Bearer \(accessToken)"],
             responseType: UserInfoResponseDTO.self
         )
-        .flatMap { response in
-            guard let dto = response.data else {
-                if let error = response.error {
-                    return .error(NetworkError.detailedError(error))
-                }
-                return .error(NetworkError.unknown)
-            }
-            
-            do {
-                let entity = UserEntity(
-                    name: dto.nickname,
-                    birth: dto.birthday,
-                    gender: try GenderMapper.fromAPI(dto.gender),
-                    profileImage: dto.profileImage,
-                    languages: dto.languages.compactMap(LanguageMapper.fromAPI)
-                )
-                return .just(entity)
-            } catch {
-                return .error(error)
-            }
-        }
+        .map { try $0.unwrapData().toEntity() }
     }
 }

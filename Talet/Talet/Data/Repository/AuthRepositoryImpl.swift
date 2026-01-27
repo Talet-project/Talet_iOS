@@ -39,15 +39,7 @@ final class AuthRepositoryImpl: AuthRepositoryProtocol {
                 }
             }
         })
-        // .map: 반환된 Single<LoginResponseDTO>를 LoginResultEntity에 매핑
-        .map { response in
-            LoginResultEntity(
-                accessToken: response.data?.accessToken,
-                refreshToken: response.data?.refreshToken,
-                signUpToken: response.data?.signUpToken,
-                isSignUpNeeded: response.data?.signUpToken != nil
-            )
-        }
+        .map { try $0.unwrapData().toEntity() }
     }
     
     func validateAccessToken() -> Single<Void> {
@@ -64,7 +56,7 @@ final class AuthRepositoryImpl: AuthRepositoryProtocol {
             ],
             responseType: EmptyResponse.self
         )
-        .map { _ in () } // <Void> 으로 변환
+        .map { _ in () }
     }
     
     func refreshAccessToken() -> Single<Void> {
@@ -111,13 +103,7 @@ final class AuthRepositoryImpl: AuthRepositoryProtocol {
             self?.tokenManager.accessToken = data.accessToken
             self?.tokenManager.refreshToken = data.refreshToken
         })
-        .map { dto in
-            LoginResultEntity(
-                accessToken: dto.data?.accessToken,
-                refreshToken: dto.data?.refreshToken,
-                signUpToken: dto.data?.signUpToken,
-                isSignUpNeeded: false)
-        }
+        .map { try $0.unwrapData().toEntity() }
     }
     
     func logout() -> Single<Void> {
