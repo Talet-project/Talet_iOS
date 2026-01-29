@@ -28,17 +28,6 @@ final class AuthRepositoryImpl: AuthRepositoryProtocol {
             headers: nil,
             responseType: LoginResponseDTO.self
         )
-        // .do: 반환된 Single<LoginResponseDTO>를 사용해 실제로 작업들을 수행
-        .do(onSuccess: { [weak self] (response: LoginResponseDTO) in
-            if response.data?.signUpToken == nil {
-                if let accessToken = response.data?.accessToken {
-                    self?.tokenManager.accessToken = accessToken
-                }
-                if let refreshToken = response.data?.refreshToken {
-                    self?.tokenManager.refreshToken = refreshToken
-                }
-            }
-        })
         .map { try $0.unwrapData().toEntity() }
     }
     
@@ -47,19 +36,17 @@ final class AuthRepositoryImpl: AuthRepositoryProtocol {
             return .error(AuthError.noToken)
         }
         
-        return network.request(
+        return network.requestVoid(
             endpoint: "/auth/validate",
             method: .get,
             body: nil,
             headers: [
                 "Authorization": "Bearer \(accessToken)"
-            ],
-            responseType: EmptyResponse.self
+            ]
         )
-        .map { _ in () }
     }
     
-    func refreshAccessToken() -> Single<Void> {
+    func refreshAccessToken() -> Single<TokenEntity> {
         print("refreshAccessToken called")
         guard let refreshToken = tokenManager.refreshToken else {
             return .error(AuthError.noToken)
@@ -74,13 +61,7 @@ final class AuthRepositoryImpl: AuthRepositoryProtocol {
             ],
             responseType: RefreshResponseDTO.self
         )
-        .do(onSuccess: { [weak self] response in
-            print("받아오는데까지 갔음")
-            guard let data = response.data else { return }
-            self?.tokenManager.accessToken = data.accessToken
-            self?.tokenManager.refreshToken = data.refreshToken
-        })
-        .map { _ in () }
+        .map { try $0.unwrapData().toEntity() }
     }
     
     func signUp(SignUpString: String, request: UserEntity) -> Single<LoginResultEntity> {
@@ -98,11 +79,6 @@ final class AuthRepositoryImpl: AuthRepositoryProtocol {
             headers: headers,
             responseType: SignUpResponseDTO.self
         )
-        .do(onSuccess: { [weak self] (response: SignUpResponseDTO) in
-            guard let data = response.data else { return }
-            self?.tokenManager.accessToken = data.accessToken
-            self?.tokenManager.refreshToken = data.refreshToken
-        })
         .map { try $0.unwrapData().toEntity() }
     }
     
@@ -116,14 +92,12 @@ final class AuthRepositoryImpl: AuthRepositoryProtocol {
             "Authorization": "Bearer \(token)"
         ]
         
-        return network.request(
+        return network.requestVoid(
             endpoint: "/auth/logout",
             method: .post,
             body: nil,
-            headers: headers,
-            responseType: EmptyResponse.self
+            headers: headers
         )
-        .map { _ in () }
     }
     
     func deleteAccount() -> Single<Void> {
@@ -135,13 +109,11 @@ final class AuthRepositoryImpl: AuthRepositoryProtocol {
             "Authorization": "Bearer \(token)"
         ]
         
-        return network.request(
+        return network.requestVoid(
             endpoint: "/auth/delete",
             method: .delete,
             body: nil,
-            headers: headers,
-            responseType: EmptyResponse.self
+            headers: headers
         )
-        .map { _ in () }
     }
 }
