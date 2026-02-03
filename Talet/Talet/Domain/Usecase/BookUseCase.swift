@@ -16,7 +16,6 @@ protocol BookUseCaseProtocol {
     func fetchBookDetail(bookId: String) -> Single<BookDetailResponse>
 
     func toggleBookmark(bookId: String, isCurrentlyBookmarked: Bool) -> Single<Void>
-    func toggleLike(bookId: String, isCurrentlyLiked: Bool) -> Single<Void>
     func updateReadingProgress(bookId: String, page: Int) -> Single<Void>
 }
 
@@ -29,7 +28,6 @@ final class BookUseCase: BookUseCaseProtocol {
         self.repository = repository
     }
 
-    // MARK: - Fetch
 
     func fetchAllBooks() -> Single<[BookEntity]> {
         repository.fetchAllBooks()
@@ -51,21 +49,12 @@ final class BookUseCase: BookUseCaseProtocol {
         repository.fetchBookDetail(bookId: bookId)
     }
 
-    // MARK: - Actions
 
     func toggleBookmark(bookId: String, isCurrentlyBookmarked: Bool) -> Single<Void> {
         if isCurrentlyBookmarked {
-            return repository.unbookmarkBook(bookId: bookId)
+            return repository.bookmarkBook(bookId: bookId)
         } else {
             return repository.bookmarkBook(bookId: bookId)
-        }
-    }
-
-    func toggleLike(bookId: String, isCurrentlyLiked: Bool) -> Single<Void> {
-        if isCurrentlyLiked {
-            return repository.unlikeBook(bookId: bookId)
-        } else {
-            return repository.likeBook(bookId: bookId)
         }
     }
 
