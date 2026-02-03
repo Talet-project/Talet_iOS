@@ -64,4 +64,17 @@ enum BookTagMapper {
         default: return nil
         }
     }
+    
+    static func toAPI(_ tag: BookTag) -> String {
+        switch tag {
+        case .courage: return "courage"
+        case .wisdom: return "wisdom"
+        case .goodAndEvil: return "goodAndEvil"
+        case .sharing: return "sharing"
+        case .familyLove: return "familyLove"
+        case .friendship: return "friendship"
+        case .justice: return "justice"
+        case .growth: return "growth"
+        }
+    }
 }

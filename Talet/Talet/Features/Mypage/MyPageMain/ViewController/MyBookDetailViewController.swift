@@ -11,6 +11,9 @@ import SnapKit
 import Then
 
 
+let dummyBooks: [UserBookEntity] = []
+
+
 class MyBookDetailViewController: UIViewController {
     //MARK: Constants
     

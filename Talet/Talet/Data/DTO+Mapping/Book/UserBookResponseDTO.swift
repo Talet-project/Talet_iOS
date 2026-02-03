@@ -17,16 +17,27 @@ struct UserBookDataDTO: Decodable {
     let isLiked: Bool
 }
 
-typealias UserBookDTO = BaseResponse<UserBookDataDTO>
+typealias UserBookResponseDTO = BaseResponse<[UserBookDataDTO]>
 
 extension UserBookDataDTO {
-    func toUserBookEntity(with book: BookEntity) -> UserBookEntity? {
+    func toBookEntity() -> BookEntity? {
         guard let imageURL = URL(string: thumbnail) else { return nil }
         
-        return UserBookEntity(
+        return BookEntity(
             id: id,
             title: name,
             image: imageURL,
+            tags: nil,
+            shortSummary: nil,
+            longSummary: nil,
+            totalPage: totalPage,
+            stillImages: nil
+        )
+    }
+    
+    func toUserBookEntity() -> UserBookEntity {
+        UserBookEntity(
+            id: id,
             totalPage: totalPage,
             currentPage: currentPage,
             isLiked: isLiked

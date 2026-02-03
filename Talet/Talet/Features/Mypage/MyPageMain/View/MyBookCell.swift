@@ -47,10 +47,10 @@ class MyBookCell: UICollectionViewCell {
     
 
     //MARK: Configure
-    func configure(cellModel: MyBookEntity) {
+    func configure(cellModel: UserBookEntity) {
         mainImage.kf.setImage(with: cellModel.image,placeholder: UIImage.bookPlaceHolder ,options: [.cacheOriginalImage])
         bookTitleLabel.text = cellModel.title
-        readPercentView.progress = cellModel.readPercentage
+        readPercentView.progress = Float(cellModel.currentPage) / Float(cellModel.totalPage)
     }
     
     //MARK: Layout

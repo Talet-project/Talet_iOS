@@ -10,57 +10,66 @@ import RxSwift
 
 protocol BookUseCaseProtocol {
     func fetchAllBooks() -> Single<[BookEntity]>
-    func fetchBooksWithTag(tag: BookTag) -> Single<[BookEntity]>
-    func fetchBooksWithLike() -> Single<[BookWithLikeStatus]>
-    func fetchDetailBook(bookId: String) -> Single<BookWithLikeStatus>
-    func fetchUserBooks() -> Single<[UserBookEntity]>
-    
-    func likeBook(bookId: String) -> Single<Void>
-    func dislikeBook(bookId: String) -> Single<Void>
-    func updateReadingPage(bookId: String, page: Int) -> Single<Void>
+    func fetchBooks(tag: BookTag) -> Single<[BookEntity]>
+    func fetchBrowseBooks() -> Single<[BrowseBookResponse]>
+    func fetchUserBooks() -> Single<[UserBookResponse]>
+    func fetchBookDetail(bookId: String) -> Single<BookDetailResponse>
+
+    func toggleBookmark(bookId: String, isCurrentlyBookmarked: Bool) -> Single<Void>
+    func toggleLike(bookId: String, isCurrentlyLiked: Bool) -> Single<Void>
+    func updateReadingProgress(bookId: String, page: Int) -> Single<Void>
 }
 
 
 final class BookUseCase: BookUseCaseProtocol {
-    private let bookRepository: BookRepositoryProtocol
-    
-    init(bookRepository: BookRepositoryProtocol) {
-        self.bookRepository = bookRepository
+
+    private let repository: BookRepositoryProtocol
+
+    init(repository: BookRepositoryProtocol) {
+        self.repository = repository
     }
-    
-    // MARK: - Read
-    
+
+    // MARK: - Fetch
+
     func fetchAllBooks() -> Single<[BookEntity]> {
-        bookRepository.fetchBooks()
+        repository.fetchAllBooks()
     }
-    
-    func fetchBooksWithTag(tag: BookTag) -> Single<[BookEntity]> {
-        bookRepository.fetchBooks(tag: tag)
+
+    func fetchBooks(tag: BookTag) -> Single<[BookEntity]> {
+        repository.fetchBooks(tag: tag)
     }
-    
-    func fetchBooksWithLike() -> Single<[BookWithLikeStatus]> {
-        bookRepository.fetchLikedBooks()
+
+    func fetchBrowseBooks() -> Single<[BrowseBookResponse]> {
+        repository.fetchBrowseBooks()
     }
-    
-    func fetchDetailBook(bookId: String) -> Single<BookWithLikeStatus> {
-        bookRepository.fetchBookDetail(bookId: bookId)
+
+    func fetchUserBooks() -> Single<[UserBookResponse]> {
+        repository.fetchUserBooks()
     }
-    
-    func fetchUserBooks() -> Single<[UserBookEntity]> {
-        bookRepository.
+
+    func fetchBookDetail(bookId: String) -> Single<BookDetailResponse> {
+        repository.fetchBookDetail(bookId: bookId)
     }
-    
-    // MARK: - Write
-    
-    func likeBook(bookId: String) -> Single<Void> {
-        bookRepository.likeBook(bookId: bookId)
+
+    // MARK: - Actions
+
+    func toggleBookmark(bookId: String, isCurrentlyBookmarked: Bool) -> Single<Void> {
+        if isCurrentlyBookmarked {
+            return repository.unbookmarkBook(bookId: bookId)
+        } else {
+            return repository.bookmarkBook(bookId: bookId)
+        }
     }
-    
-    func dislikeBook(bookId: String) -> Single<Void> {
-        bookRepository.dislikeBook(bookId: bookId)
+
+    func toggleLike(bookId: String, isCurrentlyLiked: Bool) -> Single<Void> {
+        if isCurrentlyLiked {
+            return repository.unlikeBook(bookId: bookId)
+        } else {
+            return repository.likeBook(bookId: bookId)
+        }
     }
-    
-    func updateReadingPage(bookId: String, page: Int) -> Single<Void> {
-        bookRepository.updateReadingPage(bookId: bookId, page: page)
+
+    func updateReadingProgress(bookId: String, page: Int) -> Single<Void> {
+        repository.updateReadingPage(bookId: bookId, page: page)
     }
 }

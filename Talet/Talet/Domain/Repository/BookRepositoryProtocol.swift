@@ -8,14 +8,20 @@
 import RxSwift
 
 
+// MARK: - Response Wrappers
+
+
+
+
+// MARK: - Repository Protocol
+
 protocol BookRepositoryProtocol {
-    func fetchBooks() -> Single<[BookEntity]>
+    func fetchAllBooks() -> Single<[BookEntity]>
     func fetchBooks(tag: BookTag) -> Single<[BookEntity]>
-    func fetchLikedBooks() -> Single<[BookWithLikeStatus]>
-    func fetchBookDetail(bookId: String) -> Single<BookWithLikeStatus>
-    func fetchUserBooks() -> Single<[UserBookEntity]>
-    
-    func likeBook(bookId: String) -> Single<Void>
-    func dislikeBook(bookId: String) -> Single<Void>
+    func fetchBrowseBooks() -> Single<[BrowseBookResponse]>
+    func fetchUserBooks() -> Single<[UserBookResponse]>
+    func fetchBookDetail(bookId: String) -> Single<BookDetailResponse>
+
+    func bookmarkBook(bookId: String) -> Single<Void>
     func updateReadingPage(bookId: String, page: Int) -> Single<Void>
 }

@@ -18,11 +18,11 @@ struct AllBookResponseDataDTO: Decodable {
     let totalPage: Int
 }
 
-typealias AllBookResponseDTO = BaseResponse<AllBookResponseDataDTO>
+typealias AllBookResponseDTO = BaseResponse<[AllBookResponseDataDTO]>
 
 extension AllBookResponseDataDTO {
-    func toEntity() -> BookEntity? {
-        guard let imageURL = URL(string: thumbnail) else { return nil }
+    func toEntity() -> BookEntity {
+        guard let imageURL = URL(string: thumbnail) else { return baseBook }
         return BookEntity(
             id: id,
             title: name,
@@ -30,7 +30,11 @@ extension AllBookResponseDataDTO {
             tags: tag.compactMap { BookTagMapper.fromAPI($0) },
             shortSummary: shortSummary,
             longSummary: longSummary,
-            totalPage: totalPage
+            totalPage: totalPage,
+            stillImages: nil
         )
     }
 }
+
+
+let baseBook = BookEntity(id: "book-001", title: "책이름", image: URL(string: "")!, tags: [.courage, .familyLove], shortSummary: ["ko": "줄거리"], longSummary: ["ko": "긴 줄거리"], totalPage: 6, stillImages: [URL(string:"")!])

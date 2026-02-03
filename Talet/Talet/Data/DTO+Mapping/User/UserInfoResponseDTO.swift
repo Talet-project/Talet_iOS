@@ -5,6 +5,9 @@
 //  Created by 김승희 on 12/28/25.
 //
 
+import Foundation
+
+
 struct UserInfoDataResponseDTO: Decodable {
     let profileImage: String?
     let nickname: String
@@ -17,11 +20,11 @@ typealias UserInfoResponseDTO = BaseResponse<UserInfoDataResponseDTO>
 
 // MARK: - Mapping to Entity
 extension UserInfoDataResponseDTO {
-    func toEntity() throws -> UserEntity {
+    func toEntity() -> UserEntity {        
         UserEntity(
             name: nickname,
             birth: birthday,
-            gender: try GenderMapper.fromAPI(gender),
+            gender: GenderMapper.fromAPI(gender) ?? GenderEntity.boy,
             profileImage: profileImage,
             languages: languages.compactMap(LanguageMapper.fromAPI)
         )

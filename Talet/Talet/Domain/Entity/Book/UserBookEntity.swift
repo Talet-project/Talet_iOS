@@ -10,8 +10,6 @@ import Foundation
 
 struct UserBookEntity {
     let id: String
-    let title: String
-    let image: URL
     let totalPage: Int
     let currentPage: Int
     let isLiked: Bool
