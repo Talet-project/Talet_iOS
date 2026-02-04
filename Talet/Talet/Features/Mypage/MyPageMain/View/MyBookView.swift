@@ -18,7 +18,6 @@ class MyBookView: UIView {
     //MARK: Properties
     private let disposeBag = DisposeBag()
     private var selectedIdx = 0
-    private var books: [MyBookEntity] = []
     private let tabButtons: [UIButton] = []
     
     //임시 콜백
@@ -138,10 +137,10 @@ class MyBookView: UIView {
     }
     
     //MARK: Methods
-    func setEntity(with books: [MyBookEntity]) {
-        self.books = books
-        myBookCollectionView.reloadData()
-    }
+//    func setEntity(with books: [MyBookEntity]) {
+//        self.books = books
+//        myBookCollectionView.reloadData()
+//    }
     
     //버튼 클릭 UI 변경 메서드, 데이터 처리는 VM-VC에서 해야함 (MypageVM, VC참고)
     private func selectButton(_ button: UIButton) {
@@ -239,14 +238,14 @@ extension MyBookView: UICollectionViewDelegate {
 
 extension MyBookView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 2
+        return dummyBooks.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyBookCell.id, for: indexPath) as? MyBookCell else {
             return UICollectionViewCell()
         }
-        cell.configure(cellModel: books[indexPath.item])
+        cell.configure(with: dummyBooks[indexPath.item])
         return cell
     }
 }

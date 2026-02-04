@@ -32,7 +32,7 @@ final class TagCollectionViewCell: UICollectionViewCell {
             print("📦 [TagCell] frame:", frame)
         }
     
-    func configure(type: TagType) {
+    func configure(type: TagModel) {
         tagView.configure(type: type)
     }
 }

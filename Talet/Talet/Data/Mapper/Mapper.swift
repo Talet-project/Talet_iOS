@@ -48,3 +48,33 @@ enum LanguageMapper {
         }
     }
 }
+
+
+enum BookTagMapper {
+    static func fromAPI(_ value: String) -> BookTag? {
+        switch value {
+        case "courage": return .courage
+        case "wisdom": return .wisdom
+        case "goodAndEvil": return .goodAndEvil
+        case "sharing": return .sharing
+        case "familyLove": return .familyLove
+        case "friendship": return .friendship
+        case "justice": return .justice
+        case "growth": return .growth
+        default: return nil
+        }
+    }
+    
+    static func toAPI(_ tag: BookTag) -> String {
+        switch tag {
+        case .courage: return "courage"
+        case .wisdom: return "wisdom"
+        case .goodAndEvil: return "goodAndEvil"
+        case .sharing: return "sharing"
+        case .familyLove: return "familyLove"
+        case .friendship: return "friendship"
+        case .justice: return "justice"
+        case .growth: return "growth"
+        }
+    }
+}

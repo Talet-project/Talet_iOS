@@ -9,5 +9,13 @@ struct BaseResponse<T: Decodable>: Decodable {
     let success: Bool
     let message: String
     let data: T?
-    let error: ErrorResponse?
+}
+
+extension BaseResponse {
+    func unwrapData() throws -> T {
+        if let data = data {
+            return data
+        }
+        throw NetworkError.noData
+    }
 }

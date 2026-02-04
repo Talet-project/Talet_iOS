@@ -70,9 +70,10 @@ class MypageViewController: UIViewController {
     }
     
     //TODO: 책 처리 방법 논의
-    private lazy var myBookView = MyBookView().then {
-        $0.setEntity(with: dummyBooks)
-    }
+    private lazy var myBookView = MyBookView()
+//        .then {
+//        $0.setEntity(with: dummyBooks)
+//    }
     
     //MARK: init
     init(viewModel: MypageViewModel) {

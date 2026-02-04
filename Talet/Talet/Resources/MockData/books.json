@@ -1,0 +1,212 @@
+{
+  "books": [
+    {
+      "id": "book_001",
+      "title": "흥부와 놀부",
+      "image": "https://picsum.photos/seed/book1/300/400",
+      "tags": [
+        {
+          "tag": "sharing",
+          "foreground_color": "#FFFFFF",
+          "background_color": "#4CAF50"
+        },
+        {
+          "tag": "good_and_evil",
+          "foreground_color": "#FFFFFF",
+          "background_color": "#9C27B0"
+        }
+      ],
+      "short_summary": {
+        "ko": "나보다 남의 처지를 먼저 헤아리는 미덕을 담은 따스하고 정감 있는 전래동화",
+        "vi": "Truyện cổ tích ấm áp về lòng nhân ái, biết nghĩ cho người khác trước bản thân"
+      },
+      "long_summary": {
+        "ko": "형님 먼저! 아우 먼저!\n\n개성 있는 그림과 재미난 글로 완성도 있는 그림책을 선보여 온 「비룡소 전래동화」시리즈 스무 번째 책 『의좋은 형제』. 이 책은 섬진강 시인이라 불리는 김용택의 구수하고 정감 있는 글과 볼로냐 라가치 상 수상 작가 염혜원의 따뜻한 판화가 어우러져 잔잔한 감동을 전한다.",
+        "vi": "Anh trước! Em trước!\n\nĐây là câu chuyện về hai anh em Heungbu và Nolbu. Heungbu tốt bụng và chăm chỉ, trong khi Nolbu tham lam và ích kỷ. Qua câu chuyện, chúng ta học được bài học về lòng nhân ái và sự chia sẻ."
+      },
+      "total_page": 32
+    },
+    {
+      "id": "book_002",
+      "title": "콩쥐 팥쥐",
+      "image": "https://picsum.photos/seed/book2/300/400",
+      "tags": [
+        {
+          "tag": "good_and_evil",
+          "foreground_color": "#FFFFFF",
+          "background_color": "#9C27B0"
+        },
+        {
+          "tag": "courage",
+          "foreground_color": "#FFFFFF",
+          "background_color": "#F44336"
+        }
+      ],
+      "short_summary": {
+        "ko": "착한 콩쥐와 못된 팥쥐의 이야기를 통해 선과 악의 대비를 보여주는 전래동화",
+        "vi": "Truyện cổ tích về sự đối lập giữa thiện và ác qua câu chuyện của Kongjwi hiền lành và Patjwi độc ác"
+      },
+      "long_summary": {
+        "ko": "옛날 옛적에 콩쥐라는 착한 소녀가 살았어요. 콩쥐의 어머니가 돌아가시고 새어머니와 새언니 팥쥐가 들어왔지요. 새어머니와 팥쥐는 콩쥐를 구박하며 힘든 일만 시켰어요. 하지만 콩쥐는 언제나 착하고 부지런했답니다.",
+        "vi": "Ngày xửa ngày xưa, có một cô gái hiền lành tên là Kongjwi. Sau khi mẹ cô qua đời, mẹ kế và chị kế Patjwi chuyển đến. Họ đối xử tệ với Kongjwi và bắt cô làm việc nặng nhọc. Nhưng Kongjwi luôn tốt bụng và chăm chỉ."
+      },
+      "total_page": 28
+    },
+    {
+      "id": "book_003",
+      "title": "선녀와 나무꾼",
+      "image": "https://picsum.photos/seed/book3/300/400",
+      "tags": [
+        {
+          "tag": "family_love",
+          "foreground_color": "#FFFFFF",
+          "background_color": "#E91E63"
+        },
+        {
+          "tag": "wisdom",
+          "foreground_color": "#FFFFFF",
+          "background_color": "#2196F3"
+        }
+      ],
+      "short_summary": {
+        "ko": "하늘나라 선녀와 착한 나무꾼의 아름다운 사랑 이야기",
+        "vi": "Câu chuyện tình yêu đẹp giữa tiên nữ trên trời và chàng tiều phu tốt bụng"
+      },
+      "long_summary": {
+        "ko": "깊은 산속에 홀어머니를 모시고 사는 착한 나무꾼이 있었어요. 어느 날 나무꾼은 사냥꾼에게 쫓기는 사슴을 구해주었지요. 사슴은 고마움의 표시로 나무꾼에게 선녀들이 목욕하는 연못을 알려주었어요.",
+        "vi": "Trong rừng sâu có một chàng tiều phu hiền lành sống cùng mẹ già. Một ngày nọ, anh cứu một con hươu khỏi thợ săn. Để cảm ơn, con hươu đã chỉ cho anh nơi các tiên nữ tắm."
+      },
+      "total_page": 24
+    },
+    {
+      "id": "book_004",
+      "title": "해와 달이 된 오누이",
+      "image": "https://picsum.photos/seed/book4/300/400",
+      "tags": [
+        {
+          "tag": "courage",
+          "foreground_color": "#FFFFFF",
+          "background_color": "#F44336"
+        },
+        {
+          "tag": "family_love",
+          "foreground_color": "#FFFFFF",
+          "background_color": "#E91E63"
+        }
+      ],
+      "short_summary": {
+        "ko": "호랑이를 피해 하늘로 올라간 오누이가 해와 달이 된 이야기",
+        "vi": "Câu chuyện về hai anh em chạy trốn hổ và trở thành mặt trời và mặt trăng"
+      },
+      "long_summary": {
+        "ko": "옛날 깊은 산골에 엄마와 오누이가 살았어요. 어느 날 엄마가 떡을 팔러 고개를 넘다가 무서운 호랑이를 만났지요. 호랑이는 엄마의 떡을 다 빼앗고 엄마까지 잡아먹었어요. 그리고 엄마로 변장해서 오누이를 찾아갔답니다.",
+        "vi": "Ngày xưa, trong một ngôi làng miền núi sâu, có mẹ và hai anh em sống cùng nhau. Một ngày, khi mẹ đi bán bánh qua đèo, bà gặp một con hổ đáng sợ. Con hổ cướp hết bánh và ăn thịt mẹ, rồi giả làm mẹ đến tìm hai anh em."
+      },
+      "total_page": 20
+    },
+    {
+      "id": "book_005",
+      "title": "토끼와 자라",
+      "image": "https://picsum.photos/seed/book5/300/400",
+      "tags": [
+        {
+          "tag": "wisdom",
+          "foreground_color": "#FFFFFF",
+          "background_color": "#2196F3"
+        },
+        {
+          "tag": "justice",
+          "foreground_color": "#FFFFFF",
+          "background_color": "#FF9800"
+        }
+      ],
+      "short_summary": {
+        "ko": "용왕님의 병을 고치기 위해 토끼의 간을 구하러 간 자라의 이야기",
+        "vi": "Câu chuyện về con rùa đi tìm gan thỏ để chữa bệnh cho vua rồng"
+      },
+      "long_summary": {
+        "ko": "바다 속 용궁에 사는 용왕님이 큰 병에 걸렸어요. 의원은 토끼의 간을 먹으면 낫는다고 했지요. 충성스러운 자라는 토끼의 간을 구하러 뭍으로 올라갔어요. 자라는 토끼를 꾀어 용궁으로 데려갔답니다.",
+        "vi": "Vua rồng sống trong cung điện dưới biển bị bệnh nặng. Thầy thuốc nói rằng ăn gan thỏ sẽ khỏi bệnh. Con rùa trung thành đã lên bờ để tìm gan thỏ và lừa thỏ xuống cung điện rồng."
+      },
+      "total_page": 26
+    },
+    {
+      "id": "book_006",
+      "title": "금도끼 은도끼",
+      "image": "https://picsum.photos/seed/book6/300/400",
+      "tags": [
+        {
+          "tag": "justice",
+          "foreground_color": "#FFFFFF",
+          "background_color": "#FF9800"
+        },
+        {
+          "tag": "good_and_evil",
+          "foreground_color": "#FFFFFF",
+          "background_color": "#9C27B0"
+        }
+      ],
+      "short_summary": {
+        "ko": "정직한 나무꾼이 산신령에게 복을 받는 교훈적인 이야기",
+        "vi": "Câu chuyện giáo dục về người tiều phu trung thực được thần núi ban phước"
+      },
+      "long_summary": {
+        "ko": "가난하지만 정직한 나무꾼이 있었어요. 어느 날 나무를 하다가 그만 도끼를 연못에 빠뜨리고 말았지요. 나무꾼이 슬퍼하고 있을 때 산신령이 나타나 금도끼와 은도끼를 보여주었어요.",
+        "vi": "Có một người tiều phu nghèo nhưng trung thực. Một ngày nọ, khi đang chặt củi, anh lỡ làm rơi rìu xuống ao. Khi anh đang buồn, thần núi xuất hiện và cho anh xem rìu vàng và rìu bạc."
+      },
+      "total_page": 18
+    },
+    {
+      "id": "book_007",
+      "title": "견우와 직녀",
+      "image": "https://picsum.photos/seed/book7/300/400",
+      "tags": [
+        {
+          "tag": "family_love",
+          "foreground_color": "#FFFFFF",
+          "background_color": "#E91E63"
+        },
+        {
+          "tag": "growth",
+          "foreground_color": "#FFFFFF",
+          "background_color": "#00BCD4"
+        }
+      ],
+      "short_summary": {
+        "ko": "일 년에 한 번 칠월 칠석에만 만날 수 있는 슬픈 사랑 이야기",
+        "vi": "Câu chuyện tình yêu buồn về đôi tình nhân chỉ được gặp nhau mỗi năm một lần vào ngày Thất Tịch"
+      },
+      "long_summary": {
+        "ko": "하늘나라에 소를 키우는 견우와 베를 짜는 직녀가 살았어요. 둘은 서로 사랑에 빠져 결혼했지만, 일만 게을리했지요. 화가 난 옥황상제는 둘을 은하수 양쪽으로 갈라놓았어요.",
+        "vi": "Trên thiên đường có Ngưu Lang chăn bò và Chức Nữ dệt vải. Họ yêu nhau và kết hôn, nhưng lơ là công việc. Ngọc Hoàng tức giận đã chia cắt họ ở hai bên dải Ngân Hà."
+      },
+      "total_page": 22
+    },
+    {
+      "id": "book_008",
+      "title": "심청전",
+      "image": "https://picsum.photos/seed/book8/300/400",
+      "tags": [
+        {
+          "tag": "family_love",
+          "foreground_color": "#FFFFFF",
+          "background_color": "#E91E63"
+        },
+        {
+          "tag": "courage",
+          "foreground_color": "#FFFFFF",
+          "background_color": "#F44336"
+        }
+      ],
+      "short_summary": {
+        "ko": "눈먼 아버지를 위해 목숨을 바친 효녀 심청의 감동적인 이야기",
+        "vi": "Câu chuyện cảm động về cô gái hiếu thảo Simcheong hy sinh mạng sống vì cha mù"
+      },
+      "long_summary": {
+        "ko": "눈이 먼 심봉사에게는 심청이라는 착한 딸이 있었어요. 심청은 아버지의 눈을 뜨게 해드리고 싶었지요. 공양미 삼백 석을 바치면 눈을 뜰 수 있다는 말을 듣고 심청은 큰 결심을 했어요.",
+        "vi": "Ông Sim mù có một cô con gái hiền lành tên Simcheong. Cô muốn cha mình sáng mắt. Khi nghe nói rằng dâng 300 bao gạo sẽ giúp cha sáng mắt, Simcheong đã đưa ra một quyết định lớn."
+      },
+      "total_page": 36
+    }
+  ]
+}

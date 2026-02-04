@@ -8,12 +8,13 @@
 import Swinject
 
 final class MypageAssembly: Assembly {
-    
+
     func assemble(container: Container) {
-        
+
         //MARK: - Repositories
         container.register(UserRepositoryProtocol.self) { resolver in
-            UserRepositoryImpl()
+            let network = resolver.resolve(NetworkManagerProtocol.self)!
+            return UserRepositoryImpl(networkManager: network)
         }
         
         //MARK: - UseCases

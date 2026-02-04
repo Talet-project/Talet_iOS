@@ -9,17 +9,23 @@ import Swinject
 
 
 final class AuthAssembly: Assembly {
-    
+
     func assemble(container: Container) {
-        
-        //MARK: - Service        
+
+        //MARK: - Core
+        container.register(NetworkManagerProtocol.self) { _ in
+            NetworkManager()
+        }.inObjectScope(.container)
+
+        //MARK: - Service
         container.register(AppleLoginService.self) { _ in
             AppleLoginService()
         }
-        
+
         //MARK: - Repository
         container.register(AuthRepositoryProtocol.self) { resolver in
-            return AuthRepositoryImpl()
+            let network = resolver.resolve(NetworkManagerProtocol.self)!
+            return AuthRepositoryImpl(network: network)
         }
         
         //MARK: - UseCase

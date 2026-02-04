@@ -9,7 +9,14 @@ import Foundation
 import Security
 
 
-final class TokenManager {
+protocol TokenManagerProtocol {
+    var accessToken: String? { get set }
+    var refreshToken: String? { get set }
+    func clear()
+}
+
+
+final class TokenManager: TokenManagerProtocol {
     // 싱글톤 보장
     static let shared = TokenManager()
     private init() {}

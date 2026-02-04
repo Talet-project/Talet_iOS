@@ -11,3 +11,12 @@ struct RefreshDataResponseDTO: Decodable {
 }
 
 typealias RefreshResponseDTO = BaseResponse<RefreshDataResponseDTO>
+
+extension RefreshDataResponseDTO {
+    func toEntity() -> TokenEntity {
+        TokenEntity(
+            accessToken: accessToken,
+            refreshToken: refreshToken
+        )
+    }
+}

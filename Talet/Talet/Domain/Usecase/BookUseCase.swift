@@ -1,0 +1,60 @@
+//
+//  BookUseCase.swift
+//  Talet
+//
+//  Created by 김승희 on 1/27/26.
+//
+
+import RxSwift
+
+
+protocol BookUseCaseProtocol {
+    func fetchAllBooks() -> Single<[BookEntity]>
+    func fetchBooks(tag: BookTag) -> Single<[BookEntity]>
+    func fetchBrowseBooks() -> Single<[BrowseBookResponse]>
+    func fetchUserBooks() -> Single<[UserBookResponse]>
+    func fetchBookDetail(bookId: String) -> Single<BookDetailResponse>
+
+    func toggleBookmark(bookId: String) -> Single<Void>
+    func updateReadingProgress(bookId: String, page: Int) -> Single<Void>
+}
+
+
+final class BookUseCase: BookUseCaseProtocol {
+
+    private let repository: BookRepositoryProtocol
+
+    init(repository: BookRepositoryProtocol) {
+        self.repository = repository
+    }
+
+
+    func fetchAllBooks() -> Single<[BookEntity]> {
+        repository.fetchAllBooks()
+    }
+
+    func fetchBooks(tag: BookTag) -> Single<[BookEntity]> {
+        repository.fetchBooks(tag: tag)
+    }
+
+    func fetchBrowseBooks() -> Single<[BrowseBookResponse]> {
+        repository.fetchBrowseBooks()
+    }
+
+    func fetchUserBooks() -> Single<[UserBookResponse]> {
+        repository.fetchUserBooks()
+    }
+
+    func fetchBookDetail(bookId: String) -> Single<BookDetailResponse> {
+        repository.fetchBookDetail(bookId: bookId)
+    }
+
+
+    func toggleBookmark(bookId: String) -> Single<Void> {
+        repository.toggleBookmark(bookId: bookId)
+    }
+
+    func updateReadingProgress(bookId: String, page: Int) -> Single<Void> {
+        repository.updateReadingPage(bookId: bookId, page: page)
+    }
+}

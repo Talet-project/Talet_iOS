@@ -20,7 +20,7 @@ final class AuthUseCase: AuthUseCaseProtocol {
     
     private let appleService: AppleLoginService
     private let repository: AuthRepositoryProtocol
-    private var tokenManager = TokenManager.shared
+    var tokenManager: TokenManagerProtocol = TokenManager.shared
     
     init(appleService: AppleLoginService,
          repository: AuthRepositoryProtocol
@@ -30,8 +30,6 @@ final class AuthUseCase: AuthUseCaseProtocol {
     }
     
     func socialLogin(platform: LoginPlatform) -> Single<LoginResultEntity> {
-        
-        //MARK: 각 로그인 후 SocialToken 반환 (Service)
         let socialTokenSingle: Single<SocialTokenEntity>
         
         switch platform {
@@ -41,56 +39,34 @@ final class AuthUseCase: AuthUseCaseProtocol {
             return Single.error(NetworkError.invalidRequest)
         }
         
-        // MARK: SocialToken을 Single<LoginResultEntity>로 변환 (Repository)
         return socialTokenSingle
             .flatMap { [weak self] token -> Single<LoginResultEntity> in
                 guard let self else { return .never() }
                 return self.repository.socialLogin(socialToken: token)
             }
             .do(onSuccess: { [weak self] result in
-                guard let self else { return }
+                guard let self,
+                      result.isSignUpNeeded == false,
+                      let accessToken = result.accessToken,
+                      let refreshToken = result.refreshToken
+                else { return }
                 
-                if result.isSignUpNeeded {
-                    return
-                }
+                self.tokenManager.accessToken = accessToken
+                self.tokenManager.refreshToken = refreshToken
                 
-                if let accessToken = result.accessToken {
-                    self.tokenManager.accessToken = accessToken
-                }
-                
-                if let refreshToken = result.refreshToken {
-                    self.tokenManager.refreshToken = refreshToken
-                }
-            }
-                
-            )
+            })
     }
     
     func autoLogin() -> Single<Void> {
-        return Single.deferred { [weak self] in
-            guard let self else {
-                return .error(AuthError.noToken)
+        return repository.validateAccessToken()
+            .catch { _ in
+                self.repository.refreshToken()
+                    .do(onSuccess: { [weak self] token in
+                        self?.tokenManager.accessToken = token.accessToken
+                        self?.tokenManager.refreshToken = token.refreshToken
+                    })
+                    .map { _ in () }
             }
-            
-            return self.repository.validateAccessToken()
-                .catch { error in                    
-                    guard case NetworkError.detailedError(let errorResponse) = error,
-                          let code = errorResponse.code else {
-                        return .error(error)
-                    }
-                    
-                    switch code {
-                    case "0203":
-                        print("0203 called")
-                        return self.repository.refreshAccessToken()
-                            .flatMap { self.repository.validateAccessToken() }
-                        
-                    default:
-                        self.tokenManager.clear()
-                        return .error(error)
-                    }
-                }
-        }
     }
     
     func signUp(
@@ -98,18 +74,15 @@ final class AuthUseCase: AuthUseCaseProtocol {
         request: UserEntity) -> Single<LoginResultEntity> {
             return repository
                 .signUp(SignUpString: signUpToken, request: request)
-                .flatMap { [weak self] result -> Single<LoginResultEntity> in
+                .do(onSuccess: { [weak self] result in
+                    guard let self,
+                          let accessToken = result.accessToken,
+                          let refreshToken = result.refreshToken
+                    else { return }
                     
-                    guard let self else { return .just(result) }
-                    if let accessToken = result.accessToken {
-                        self.tokenManager.accessToken = accessToken
-                    }
-                    if let refreshToken = result.refreshToken {
-                        self.tokenManager.refreshToken = refreshToken
-                    }
-                    
-                    return .just(result)
-                }
+                    self.tokenManager.accessToken = accessToken
+                    self.tokenManager.refreshToken = refreshToken
+                })
         }
     
     func logout() -> Single<Void> {
