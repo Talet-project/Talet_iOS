@@ -20,11 +20,11 @@ typealias UserInfoResponseDTO = BaseResponse<UserInfoDataResponseDTO>
 
 // MARK: - Mapping to Entity
 extension UserInfoDataResponseDTO {
-    func toEntity() -> UserEntity {        
+    func toEntity() throws -> UserEntity {        
         UserEntity(
             name: nickname,
             birth: birthday,
-            gender: GenderMapper.fromAPI(gender) ?? GenderEntity.boy,
+            gender: try GenderMapper.fromAPI(gender),
             profileImage: profileImage,
             languages: languages.compactMap(LanguageMapper.fromAPI)
         )

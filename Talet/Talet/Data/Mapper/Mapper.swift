@@ -6,11 +6,11 @@
 //
 
 enum GenderMapper {
-    static func fromAPI(_ value: String) -> GenderEntity? {
+    static func fromAPI(_ value: String) throws -> GenderEntity {
         switch value {
         case "여성": return .girl
         case "남성": return .boy
-        default: return nil
+        default: throw NetworkError.decodingError
         }
     }
     

@@ -15,7 +15,7 @@ protocol BookUseCaseProtocol {
     func fetchUserBooks() -> Single<[UserBookResponse]>
     func fetchBookDetail(bookId: String) -> Single<BookDetailResponse>
 
-    func toggleBookmark(bookId: String, isCurrentlyBookmarked: Bool) -> Single<Void>
+    func toggleBookmark(bookId: String) -> Single<Void>
     func updateReadingProgress(bookId: String, page: Int) -> Single<Void>
 }
 
@@ -50,12 +50,8 @@ final class BookUseCase: BookUseCaseProtocol {
     }
 
 
-    func toggleBookmark(bookId: String, isCurrentlyBookmarked: Bool) -> Single<Void> {
-        if isCurrentlyBookmarked {
-            return repository.bookmarkBook(bookId: bookId)
-        } else {
-            return repository.bookmarkBook(bookId: bookId)
-        }
+    func toggleBookmark(bookId: String) -> Single<Void> {
+        repository.toggleBookmark(bookId: bookId)
     }
 
     func updateReadingProgress(bookId: String, page: Int) -> Single<Void> {

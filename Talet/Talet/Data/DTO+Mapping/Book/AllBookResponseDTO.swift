@@ -13,9 +13,7 @@ struct AllBookResponseDataDTO: Decodable {
     let name: String
     let thumbnail: String
     let tag: [String]
-    let shortSummary: [String: String]
-    let longSummary: [String: String]
-    let totalPage: Int
+    let plot: [String: String]
 }
 
 typealias AllBookResponseDTO = BaseResponse<[AllBookResponseDataDTO]>
@@ -28,13 +26,22 @@ extension AllBookResponseDataDTO {
             title: name,
             image: imageURL,
             tags: tag.compactMap { BookTagMapper.fromAPI($0) },
-            shortSummary: shortSummary,
-            longSummary: longSummary,
-            totalPage: totalPage,
+            shortSummary: nil,
+            longSummary: plot,
+            totalPage: nil,
             stillImages: nil
         )
     }
 }
 
 
-let baseBook = BookEntity(id: "book-001", title: "책이름", image: URL(string: "")!, tags: [.courage, .familyLove], shortSummary: ["ko": "줄거리"], longSummary: ["ko": "긴 줄거리"], totalPage: 6, stillImages: [URL(string:"")!])
+let baseBook = BookEntity(
+    id: "book-001",
+    title: "책이름",
+    image: URL(string: "https://placehold.co/400x700")!,
+    tags: [.courage, .familyLove],
+    shortSummary: ["ko": "줄거리"],
+    longSummary: ["ko": "긴 줄거리"],
+    totalPage: 6,
+    stillImages: nil
+)

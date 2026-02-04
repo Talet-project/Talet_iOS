@@ -20,7 +20,7 @@ final class AuthUseCase: AuthUseCaseProtocol {
     
     private let appleService: AppleLoginService
     private let repository: AuthRepositoryProtocol
-    private var tokenManager = TokenManager.shared
+    var tokenManager: TokenManagerProtocol = TokenManager.shared
     
     init(appleService: AppleLoginService,
          repository: AuthRepositoryProtocol

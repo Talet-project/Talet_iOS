@@ -107,7 +107,7 @@ final class BookRepositoryImpl: BookRepositoryProtocol {
         }
     }
     
-    func bookmarkBook(bookId: String) -> RxSwift.Single<Void> {
+    func toggleBookmark(bookId: String) -> RxSwift.Single<Void> {
         guard let accessToken = tokenManager.accessToken else {
             return .error(AuthError.noToken)
         }
