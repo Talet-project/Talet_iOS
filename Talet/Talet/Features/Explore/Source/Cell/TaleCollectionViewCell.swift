@@ -104,7 +104,7 @@ final class TaleCollectionViewCell: UICollectionViewCell {
         return collectionView
     }()
     
-    private var tags: [TagType] = []
+    private var tags: [TagModel] = []
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -185,7 +185,10 @@ final class TaleCollectionViewCell: UICollectionViewCell {
         fairyTaleTitle.text = model.name
         fairyTaleDescription.text = model.description
         
-        tags = model.tags.compactMap { TagType(rawValue: $0) }
+        // 임시 처리, 이후 Explore관련 model, viewmodel 수정
+        tags = model.tags
+            .compactMap { BookTag.from(title: $0) }
+            .map { BookTagStyleProvider.style(for: $0) }
 //        print("🎯 tags:", model.tags, "→ 필터 후:", tags)
         DispatchQueue.main.async { [weak self] in
                 self?.tagCollectionView.reloadData()
@@ -213,5 +216,25 @@ extension TaleCollectionViewCell: UICollectionViewDataSource, UICollectionViewDe
         }
         cell.configure(type: tags[indexPath.item])
         return cell
+    }
+}
+
+
+
+
+// 임시
+extension BookTag {
+    static func from(title: String) -> BookTag? {
+        switch title {
+        case "용기": return .courage
+        case "지혜": return .wisdom
+        case "선과 악": return .goodAndEvil
+        case "나눔": return .sharing
+        case "가족애": return .familyLove
+        case "우정": return .friendship
+        case "정의": return .justice
+        case "성장": return .growth
+        default: return nil
+        }
     }
 }

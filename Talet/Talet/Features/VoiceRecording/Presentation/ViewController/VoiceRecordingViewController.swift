@@ -214,7 +214,6 @@ final class VoiceRecordingViewController: UIViewController {
     
     // MARK: Phase에 따른 UI Update methods
     private func updateUIForNormalPhase() {
-        print("updateUIForNormalPhase 호출됨")
         topOrangeLabel.text = "목소리를 듣고 따라해보세요."
         recordButton.setImage(.recordIcon, for: .normal)
         sentenceContainerView.layer.borderColor = UIColor.orange.cgColor
@@ -248,7 +247,6 @@ final class VoiceRecordingViewController: UIViewController {
     }
         
     private func updateUIForRecordingPhase() {
-        print("updateUIForRecordingPhase 호출됨")
         topOrangeLabel.text = "듣고 있어요"
         recordButton.setImage(.recordStopIcon, for: .normal)
         sentenceContainerView.layer.borderColor = UIColor.gray100.cgColor
@@ -269,7 +267,6 @@ final class VoiceRecordingViewController: UIViewController {
     }
         
     private func updateUIForSavePhase() {
-        print("updateUIForSavePhase 호출됨")
         topOrangeLabel.text = "잘했어요! 🎉"
         sentenceContainerView.layer.borderColor = UIColor.gray100.cgColor
         recordButtonContainerView.layer.borderColor = UIColor.orange.cgColor
@@ -366,15 +363,13 @@ final class VoiceRecordingViewController: UIViewController {
     private func handleRecordButtonTap() {
         switch currentPhase {
         case .normal:
-            print("현재 phase는 recording")
             currentPhase = .recording
             
         case .recording:
-            print("현재 phase는 save")
             currentPhase = .save
             
         case .save:
-            print("save에는 recordButton이 사라짐")
+            print("save")
         }
     }
         

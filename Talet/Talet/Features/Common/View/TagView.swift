@@ -82,9 +82,10 @@ final class TagView: UIView {
         setContentCompressionResistancePriority(.required, for: .horizontal)
     }
     
-    func configure(type: TagType) {
-        titleLabel.text = type.rawValue
-        titleLabel.textColor = type.textColor
+    // 새롭게 생성된 모델에 맞게 변경했습니다..!
+    func configure(type: TagModel) {
+        titleLabel.text = type.title
+        titleLabel.textColor = type.foregroundColor
         backgroundColor = type.backgroundColor
     }
 }

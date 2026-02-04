@@ -47,10 +47,14 @@ class MyBookCell: UICollectionViewCell {
     
 
     //MARK: Configure
-    func configure(cellModel: MyBookEntity) {
-        mainImage.kf.setImage(with: cellModel.image,placeholder: UIImage.bookPlaceHolder ,options: [.cacheOriginalImage])
-        bookTitleLabel.text = cellModel.title
-        readPercentView.progress = cellModel.readPercentage
+    func configure(with response: UserBookResponse) {
+        mainImage.kf.setImage(
+            with: response.book.image,
+            placeholder: UIImage.bookPlaceHolder,
+            options: [.cacheOriginalImage]
+        )
+        bookTitleLabel.text = response.book.title
+        readPercentView.progress = Float(response.progress.progress)
     }
     
     //MARK: Layout

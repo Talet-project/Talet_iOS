@@ -12,3 +12,15 @@ struct SignUpDataResponseDTO: Decodable {
 }
 
 typealias SignUpResponseDTO = BaseResponse<SignUpDataResponseDTO>
+
+
+extension SignUpDataResponseDTO {
+    func toEntity() -> LoginResultEntity {
+        LoginResultEntity(
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+            signUpToken: signUpToken,
+            isSignUpNeeded: false
+        )
+    }
+}
