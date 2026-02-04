@@ -13,7 +13,7 @@ final class NetworkLogger: EventMonitor {
 
     let queue = DispatchQueue(label: "com.talet.networklogger")
 
-    func requestDidFinish(_ request: Request) {
+    func requestDidResume(_ request: Request) {
         let method = request.request?.httpMethod ?? "Unknown"
         let url = request.request?.url?.absoluteString ?? "Unknown"
 
