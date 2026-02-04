@@ -36,7 +36,7 @@ extension DetailBookDataResponseDTO {
         )
     }
     
-    var isBookMarked: Bool {
+    var isBookmarked: Bool {
         bookmark
     }
 }

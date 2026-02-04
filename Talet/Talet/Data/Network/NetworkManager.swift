@@ -41,7 +41,16 @@ protocol NetworkManagerProtocol {
 final class NetworkManager: NetworkManagerProtocol {
 
     static let shared = NetworkManager()
-    init() { }
+
+    private let session: Session
+
+    init() {
+        #if DEBUG
+        self.session = Session(eventMonitors: [NetworkLogger()])
+        #else
+        self.session = Session()
+        #endif
+    }
     
     private let baseURL = "https://talet.site"
     
@@ -78,7 +87,7 @@ final class NetworkManager: NetworkManagerProtocol {
             let httpHeaders = HTTPHeaders(headers ?? [:])
             
             //MARK: 네트워크 요청
-            let request = AF.request(
+            let request = self.session.request(
                 url,
                 method: method,
                 parameters: parameters,
@@ -171,7 +180,7 @@ final class NetworkManager: NetworkManagerProtocol {
             let httpHeaders = HTTPHeaders(headers ?? [:])
             
             //MARK: 네트워크 요청
-            let request = AF.request(
+            let request = self.session.request(
                 url,
                 method: method,
                 parameters: parameters,
@@ -191,6 +200,10 @@ final class NetworkManager: NetworkManagerProtocol {
                     
                     switch status {
                     case 204:
+                        single(.success(()))
+                        return
+                        
+                    case 200...299:
                         single(.success(()))
                         return
                         
@@ -228,7 +241,7 @@ final class NetworkManager: NetworkManagerProtocol {
             let url = self.baseURL + endpoint
             let httpHeaders = HTTPHeaders(headers ?? [:])
             
-            AF.upload(
+            self.session.upload(
                 multipartFormData: { multipart in
                     multipart.append(
                         imageData,

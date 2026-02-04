@@ -245,7 +245,7 @@ extension MyBookView: UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyBookCell.id, for: indexPath) as? MyBookCell else {
             return UICollectionViewCell()
         }
-        cell.configure(cellModel: dummyBooks[indexPath.item])
+        cell.configure(with: dummyBooks[indexPath.item])
         return cell
     }
 }

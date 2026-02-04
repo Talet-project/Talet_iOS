@@ -11,7 +11,7 @@ import RxSwift
 protocol AuthRepositoryProtocol {
     func socialLogin(socialToken: SocialTokenEntity) -> Single<LoginResultEntity>
     func validateAccessToken() -> Single<Void>
-    func refreshAccessToken() -> Single<TokenEntity>
+    func refreshToken() -> Single<TokenEntity>
     func signUp(SignUpString: String, request: UserEntity) -> Single<LoginResultEntity>
     func logout() -> Single<Void>
     func deleteAccount() -> Single<Void>

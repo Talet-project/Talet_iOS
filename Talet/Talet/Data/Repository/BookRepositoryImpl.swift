@@ -82,7 +82,7 @@ final class BookRepositoryImpl: BookRepositoryProtocol {
             responseType: UserBookResponseDTO.self
         ).map {
             try $0.unwrapData().compactMap {
-                let book = $0.toBookEntity()!
+                let book = $0.toBookEntity()
                 let userBook = $0.toUserBookEntity()
                 return UserBookResponse(book: book, progress: userBook)
             }
@@ -95,7 +95,7 @@ final class BookRepositoryImpl: BookRepositoryProtocol {
         }
         
         return network.request(
-            endpoint: "/book/find/($bookID)",
+            endpoint: "/book/find/\(bookId)",
             method: .get,
             body: nil,
             headers: ["Authorization": "Bearer \(accessToken)"],
@@ -103,7 +103,7 @@ final class BookRepositoryImpl: BookRepositoryProtocol {
         ).map {
             let dto = try $0.unwrapData()
             let book = dto.toEntity()
-            return BookDetailResponse(book: book, isBookmarked: dto.isBookMarked)
+            return BookDetailResponse(book: book, isBookmarked: dto.isBookmarked)
         }
     }
     

@@ -46,8 +46,7 @@ final class AuthRepositoryImpl: AuthRepositoryProtocol {
         )
     }
     
-    func refreshAccessToken() -> Single<TokenEntity> {
-        print("refreshAccessToken called")
+    func refreshToken() -> Single<TokenEntity> {
         guard let refreshToken = tokenManager.refreshToken else {
             return .error(AuthError.noToken)
         }

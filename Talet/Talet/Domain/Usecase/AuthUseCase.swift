@@ -58,13 +58,14 @@ final class AuthUseCase: AuthUseCaseProtocol {
     }
     
     func autoLogin() -> Single<Void> {
-        return repository.refreshAccessToken()
-            .do(onSuccess: { [weak self] token in
-                self?.tokenManager.accessToken = token.accessToken
-                self?.tokenManager.refreshToken = token.refreshToken
-            })
-            .flatMap { _ in
-                self.repository.validateAccessToken()
+        return repository.validateAccessToken()
+            .catch { _ in
+                self.repository.refreshToken()
+                    .do(onSuccess: { [weak self] token in
+                        self?.tokenManager.accessToken = token.accessToken
+                        self?.tokenManager.refreshToken = token.refreshToken
+                    })
+                    .map { _ in () }
             }
     }
     
