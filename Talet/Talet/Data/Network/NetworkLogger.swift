@@ -13,7 +13,7 @@ final class NetworkLogger: EventMonitor {
 
     let queue = DispatchQueue(label: "com.talet.networklogger")
 
-    func requestDidResume(_ request: Request) {
+    func requestDidFinish(_ request: Request) {
         let method = request.request?.httpMethod ?? "Unknown"
         let url = request.request?.url?.absoluteString ?? "Unknown"
 
@@ -23,7 +23,8 @@ final class NetworkLogger: EventMonitor {
         }
 
         print("""
-        REQUEST [\(method)] \(url)
+        ============================================================
+        [REQUEST [\(method)] \(url)]
         Body: \(body ?? "nil")
         """)
     }
@@ -45,8 +46,10 @@ final class NetworkLogger: EventMonitor {
         let icon = (200...299).contains(status) ? "✅" : "❌"
 
         print("""
-        \(icon) RESPONSE [\(status)] (\(duration)) \(url)
+        ============================================================
+        [\(icon) RESPONSE [\(status)] (\(duration)) \(url)]
         Body: \(body ?? "nil")
+        ============================================================
         """)
     }
 }
