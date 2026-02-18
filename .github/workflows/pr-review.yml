@@ -16,6 +16,6 @@ jobs:
         uses: actions/checkout@v3
       
       - name: AI Code Review
-        uses: palrang/pr-reviewer@v1
+        uses: palrang22/PRReviewer@v1
         with:
           anthropic-key: ${{ secrets.ANTHROPIC_API_KEY }}
