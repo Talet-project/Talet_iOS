@@ -3,7 +3,6 @@
 부모의 목소리로 전래동화를 들려주는 음성 기반 동화 애플리케이션입니다.
 다문화 가정 아이들이 부모의 음성을 통해 한국어에 자연스럽게 노출되고, 정서적 유대와 언어 학습을 동시에 경험할 수 있도록 설계했습니다.
 
-**Voice Cloning 기반 개인화 스토리텔링 경험**을 제공하는 것을 목표로 합니다.
 
 ---
 
@@ -75,10 +74,10 @@
 
 | 분류             | 사용 기술                                |
 | -------------- | ------------------------------------ |
-| Language       | Swift 5                              |
-| UI             | UIKit, SnapKit                       |
+| Language       | Swift                                |
+| UI             | UIKit, SnapKit, Then                 |
 | Reactive       | RxSwift 6.9.0                        |
-| Network        | Alamofire 5.10.2, Moya 15.0.3        |
+| Network        | Alamofire 5.10.2                     |
 | DI             | Swinject 2.9.1                       |
 | Image          | Kingfisher 8.3.3                     |
 | Authentication | Apple Sign-In, Google SDK, Kakao SDK |
@@ -87,22 +86,10 @@
 
 ## 아키텍처
 
-Clean Architecture + MVVM + Repository Pattern
-
-```
-Features (Presentation)
-    └── Domain (Entity, UseCase, Repository Protocol)
-            └── Data (Repository Impl, DTO, Network)
-                    └── Core (Error, Security, Extensions)
-```
-
-### 설계 의도
-
-* Presentation → Domain → Data 단방향 의존성 유지
+Clean Architecture + MVVM
+* Presentation → Domain, Data → Domain 단방향 의존성 유지
 * Repository Protocol을 Domain에 정의하여 DIP 원칙 준수
-* DTO ↔ Entity 분리로 계층 간 책임 명확화
 * Swinject 기반 Assembly 단위 DI 구성
-* Feature 모듈 단위로 독립성 유지
 
 ---
 
@@ -148,11 +135,3 @@ Talet/
     ├── Onboarding
     └── Voice
 ```
-
----
-
-## 요구 사항
-
-* iOS 16.6+
-* Xcode 15+
-* Swift 5
