@@ -58,7 +58,8 @@ final class TaleCollectionViewCell: UICollectionViewCell {
         label.font = .pretendard(.bodyLong2)
         label.textColor = .gray500
         label.textAlignment = .left
-        label.numberOfLines = 0
+        label.numberOfLines = 2
+        label.lineBreakMode = .byTruncatingTail
         return label
     }()
     
@@ -98,7 +99,6 @@ final class TaleCollectionViewCell: UICollectionViewCell {
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 18)
         collectionView.register(TagCollectionViewCell.self,
                                 forCellWithReuseIdentifier: TagCollectionViewCell.reuseIdentifier)
         return collectionView
@@ -216,6 +216,25 @@ extension TaleCollectionViewCell: UICollectionViewDataSource, UICollectionViewDe
         }
         cell.configure(type: tags[indexPath.item])
         return cell
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        insetForSectionAt section: Int
+    ) -> UIEdgeInsets {
+        let font = UIFont.nanum(.label1)
+        let horizontalPadding: CGFloat = 20
+        let spacing: CGFloat = 8
+
+        let totalCellWidth = tags.reduce(CGFloat(0)) { sum, tag in
+            let textWidth = (tag.title as NSString).size(withAttributes: [.font: font]).width
+            return sum + ceil(textWidth) + horizontalPadding
+        }
+        let totalSpacingWidth = spacing * CGFloat(max(tags.count - 1, 0))
+        let totalWidth = totalCellWidth + totalSpacingWidth
+        let inset = max((collectionView.bounds.width - totalWidth) / 2, 0)
+        return UIEdgeInsets(top: 0, left: inset, bottom: 0, right: inset)
     }
 }
 

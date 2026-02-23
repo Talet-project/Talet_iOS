@@ -9,6 +9,9 @@ import Swinject
 
 final class HomeRepositoryAssembly: Assembly {
     func assemble(container: Swinject.Container) {
-        
+        container.register(BookRepositoryProtocol.self) { resolver in
+            let network = resolver.resolve(NetworkManagerProtocol.self)!
+            return BookRepositoryImpl(network: network)
+        }
     }
 }
