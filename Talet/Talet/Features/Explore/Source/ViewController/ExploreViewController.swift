@@ -11,15 +11,6 @@ import SnapKit
 import RxCocoa
 import RxSwift
 
-struct ExploreModel {
-    let id: String
-    let name: String
-    let description: String
-    let thumbnail: String
-    let tags: [String]
-//    let shorts: object
-//    let bookmark: Bool
-}
 
 class ExploreViewController: UIViewController {
     private let disposeBag = DisposeBag()

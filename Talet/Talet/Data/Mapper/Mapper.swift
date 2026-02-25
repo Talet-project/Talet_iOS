@@ -47,6 +47,17 @@ enum LanguageMapper {
         case .thai: return "THAI"
         }
     }
+    
+    static func toShortKey(_ entity: LanguageEntity) -> String {
+        switch entity {
+        case .korean: return "short_ko"
+        case .english: return "short_en"
+        case .chinese: return "short_ch"
+        case .japanese: return "short_ja"
+        case .vietnamese: return "short_vi"
+        case .thai: return "short_th"
+        }
+    }
 }
 
 

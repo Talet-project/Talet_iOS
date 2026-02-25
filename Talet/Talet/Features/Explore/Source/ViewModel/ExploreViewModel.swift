@@ -41,7 +41,7 @@ final class ExploreViewModelImpl: ExploreViewModel {
                 let langKey = self.userUseCase.fetchUserInfo()
                     .asObservable()
                     .map { user -> String in
-                        LanguageMapper.toAPI(user.languages.first ?? .korean)
+                        LanguageMapper.toShortKey(user.languages.first ?? .korean)
                     }
                     .catchAndReturn(LanguageMapper.toAPI(.korean))
 
@@ -54,11 +54,10 @@ final class ExploreViewModelImpl: ExploreViewModel {
                         ExploreModel(
                             id: response.book.id,
                             name: response.book.title,
-                            description: response.book.shortSummary?[key]
-                                ?? response.book.shortSummary?["KOREAN"]
-                                ?? response.book.shortSummary?.values.first ?? "",
+                            description: response.book.shortSummary?[key] ?? "",
                             thumbnail: response.book.image.absoluteString,
-                            tags: (response.book.tags ?? []).map { BookTagStyleProvider.style(for: $0).title }
+                            tags: (response.book.tags ?? []).map { BookTagStyleProvider.style(for: $0).title },
+                            bookmark: response.isBookmarked
                         )
                     }
                 }

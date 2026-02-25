@@ -10,5 +10,5 @@ struct UserEntity {
     let birth: String
     let gender: GenderEntity
     let profileImage: String?
-    let languages: [LanguageEntity]
+    let languages: [LanguageEntity]  // lang1, 2 순서대로
 }
