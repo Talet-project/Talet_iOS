@@ -16,6 +16,8 @@ class ExploreViewController: UIViewController {
     private let disposeBag = DisposeBag()
     private let viewModel: ExploreViewModel
     
+    private let bookmarkTapRelay = PublishRelay<String>()
+    
     init(viewModel: ExploreViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -104,7 +106,8 @@ class ExploreViewController: UIViewController {
     
     private func bind() {
         let input = ExploreViewModelImpl.Input(
-            viewDidLoad: Observable.just(())
+            viewDidLoad: Observable.just(()),
+            bookmarkTapped: bookmarkTapRelay.asObservable()
         )
         let output = viewModel.transform(input: input)
 
@@ -114,6 +117,9 @@ class ExploreViewController: UIViewController {
                 cellType: TaleCollectionViewCell.self
             )) { index, item, cell in
                 cell.configure(with: item, index: index)
+                cell.bookmarkTapped = { [weak self] bookId in
+                    self?.bookmarkTapRelay.accept(bookId)
+                }
             }
             .disposed(by: disposeBag)
 

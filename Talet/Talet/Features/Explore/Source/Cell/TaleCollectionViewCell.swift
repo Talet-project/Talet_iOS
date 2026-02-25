@@ -7,6 +7,8 @@
 
 import UIKit
 
+import RxCocoa
+import RxSwift
 import SnapKit
 
 // 백그라운드 이미지
@@ -23,6 +25,11 @@ enum TaleCardBackground: String, CaseIterable {
 final class TaleCollectionViewCell: UICollectionViewCell {
     static let reuseIdentifier = "TaleCollectionViewCell"
     
+    private var tags: [TagModel] = []
+    private let disposeBag = DisposeBag()
+    var bookmarkTapped: ((String) -> Void)?
+    private var bookId: String = ""
+
     private let backgroundImage: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -63,9 +70,10 @@ final class TaleCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    private let favoriteButton: UIButton = {
+    private let bookmarkButton: UIButton = {
         let button = UIButton()
-        button.setImage(.favorite, for: .normal)
+        button.setImage(.unBookmark, for: .normal)
+        button.setImage(.bookmark, for: .selected)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 8
         
@@ -104,8 +112,6 @@ final class TaleCollectionViewCell: UICollectionViewCell {
         return collectionView
     }()
     
-    private var tags: [TagModel] = []
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setLayout()
@@ -117,8 +123,29 @@ final class TaleCollectionViewCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        print("📐 [TagCV] frame:", tagCollectionView.frame)
         tagCollectionView.collectionViewLayout.invalidateLayout()
+    }
+    
+    func configure(with model: ExploreModel, index: Int) {
+        let backgrounds = TaleCardBackground.allCases
+        let background = backgrounds[index % backgrounds.count]
+        backgroundImage.image = background.image
+        
+        
+        fairyTaleTitle.text = model.name
+        fairyTaleDescription.text = model.description
+        bookmarkButton.isSelected = model.bookmark
+        bookId = model.id
+        
+        tags = model.tags
+            .map { BookTagStyleProvider.style(for: $0) }
+
+        bookmarkButton.rx.tap
+            .bind { [weak self] in
+                guard let self else { return }
+                self.bookmarkTapped?(self.bookId)
+            }
+            .disposed(by: disposeBag)
     }
     
     private func setLayout() {
@@ -130,7 +157,7 @@ final class TaleCollectionViewCell: UICollectionViewCell {
             fairyTaleImage,
             fairyTaleTitle,
             fairyTaleDescription,
-            favoriteButton,
+            bookmarkButton,
             readButton,
             tagCollectionView
         ].forEach { contentView.addSubview($0) }
@@ -157,7 +184,7 @@ final class TaleCollectionViewCell: UICollectionViewCell {
             $0.trailing.equalToSuperview().offset(-18)
         }
         
-        favoriteButton.snp.makeConstraints {
+        bookmarkButton.snp.makeConstraints {
             $0.bottom.equalToSuperview().offset(-18)
             $0.leading.equalToSuperview().offset(18)
             $0.size.equalTo(CGSize(width: 56, height: 42))
@@ -165,38 +192,17 @@ final class TaleCollectionViewCell: UICollectionViewCell {
         
         readButton.snp.makeConstraints {
             $0.bottom.equalToSuperview().offset(-18)
-            $0.leading.equalTo(favoriteButton.snp.trailing).offset(8)
+            $0.leading.equalTo(bookmarkButton.snp.trailing).offset(8)
             $0.trailing.equalToSuperview().offset(-18)
             $0.height.equalTo(42)
         }
         
         tagCollectionView.snp.makeConstraints {
-//            $0.leading.trailing.equalToSuperview()
-//            $0.bottom.equalToSuperview().offset(-83)
-//            $0.height.equalTo(30)
             $0.top.equalTo(fairyTaleDescription.snp.bottom).offset(12)
                 $0.leading.equalToSuperview()
                 $0.trailing.equalToSuperview()
                 $0.height.equalTo(30)
         }
-    }
-    
-    func configure(with model: ExploreModel, index: Int) {
-        fairyTaleTitle.text = model.name
-        fairyTaleDescription.text = model.description
-        
-        // 임시 처리, 이후 Explore관련 model, viewmodel 수정
-        tags = model.tags
-            .compactMap { BookTag.from(title: $0) }
-            .map { BookTagStyleProvider.style(for: $0) }
-//        print("🎯 tags:", model.tags, "→ 필터 후:", tags)
-        DispatchQueue.main.async { [weak self] in
-                self?.tagCollectionView.reloadData()
-            }
-        
-        let backgrounds = TaleCardBackground.allCases
-        let background = backgrounds[index % backgrounds.count]
-        backgroundImage.image = background.image
     }
 }
 
@@ -235,25 +241,5 @@ extension TaleCollectionViewCell: UICollectionViewDataSource, UICollectionViewDe
         let totalWidth = totalCellWidth + totalSpacingWidth
         let inset = max((collectionView.bounds.width - totalWidth) / 2, 0)
         return UIEdgeInsets(top: 0, left: inset, bottom: 0, right: inset)
-    }
-}
-
-
-
-
-// 임시
-extension BookTag {
-    static func from(title: String) -> BookTag? {
-        switch title {
-        case "용기": return .courage
-        case "지혜": return .wisdom
-        case "선과 악": return .goodAndEvil
-        case "나눔": return .sharing
-        case "가족애": return .familyLove
-        case "우정": return .friendship
-        case "정의": return .justice
-        case "성장": return .growth
-        default: return nil
-        }
     }
 }

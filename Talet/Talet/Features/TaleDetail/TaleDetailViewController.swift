@@ -115,11 +115,12 @@ final class TaleDetailViewController: UIViewController {
         return button
     }()
     
-    private let favoriteButton: UIButton = {
+    private let bookmarkButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 8
-        button.setImage(UIImage.favorite, for: .normal)
+        button.setImage(.unBookmark, for: .normal)
+        button.setImage(.bookmark, for: .selected)
         return button
     }()
 
@@ -169,7 +170,7 @@ final class TaleDetailViewController: UIViewController {
         ].forEach { bookDescriptionView.addSubview($0) }
         
         [
-            favoriteButton,
+            bookmarkButton,
             nextButton
         ].forEach { bottomButtonView.addSubview($0) }
         
@@ -243,14 +244,14 @@ final class TaleDetailViewController: UIViewController {
             $0.height.equalTo(62)
         }
         
-        favoriteButton.snp.makeConstraints {
+        bookmarkButton.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(20)
             $0.size.equalTo(CGSize(width: 56, height: 42))
             $0.centerY.equalToSuperview()
         }
         
         nextButton.snp.makeConstraints {
-            $0.leading.equalTo(favoriteButton.snp.trailing).offset(10)
+            $0.leading.equalTo(bookmarkButton.snp.trailing).offset(10)
             $0.trailing.equalToSuperview().offset(-20)
             $0.height.equalTo(42)
             $0.centerY.equalToSuperview()

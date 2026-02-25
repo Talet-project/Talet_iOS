@@ -54,7 +54,6 @@ final class BookRepositoryImpl: BookRepositoryProtocol {
         guard let accessToken = tokenManager.accessToken else {
             return .error(AuthError.noToken)
         }
-        
         return network.request(
             endpoint: "/book/look",
             method: .get,

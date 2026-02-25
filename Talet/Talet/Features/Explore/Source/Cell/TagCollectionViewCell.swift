@@ -29,7 +29,6 @@ final class TagCollectionViewCell: UICollectionViewCell {
     
     override func layoutSubviews() {
             super.layoutSubviews()
-            print("📦 [TagCell] frame:", frame)
         }
     
     func configure(type: TagModel) {

@@ -11,6 +11,6 @@ struct ExploreModel {
     let name: String
     let description: String
     let thumbnail: String
-    let tags: [String]
+    let tags: [BookTag]
     let bookmark: Bool
 }
