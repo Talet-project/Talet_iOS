@@ -54,7 +54,6 @@ final class BookRepositoryImpl: BookRepositoryProtocol {
         guard let accessToken = tokenManager.accessToken else {
             return .error(AuthError.noToken)
         }
-        
         return network.request(
             endpoint: "/book/look",
             method: .get,
@@ -75,7 +74,7 @@ final class BookRepositoryImpl: BookRepositoryProtocol {
         }
         
         return network.request(
-            endpoint: "/book/userbook",
+            endpoint: "/member/bookshelf",
             method: .get,
             body: nil,
             headers: ["Authorization": "Bearer \(accessToken)"],
@@ -113,7 +112,7 @@ final class BookRepositoryImpl: BookRepositoryProtocol {
         }
         
         return network.requestVoid(
-            endpoint: "/book/bookmark",
+            endpoint: "/member/bookmark",
             method: .get,
             body: UpdateBookmarkRequestDTO(bookId: bookId),
             headers: ["Authorization": "Bearer \(accessToken)"],

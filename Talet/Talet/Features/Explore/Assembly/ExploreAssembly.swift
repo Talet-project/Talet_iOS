@@ -10,7 +10,10 @@ import Swinject
 final class ExploreAssembly: Assembly {
     func assemble(container: Swinject.Container) {
         container.register(ExploreViewModel.self) { resolver in
-            ExploreViewModelImpl()
+            ExploreViewModelImpl(
+                bookUseCase: resolver.resolve(BookUseCaseProtocol.self)!,
+                userUseCase: resolver.resolve(UserUseCaseProtocol.self)!
+            )
         }
         
         container.register(ExploreViewController.self) { resolver in

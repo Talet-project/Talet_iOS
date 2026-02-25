@@ -9,6 +9,8 @@ import Swinject
 
 final class HomeUseCaseAssembly: Assembly {
     func assemble(container: Swinject.Container) {
-       
+        container.register(BookUseCaseProtocol.self) { resolver in
+            BookUseCase(repository: resolver.resolve(BookRepositoryProtocol.self)!)
+        }
     }
 }

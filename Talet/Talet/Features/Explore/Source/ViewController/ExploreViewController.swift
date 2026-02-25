@@ -11,19 +11,12 @@ import SnapKit
 import RxCocoa
 import RxSwift
 
-struct ExploreModel {
-    let id: String
-    let name: String
-    let description: String
-    let thumbnail: String
-    let tags: [String]
-//    let shorts: object
-//    let bookmark: Bool
-}
 
 class ExploreViewController: UIViewController {
     private let disposeBag = DisposeBag()
     private let viewModel: ExploreViewModel
+    
+    private let bookmarkTapRelay = PublishRelay<String>()
     
     init(viewModel: ExploreViewModel) {
         self.viewModel = viewModel
@@ -112,16 +105,33 @@ class ExploreViewController: UIViewController {
     }
     
     private func bind() {
-        let input = ExploreViewModelImpl.Input()
+        let input = ExploreViewModelImpl.Input(
+            viewDidLoad: Observable.just(()),
+            bookmarkTapped: bookmarkTapRelay.asObservable()
+        )
         let output = viewModel.transform(input: input)
-        
+
         output.items
             .drive(taleCollectionView.rx.items(
                 cellIdentifier: TaleCollectionViewCell.reuseIdentifier,
                 cellType: TaleCollectionViewCell.self
             )) { index, item, cell in
                 cell.configure(with: item, index: index)
+                cell.bookmarkTapped = { [weak self] bookId in
+                    self?.bookmarkTapRelay.accept(bookId)
+                }
             }
+            .disposed(by: disposeBag)
+
+        output.errorMessage
+            .emit(onNext: { [weak self] message in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                    guard let self else { return }
+                    let alert = UIAlertController(title: "오류", message: message, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "확인", style: .default))
+                    self.present(alert, animated: true)
+                }
+            })
             .disposed(by: disposeBag)
     }
     
